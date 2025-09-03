@@ -1,0 +1,39 @@
+{
+    "serviceInfo": {
+        "serviceID": "FoodSpoilageControl",
+        "serviceName": "Food Spoilage Control Service",
+        "serviceDescription": "Monitors fridge gas sensor via MQTT and sends spoilage alerts when gas levels indicate potential food spoilage.",
+        "serviceType": "monitoring_service",
+        "version": "1.0.0",
+        "endpoints": [
+            "MQTT Subscribe: Group17/SmartChill/Devices/+/+/gas",
+            "MQTT Subscribe: Group17/SmartChill/FoodSpoilageControl/config_update",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/Spoilage"
+        ]
+    },
+    "catalog": {
+        "url": "http://catalog:8001",
+        "registration_interval_seconds": 300,
+        "ping_interval_seconds": 60
+    },
+    "mqtt": {
+        "brokerIP": "mosquitto",
+        "brokerPort": 1883,
+        "clientID_prefix": "FoodSpoilageControl"
+    },
+    "defaults": {
+        "gas_threshold_ppm": 300,
+        "alert_severity": "warning",
+        "enable_continuous_alerts": false,
+        "alert_cooldown_minutes": 15
+    },
+    "devices": {
+        "SmartChill_DDEEFF": {
+            "gas_threshold_ppm": 300,
+            "enable_continuous_alerts": false,
+            "alert_cooldown_minutes": 15
+        }
+    },
+    "lastUpdate": "2025-09-03T13:48:39.805477+00:00",
+    "configVersion": 2
+}

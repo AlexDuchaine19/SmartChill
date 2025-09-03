@@ -1,0 +1,613 @@
+1756314452: mosquitto version 2.0.22 starting
+1756314452: Config loaded from /mosquitto/config/mosquitto.conf.
+1756314452: Opening ipv4 listen socket on port 1883.
+1756314452: Opening websockets listen socket on port 9001.
+1756314452: mosquitto version 2.0.22 running
+1756314506: mosquitto version 2.0.22 terminating
+1756314506: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756314570: mosquitto version 2.0.22 starting
+1756314570: Config loaded from /mosquitto/config/mosquitto.conf.
+1756314570: Opening ipv4 listen socket on port 1883.
+1756314570: Opening websockets listen socket on port 9001.
+1756314570: mosquitto version 2.0.22 running
+1756314626: mosquitto version 2.0.22 terminating
+1756314626: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756314638: mosquitto version 2.0.22 starting
+1756314638: Config loaded from /mosquitto/config/mosquitto.conf.
+1756314638: Opening ipv4 listen socket on port 1883.
+1756314638: Opening websockets listen socket on port 9001.
+1756314638: mosquitto version 2.0.22 running
+1756314693: mosquitto version 2.0.22 terminating
+1756314693: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756314706: mosquitto version 2.0.22 starting
+1756314706: Config loaded from /mosquitto/config/mosquitto.conf.
+1756314706: Opening ipv4 listen socket on port 1883.
+1756314706: Opening websockets listen socket on port 9001.
+1756314706: mosquitto version 2.0.22 running
+1756315027: mosquitto version 2.0.22 terminating
+1756315027: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756315039: mosquitto version 2.0.22 starting
+1756315039: Config loaded from /mosquitto/config/mosquitto.conf.
+1756315039: Opening ipv4 listen socket on port 1883.
+1756315039: Opening websockets listen socket on port 9001.
+1756315039: mosquitto version 2.0.22 running
+1756315388: mosquitto version 2.0.22 terminating
+1756315388: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756315393: mosquitto version 2.0.22 starting
+1756315393: Config loaded from /mosquitto/config/mosquitto.conf.
+1756315393: Opening ipv4 listen socket on port 1883.
+1756315393: Opening websockets listen socket on port 9001.
+1756315393: mosquitto version 2.0.22 running
+1756315487: mosquitto version 2.0.22 terminating
+1756315487: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756315503: mosquitto version 2.0.22 starting
+1756315503: Config loaded from /mosquitto/config/mosquitto.conf.
+1756315503: Opening ipv4 listen socket on port 1883.
+1756315503: Opening websockets listen socket on port 9001.
+1756315503: mosquitto version 2.0.22 running
+1756315658: mosquitto version 2.0.22 terminating
+1756315658: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756315676: mosquitto version 2.0.22 starting
+1756315676: Config loaded from /mosquitto/config/mosquitto.conf.
+1756315676: Opening ipv4 listen socket on port 1883.
+1756315676: Opening websockets listen socket on port 9001.
+1756315676: mosquitto version 2.0.22 running
+1756315700: New connection from 172.19.0.1:56182 on port 1883.
+1756315700: New client connected from 172.19.0.1:56182 as fridge_SmartChill_DDEEFF_1756315700 (p2, c1, k60).
+1756315860: Client fridge_SmartChill_DDEEFF_1756315700 disconnected.
+1756316023: New connection from 172.19.0.1:53750 on port 1883.
+1756316023: New client connected from 172.19.0.1:53750 as fridge_SmartChill_DDEEFF_1756316023 (p2, c1, k60).
+1756316028: Client fridge_SmartChill_DDEEFF_1756316023 disconnected.
+1756316175: New connection from 172.19.0.1:60126 on port 1883.
+1756316175: New client connected from 172.19.0.1:60126 as fridge_SmartChill_DDEEFF_1756316175 (p2, c1, k60).
+1756316280: Client fridge_SmartChill_DDEEFF_1756316175 disconnected.
+1756316348: mosquitto version 2.0.22 terminating
+1756316348: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756316582: mosquitto version 2.0.22 starting
+1756316582: Config loaded from /mosquitto/config/mosquitto.conf.
+1756316582: Opening ipv4 listen socket on port 1883.
+1756316582: Opening websockets listen socket on port 9001.
+1756316582: mosquitto version 2.0.22 running
+1756316595: mosquitto version 2.0.22 terminating
+1756316595: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756316757: mosquitto version 2.0.22 starting
+1756316757: Config loaded from /mosquitto/config/mosquitto.conf.
+1756316757: Opening ipv4 listen socket on port 1883.
+1756316757: Opening websockets listen socket on port 9001.
+1756316757: mosquitto version 2.0.22 running
+1756316781: New connection from 172.19.0.1:39078 on port 1883.
+1756316781: New client connected from 172.19.0.1:39078 as fridge_SmartChill_DDEEFF_1756316781 (p2, c1, k60).
+1756316864: Client fridge_SmartChill_DDEEFF_1756316781 disconnected.
+1756316902: New connection from 172.19.0.1:47354 on port 1883.
+1756316902: New client connected from 172.19.0.1:47354 as fridge_SmartChill_DDEEFF_1756316902 (p2, c1, k60).
+1756316927: Client fridge_SmartChill_DDEEFF_1756316902 disconnected.
+1756316962: New connection from 172.19.0.1:41376 on port 1883.
+1756316962: New client connected from 172.19.0.1:41376 as fridge_SmartChill_DDEEFF_1756316962 (p2, c1, k60).
+1756317095: Client fridge_SmartChill_DDEEFF_1756316962 disconnected.
+1756317302: New connection from 172.19.0.1:44654 on port 1883.
+1756317302: New client connected from 172.19.0.1:44654 as fridge_SmartChill_DDEEFF_1756317302 (p2, c1, k60).
+1756317930: New connection from 172.19.0.1:35638 on port 1883.
+1756317930: New client connected from 172.19.0.1:35638 as timer_usage_control_1756317930 (p2, c1, k60).
+1756318399: Client timer_usage_control_1756317930 disconnected.
+1756318410: New connection from 172.19.0.1:38956 on port 1883.
+1756318410: New client connected from 172.19.0.1:38956 as timer_usage_control_1756318410 (p2, c1, k60).
+1756318557: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756318937: Client timer_usage_control_1756318410 disconnected.
+1756319222: New connection from 172.19.0.1:39462 on port 1883.
+1756319222: New client connected from 172.19.0.1:39462 as timer_usage_control_1756319222 (p2, c1, k60).
+1756319260: Client fridge_SmartChill_DDEEFF_1756317302 disconnected.
+1756319267: New connection from 172.19.0.1:58904 on port 1883.
+1756319267: New client connected from 172.19.0.1:58904 as fridge_SmartChill_DDEEFF_1756319267 (p2, c1, k60).
+1756319299: Client timer_usage_control_1756319222 disconnected.
+1756319304: New connection from 172.19.0.1:37512 on port 1883.
+1756319304: New client connected from 172.19.0.1:37512 as timer_usage_control_1756319304 (p2, c1, k60).
+1756319340: Client timer_usage_control_1756319304 disconnected.
+1756319511: New connection from 172.19.0.1:38886 on port 1883.
+1756319511: New client connected from 172.19.0.1:38886 as timer_usage_control_1756319511 (p2, c1, k60).
+1756319636: Client timer_usage_control_1756319511 closed its connection.
+1756319643: Client fridge_SmartChill_DDEEFF_1756319267 disconnected.
+1756320026: mosquitto version 2.0.22 terminating
+1756320026: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756320049: mosquitto version 2.0.22 starting
+1756320049: Config loaded from /mosquitto/config/mosquitto.conf.
+1756320049: Opening ipv4 listen socket on port 1883.
+1756320049: Opening websockets listen socket on port 9001.
+1756320049: mosquitto version 2.0.22 running
+1756320075: mosquitto version 2.0.22 terminating
+1756320075: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756320481: mosquitto version 2.0.22 starting
+1756320481: Config loaded from /mosquitto/config/mosquitto.conf.
+1756320481: Opening ipv4 listen socket on port 1883.
+1756320481: Opening websockets listen socket on port 9001.
+1756320481: mosquitto version 2.0.22 running
+1756320482: New connection from 172.19.0.4:56921 on port 1883.
+1756320482: New client connected from 172.19.0.4:56921 as timer_usage_control_1756320482 (p2, c1, k60).
+1756320484: Client timer_usage_control_1756320482 disconnected.
+1756320485: New connection from 172.19.0.4:35605 on port 1883.
+1756320485: New client connected from 172.19.0.4:35605 as timer_usage_control_1756320485 (p2, c1, k60).
+1756320487: Client timer_usage_control_1756320485 disconnected.
+1756320488: New connection from 172.19.0.4:51799 on port 1883.
+1756320488: New client connected from 172.19.0.4:51799 as timer_usage_control_1756320488 (p2, c1, k60).
+1756320490: Client timer_usage_control_1756320488 disconnected.
+1756320518: New connection from 172.19.0.4:49155 on port 1883.
+1756320518: New client connected from 172.19.0.4:49155 as timer_usage_control_1756320518 (p2, c1, k60).
+1756320520: Client timer_usage_control_1756320518 disconnected.
+1756320521: New connection from 172.19.0.4:49041 on port 1883.
+1756320521: New client connected from 172.19.0.4:49041 as timer_usage_control_1756320521 (p2, c1, k60).
+1756320523: Client timer_usage_control_1756320521 disconnected.
+1756320523: New connection from 172.19.0.4:42461 on port 1883.
+1756320523: New client connected from 172.19.0.4:42461 as timer_usage_control_1756320523 (p2, c1, k60).
+1756320525: Client timer_usage_control_1756320523 disconnected.
+1756320526: New connection from 172.19.0.4:53255 on port 1883.
+1756320526: New client connected from 172.19.0.4:53255 as timer_usage_control_1756320526 (p2, c1, k60).
+1756320528: Client timer_usage_control_1756320526 disconnected.
+1756320530: New connection from 172.19.0.4:59151 on port 1883.
+1756320530: New client connected from 172.19.0.4:59151 as timer_usage_control_1756320530 (p2, c1, k60).
+1756320532: Client timer_usage_control_1756320530 disconnected.
+1756320694: New connection from 172.19.0.4:44997 on port 1883.
+1756320694: New client connected from 172.19.0.4:44997 as timer_usage_control_1756320694 (p2, c1, k60).
+1756320711: Client timer_usage_control_1756320694 closed its connection.
+1756320711: mosquitto version 2.0.22 terminating
+1756320711: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756320716: mosquitto version 2.0.22 starting
+1756320716: Config loaded from /mosquitto/config/mosquitto.conf.
+1756320716: Opening ipv4 listen socket on port 1883.
+1756320716: Opening websockets listen socket on port 9001.
+1756320716: mosquitto version 2.0.22 running
+1756320716: New connection from 172.19.0.4:43189 on port 1883.
+1756320716: New client connected from 172.19.0.4:43189 as timer_usage_control_1756320716 (p2, c1, k60).
+1756320747: New connection from 172.19.0.1:38584 on port 1883.
+1756320747: New client connected from 172.19.0.1:38584 as fridge_SmartChill_DDEEFF_1756320747 (p2, c1, k60).
+1756320989: Client fridge_SmartChill_DDEEFF_1756320747 disconnected.
+1756320991: Client timer_usage_control_1756320716 closed its connection.
+1756320992: mosquitto version 2.0.22 terminating
+1756320992: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756321014: mosquitto version 2.0.22 starting
+1756321014: Config loaded from /mosquitto/config/mosquitto.conf.
+1756321014: Opening ipv4 listen socket on port 1883.
+1756321014: Opening websockets listen socket on port 9001.
+1756321014: mosquitto version 2.0.22 running
+1756321014: New connection from 172.19.0.4:39261 on port 1883.
+1756321014: New client connected from 172.19.0.4:39261 as timer_usage_control_1756321014 (p2, c1, k60).
+1756321031: New connection from 172.19.0.1:42028 on port 1883.
+1756321031: New client connected from 172.19.0.1:42028 as fridge_SmartChill_DDEEFF_1756321031 (p2, c1, k60).
+1756321225: Client timer_usage_control_1756321014 closed its connection.
+1756321226: mosquitto version 2.0.22 terminating
+1756321226: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756376494: mosquitto version 2.0.22 starting
+1756376494: Config loaded from /mosquitto/config/mosquitto.conf.
+1756376494: Opening ipv4 listen socket on port 1883.
+1756376494: Opening websockets listen socket on port 9001.
+1756376494: mosquitto version 2.0.22 running
+1756376496: New connection from 172.19.0.6:47209 on port 1883.
+1756376496: New client connected from 172.19.0.6:47209 as timer_usage_control_1756376496 (p2, c1, k60).
+1756376600: New connection from 172.19.0.5:60519 on port 1883.
+1756376600: New client connected from 172.19.0.5:60519 as influxdb_adaptor_1756376600 (p2, c1, k60).
+1756376602: Client influxdb_adaptor_1756376600 disconnected.
+1756376603: New connection from 172.19.0.5:56641 on port 1883.
+1756376603: New client connected from 172.19.0.5:56641 as influxdb_adaptor_1756376603 (p2, c1, k60).
+1756376605: Client influxdb_adaptor_1756376603 disconnected.
+1756376606: New connection from 172.19.0.5:36635 on port 1883.
+1756376606: New client connected from 172.19.0.5:36635 as influxdb_adaptor_1756376606 (p2, c1, k60).
+1756376608: Client influxdb_adaptor_1756376606 disconnected.
+1756376618: Client timer_usage_control_1756376496 closed its connection.
+1756376618: mosquitto version 2.0.22 terminating
+1756376618: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756376642: mosquitto version 2.0.22 starting
+1756376642: Config loaded from /mosquitto/config/mosquitto.conf.
+1756376642: Opening ipv4 listen socket on port 1883.
+1756376642: Opening websockets listen socket on port 9001.
+1756376642: mosquitto version 2.0.22 running
+1756376643: New connection from 172.19.0.6:32953 on port 1883.
+1756376643: New client connected from 172.19.0.6:32953 as timer_usage_control_1756376643 (p2, c1, k60).
+1756376643: New connection from 172.19.0.5:57065 on port 1883.
+1756376643: New client connected from 172.19.0.5:57065 as influxdb_adaptor_1756376643 (p2, c1, k60).
+1756376645: Client influxdb_adaptor_1756376643 disconnected.
+1756376646: New connection from 172.19.0.5:57343 on port 1883.
+1756376646: New client connected from 172.19.0.5:57343 as influxdb_adaptor_1756376646 (p2, c1, k60).
+1756376648: Client influxdb_adaptor_1756376646 disconnected.
+1756376657: Client timer_usage_control_1756376643 closed its connection.
+1756376657: mosquitto version 2.0.22 terminating
+1756376657: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756376729: mosquitto version 2.0.22 starting
+1756376729: Config loaded from /mosquitto/config/mosquitto.conf.
+1756376729: Opening ipv4 listen socket on port 1883.
+1756376729: Opening websockets listen socket on port 9001.
+1756376729: mosquitto version 2.0.22 running
+1756376730: New connection from 172.19.0.5:40735 on port 1883.
+1756376730: New client connected from 172.19.0.5:40735 as timer_usage_control_1756376730 (p2, c1, k60).
+1756376730: New connection from 172.19.0.6:34247 on port 1883.
+1756376730: New client connected from 172.19.0.6:34247 as influxdb_adaptor_1756376730 (p2, c1, k60).
+1756376909: New connection from 172.19.0.1:49870 on port 1883.
+1756376909: New client connected from 172.19.0.1:49870 as fridge_SmartChill_DDEEFF_1756376909 (p2, c1, k60).
+1756376949: Client influxdb_adaptor_1756376730 closed its connection.
+1756376996: Client fridge_SmartChill_DDEEFF_1756376909 disconnected.
+1756377184: Client timer_usage_control_1756376730 closed its connection.
+1756377185: mosquitto version 2.0.22 terminating
+1756377185: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756377221: mosquitto version 2.0.22 starting
+1756377221: Config loaded from /mosquitto/config/mosquitto.conf.
+1756377221: Opening ipv4 listen socket on port 1883.
+1756377221: Opening websockets listen socket on port 9001.
+1756377221: mosquitto version 2.0.22 running
+1756377222: New connection from 172.19.0.6:52189 on port 1883.
+1756377222: New client connected from 172.19.0.6:52189 as timer_usage_control_1756377222 (p2, c1, k60).
+1756377222: New connection from 172.19.0.5:40969 on port 1883.
+1756377222: New client connected from 172.19.0.5:40969 as influxdb_adaptor_1756377222 (p2, c1, k60).
+1756377271: New connection from 172.19.0.1:53886 on port 1883.
+1756377271: New client connected from 172.19.0.1:53886 as fridge_SmartChill_DDEEFF_1756377271 (p2, c1, k60).
+1756377513: Client fridge_SmartChill_DDEEFF_1756377271 disconnected.
+1756377634: New connection from 172.19.0.1:45836 on port 1883.
+1756377634: New client connected from 172.19.0.1:45836 as fridge_SmartChill_DDEEFF_1756377634 (p2, c1, k60).
+1756377639: Client fridge_SmartChill_DDEEFF_1756377634 disconnected.
+1756377943: Client influxdb_adaptor_1756377222 closed its connection.
+1756377943: Client timer_usage_control_1756377222 closed its connection.
+1756377944: mosquitto version 2.0.22 terminating
+1756377944: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756377965: mosquitto version 2.0.22 starting
+1756377965: Config loaded from /mosquitto/config/mosquitto.conf.
+1756377965: Opening ipv4 listen socket on port 1883.
+1756377965: Opening websockets listen socket on port 9001.
+1756377965: mosquitto version 2.0.22 running
+1756377966: New connection from 172.19.0.5:37505 on port 1883.
+1756377966: New client connected from 172.19.0.5:37505 as timer_usage_control_1756377966 (p2, c1, k60).
+1756377966: New connection from 172.19.0.6:38677 on port 1883.
+1756377966: New client connected from 172.19.0.6:38677 as influxdb_adaptor_1756377966 (p2, c1, k60).
+1756377994: New connection from 172.19.0.1:55120 on port 1883.
+1756377994: New client connected from 172.19.0.1:55120 as fridge_SmartChill_DDEEFF_1756377994 (p2, c1, k60).
+1756378009: Client fridge_SmartChill_DDEEFF_1756377994 disconnected.
+1756378068: Client timer_usage_control_1756377966 closed its connection.
+1756378068: Client influxdb_adaptor_1756377966 closed its connection.
+1756378069: mosquitto version 2.0.22 terminating
+1756378069: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756378483: mosquitto version 2.0.22 starting
+1756378483: Config loaded from /mosquitto/config/mosquitto.conf.
+1756378483: Opening ipv4 listen socket on port 1883.
+1756378483: Opening websockets listen socket on port 9001.
+1756378483: mosquitto version 2.0.22 running
+1756378485: New connection from 172.19.0.5:37161 on port 1883.
+1756378485: New client connected from 172.19.0.5:37161 as timer_usage_control_1756378485 (p2, c1, k60).
+1756378808: New connection from 172.19.0.6:38115 on port 1883.
+1756378808: New client connected from 172.19.0.6:38115 as influxdb_adaptor_1756378808 (p2, c1, k60).
+1756378836: New connection from 172.19.0.1:57892 on port 1883.
+1756378836: New client connected from 172.19.0.1:57892 as fridge_SmartChill_DDEEFF_1756378836 (p2, c1, k60).
+1756378924: Client fridge_SmartChill_DDEEFF_1756378836 disconnected.
+1756379031: New connection from 172.19.0.1:41092 on port 1883.
+1756379031: New client connected from 172.19.0.1:41092 as fridge_SmartChill_DDEEFF_1756379031 (p2, c1, k60).
+1756379905: Client fridge_SmartChill_DDEEFF_1756379031 disconnected.
+1756380283: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756382084: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756383885: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756385686: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756386480: New connection from 172.19.0.1:51136 on port 1883.
+1756386480: New client connected from 172.19.0.1:51136 as fridge_SmartChill_DDEEFF_1756386480 (p2, c1, k60).
+1756387487: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756388207: Client influxdb_adaptor_1756378808 closed its connection.
+1756388207: Client timer_usage_control_1756378485 closed its connection.
+1756388208: mosquitto version 2.0.22 terminating
+1756388208: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756475034: mosquitto version 2.0.22 starting
+1756475034: Config loaded from /mosquitto/config/mosquitto.conf.
+1756475034: Opening ipv4 listen socket on port 1883.
+1756475034: Opening websockets listen socket on port 9001.
+1756475034: mosquitto version 2.0.22 running
+1756476835: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756476894: mosquitto version 2.0.22 terminating
+1756476894: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756476926: mosquitto version 2.0.22 starting
+1756476926: Config loaded from /mosquitto/config/mosquitto.conf.
+1756476926: Opening ipv4 listen socket on port 1883.
+1756476926: Opening websockets listen socket on port 9001.
+1756476926: mosquitto version 2.0.22 running
+1756476933: New connection from 172.19.0.5:58125 on port 1883.
+1756476933: New client connected from 172.19.0.5:58125 as TimerUsageControl_1756476933 (p2, c1, k60).
+1756478726: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756479252: Client TimerUsageControl_1756476933 closed its connection.
+1756479252: mosquitto version 2.0.22 terminating
+1756479252: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756479281: mosquitto version 2.0.22 starting
+1756479281: Config loaded from /mosquitto/config/mosquitto.conf.
+1756479281: Opening ipv4 listen socket on port 1883.
+1756479281: Opening websockets listen socket on port 9001.
+1756479281: mosquitto version 2.0.22 running
+1756479307: New connection from 172.19.0.5:53483 on port 1883.
+1756479307: New client connected from 172.19.0.5:53483 as TimerUsageControl_1756479307 (p2, c1, k60).
+1756479615: Client TimerUsageControl_1756479307 closed its connection.
+1756479615: mosquitto version 2.0.22 terminating
+1756479615: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756479932: mosquitto version 2.0.22 starting
+1756479932: Config loaded from /mosquitto/config/mosquitto.conf.
+1756479932: Opening ipv4 listen socket on port 1883.
+1756479932: Opening websockets listen socket on port 9001.
+1756479932: mosquitto version 2.0.22 running
+1756479951: New connection from 172.19.0.1:36934 on port 1883.
+1756479951: New client connected from 172.19.0.1:36934 as fridge_SmartChill_DDEEFF_1756479951 (p2, c1, k60).
+1756480026: Client fridge_SmartChill_DDEEFF_1756479951 disconnected.
+1756480105: New connection from 172.19.0.1:38724 on port 1883.
+1756480105: New client connected from 172.19.0.1:38724 as fridge_SmartChill_DDEEFF_1756480105 (p2, c1, k60).
+1756480137: New connection from 172.19.0.4:47793 on port 1883.
+1756480137: New client connected from 172.19.0.4:47793 as TimerUsageControl_1756480137 (p2, c1, k60).
+1756480143: Client fridge_SmartChill_DDEEFF_1756480105 disconnected.
+1756480150: New connection from 172.19.0.1:59502 on port 1883.
+1756480150: New client connected from 172.19.0.1:59502 as fridge_SmartChill_DDEEFF_1756480150 (p2, c1, k60).
+1756480230: Client fridge_SmartChill_DDEEFF_1756480150 disconnected.
+1756480301: New connection from 172.19.0.1:35352 on port 1883.
+1756480301: New client connected from 172.19.0.1:35352 as fridge_SmartChill_DDEEFF_1756480301 (p2, c1, k60).
+1756480319: Client fridge_SmartChill_DDEEFF_1756480301 disconnected.
+1756480349: New connection from 172.19.0.1:44614 on port 1883.
+1756480349: New client connected from 172.19.0.1:44614 as fridge_SmartChill_DDEEFF_1756480349 (p2, c1, k60).
+1756480386: Client fridge_SmartChill_DDEEFF_1756480349 disconnected.
+1756480400: New connection from 172.19.0.1:47016 on port 1883.
+1756480400: New client connected from 172.19.0.1:47016 as fridge_SmartChill_DDEEFF_1756480400 (p2, c1, k60).
+1756480722: Client fridge_SmartChill_DDEEFF_1756480400 disconnected.
+1756481732: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756482120: Client TimerUsageControl_1756480137 closed its connection.
+1756482120: mosquitto version 2.0.22 terminating
+1756482120: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756482148: mosquitto version 2.0.22 starting
+1756482148: Config loaded from /mosquitto/config/mosquitto.conf.
+1756482148: Opening ipv4 listen socket on port 1883.
+1756482148: Opening websockets listen socket on port 9001.
+1756482148: mosquitto version 2.0.22 running
+1756482221: New connection from 172.19.0.5:38253 on port 1883.
+1756482221: New client connected from 172.19.0.5:38253 as TimerUsageControl_1756482221 (p2, c1, k60).
+1756482221: New connection from 172.19.0.6:32981 on port 1883.
+1756482221: New client connected from 172.19.0.6:32981 as InfluxDBAdaptor_1756482221 (p2, c1, k60).
+1756482288: New connection from 172.19.0.1:56600 on port 1883.
+1756482288: New client connected from 172.19.0.1:56600 as fridge_SmartChill_DDEEFF_1756482288 (p2, c1, k60).
+1756482349: Client TimerUsageControl_1756482221 closed its connection.
+1756482349: Client InfluxDBAdaptor_1756482221 closed its connection.
+1756482350: mosquitto version 2.0.22 terminating
+1756482350: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756482415: mosquitto version 2.0.22 starting
+1756482415: Config loaded from /mosquitto/config/mosquitto.conf.
+1756482415: Opening ipv4 listen socket on port 1883.
+1756482415: Opening websockets listen socket on port 9001.
+1756482415: mosquitto version 2.0.22 running
+1756482425: New connection from 172.19.0.5:47139 on port 1883.
+1756482425: New client connected from 172.19.0.5:47139 as InfluxDBAdaptor_1756482425 (p2, c1, k60).
+1756482433: New connection from 172.19.0.1:55230 on port 1883.
+1756482433: New client connected from 172.19.0.1:55230 as fridge_SmartChill_DDEEFF_1756482288 (p2, c1, k60).
+1756482434: New connection from 172.19.0.6:40509 on port 1883.
+1756482434: New client connected from 172.19.0.6:40509 as TimerUsageControl_1756482434 (p2, c1, k60).
+1756482661: Client fridge_SmartChill_DDEEFF_1756482288 disconnected.
+1756482851: Client TimerUsageControl_1756482434 closed its connection.
+1756482851: Client InfluxDBAdaptor_1756482425 closed its connection.
+1756482852: mosquitto version 2.0.22 terminating
+1756482852: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756482929: mosquitto version 2.0.22 starting
+1756482929: Config loaded from /mosquitto/config/mosquitto.conf.
+1756482929: Opening ipv4 listen socket on port 1883.
+1756482929: Opening websockets listen socket on port 9001.
+1756482929: mosquitto version 2.0.22 running
+1756482935: New connection from 172.19.0.5:57469 on port 1883.
+1756482935: New client connected from 172.19.0.5:57469 as InfluxDBAdaptor_1756482935 (p2, c1, k60).
+1756482945: New connection from 172.19.0.6:50633 on port 1883.
+1756482945: New client connected from 172.19.0.6:50633 as TimerUsageControl_1756482945 (p2, c1, k60).
+1756483498: mosquitto version 2.0.22 terminating
+1756483498: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756483499: mosquitto version 2.0.22 starting
+1756483499: Config loaded from /mosquitto/config/mosquitto.conf.
+1756483499: Opening ipv4 listen socket on port 1883.
+1756483499: Opening websockets listen socket on port 9001.
+1756483499: mosquitto version 2.0.22 running
+1756483499: New connection from 172.19.0.5:52847 on port 1883.
+1756483499: New connection from 172.19.0.6:59231 on port 1883.
+1756483499: New client connected from 172.19.0.5:52847 as InfluxDBAdaptor_1756482935 (p2, c1, k60).
+1756483499: New client connected from 172.19.0.6:59231 as TimerUsageControl_1756482945 (p2, c1, k60).
+1756483506: New connection from 172.19.0.1:37812 on port 1883.
+1756483506: New client connected from 172.19.0.1:37812 as fridge_SmartChill_DDEEFF_1756483506 (p2, c1, k60).
+1756483532: Client TimerUsageControl_1756482945 closed its connection.
+1756483533: New connection from 172.19.0.6:33355 on port 1883.
+1756483533: New client connected from 172.19.0.6:33355 as TimerUsageControl_1756483533 (p2, c1, k60).
+1756483560: Client fridge_SmartChill_DDEEFF_1756483506 disconnected.
+1756484052: Client TimerUsageControl_1756483533 closed its connection.
+1756484103: New connection from 172.19.0.6:44821 on port 1883.
+1756484103: New client connected from 172.19.0.6:44821 as TimerUsageControl_1756484103 (p2, c1, k60).
+1756484124: Client InfluxDBAdaptor_1756482935 closed its connection.
+1756484144: New connection from 172.19.0.5:43639 on port 1883.
+1756484144: New client connected from 172.19.0.5:43639 as InfluxDBAdaptor_1756484144 (p2, c1, k60).
+1756484157: New connection from 172.19.0.1:55332 on port 1883.
+1756484157: New client connected from 172.19.0.1:55332 as fridge_SmartChill_DDEEFF_1756484157 (p2, c1, k60).
+1756484331: Client InfluxDBAdaptor_1756484144 closed its connection.
+1756484331: Client TimerUsageControl_1756484103 closed its connection.
+1756484332: mosquitto version 2.0.22 terminating
+1756484332: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756484359: mosquitto version 2.0.22 starting
+1756484359: Config loaded from /mosquitto/config/mosquitto.conf.
+1756484359: Opening ipv4 listen socket on port 1883.
+1756484359: Opening websockets listen socket on port 9001.
+1756484359: mosquitto version 2.0.22 running
+1756484359: New connection from 172.19.0.1:52058 on port 1883.
+1756484359: New client connected from 172.19.0.1:52058 as fridge_SmartChill_DDEEFF_1756484157 (p2, c1, k60).
+1756484364: New connection from 172.19.0.5:33617 on port 1883.
+1756484364: New client connected from 172.19.0.5:33617 as InfluxDBAdaptor_1756484364 (p2, c1, k60).
+1756484371: Client fridge_SmartChill_DDEEFF_1756484157 disconnected.
+1756484376: New connection from 172.19.0.1:33448 on port 1883.
+1756484376: New client connected from 172.19.0.1:33448 as fridge_SmartChill_DDEEFF_1756484376 (p2, c1, k60).
+1756484441: Client fridge_SmartChill_DDEEFF_1756484376 disconnected.
+1756484477: Client InfluxDBAdaptor_1756484364 closed its connection.
+1756484496: New connection from 172.19.0.6:35953 on port 1883.
+1756484496: New client connected from 172.19.0.6:35953 as TimerUsageControl_1756484496 (p2, c1, k60).
+1756484496: New connection from 172.19.0.5:33915 on port 1883.
+1756484496: New client connected from 172.19.0.5:33915 as InfluxDBAdaptor_1756484496 (p2, c1, k60).
+1756484506: Client InfluxDBAdaptor_1756484496 closed its connection.
+1756484507: New connection from 172.19.0.5:36665 on port 1883.
+1756484507: New client connected from 172.19.0.5:36665 as InfluxDBAdaptor_1756484507 (p2, c1, k60).
+1756484507: New connection from 172.19.0.1:41820 on port 1883.
+1756484507: New client connected from 172.19.0.1:41820 as fridge_SmartChill_DDEEFF_1756484507 (p2, c1, k60).
+1756484531: Client fridge_SmartChill_DDEEFF_1756484507 disconnected.
+1756484648: Client InfluxDBAdaptor_1756484507 closed its connection.
+1756484666: New connection from 172.19.0.5:47731 on port 1883.
+1756484666: New client connected from 172.19.0.5:47731 as InfluxDBAdaptor_1756484666 (p2, c1, k60).
+1756484676: New connection from 172.19.0.1:59022 on port 1883.
+1756484676: New client connected from 172.19.0.1:59022 as fridge_SmartChill_DDEEFF_1756484676 (p2, c1, k60).
+1756484676: Client InfluxDBAdaptor_1756484666 closed its connection.
+1756484677: New connection from 172.19.0.5:34495 on port 1883.
+1756484677: New client connected from 172.19.0.5:34495 as InfluxDBAdaptor_1756484677 (p2, c1, k60).
+1756484732: Client fridge_SmartChill_DDEEFF_1756484676 disconnected.
+1756484779: New connection from 172.19.0.1:32968 on port 1883.
+1756484779: New client connected from 172.19.0.1:32968 as fridge_SmartChill_DDEEFF_1756484779 (p2, c1, k60).
+1756484821: Client fridge_SmartChill_DDEEFF_1756484779 disconnected.
+1756484865: Client InfluxDBAdaptor_1756484677 closed its connection.
+1756484884: New connection from 172.19.0.5:49675 on port 1883.
+1756484884: New client connected from 172.19.0.5:49675 as InfluxDBAdaptor_1756484884 (p2, c1, k60).
+1756484934: New connection from 172.19.0.1:59864 on port 1883.
+1756484934: New client connected from 172.19.0.1:59864 as fridge_SmartChill_DDEEFF_1756484934 (p2, c1, k60).
+1756485398: Client fridge_SmartChill_DDEEFF_1756484934 disconnected.
+1756485403: New connection from 172.19.0.1:34794 on port 1883.
+1756485403: New client connected from 172.19.0.1:34794 as fridge_SmartChill_DDEEFF_1756485403 (p2, c1, k60).
+1756485437: Client fridge_SmartChill_DDEEFF_1756485403 disconnected.
+1756485506: New connection from 172.19.0.1:35560 on port 1883.
+1756485506: New client connected from 172.19.0.1:35560 as fridge_SmartChill_DDEEFF_1756485506 (p2, c1, k60).
+1756485580: Client fridge_SmartChill_DDEEFF_1756485506 disconnected.
+1756485580: New connection from 172.19.0.1:35230 on port 1883.
+1756485580: New client connected from 172.19.0.1:35230 as fridge_SmartChill_DDEEFF_1756485580 (p2, c1, k60).
+1756485583: Client fridge_SmartChill_DDEEFF_1756485580 disconnected.
+1756486159: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756487960: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756522055: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756568745: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756570547: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756572348: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756574149: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756575950: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756577751: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756735148: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756736949: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756738750: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756740551: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756742352: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756744153: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756745954: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756749358: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756751159: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756752960: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756754761: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756761663: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756804596: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756806397: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756808198: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756810000: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756816846: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756818647: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756820448: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756822248: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756824049: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756825850: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756827651: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756829452: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756830693: New connection from 172.19.0.1:49566 on port 1883.
+1756830693: New client connected from 172.19.0.1:49566 as fridge_SmartChill_DDEEFF_1756830693 (p2, c1, k60).
+1756831253: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756831719: Client fridge_SmartChill_DDEEFF_1756830693 disconnected.
+1756831719: New connection from 172.19.0.1:36386 on port 1883.
+1756831719: New client connected from 172.19.0.1:36386 as fridge_SmartChill_DDEEFF_1756831719 (p2, c1, k60).
+1756831963: Client fridge_SmartChill_DDEEFF_1756831719 disconnected.
+1756832280: Client InfluxDBAdaptor_1756484884 closed its connection.
+1756832280: Client TimerUsageControl_1756484496 closed its connection.
+1756832281: mosquitto version 2.0.22 terminating
+1756832281: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756832303: mosquitto version 2.0.22 starting
+1756832303: Config loaded from /mosquitto/config/mosquitto.conf.
+1756832303: Opening ipv4 listen socket on port 1883.
+1756832303: Opening websockets listen socket on port 9001.
+1756832303: mosquitto version 2.0.22 running
+1756832305: New connection from 172.19.0.6:46163 on port 1883.
+1756832305: New client connected from 172.19.0.6:46163 as FoodSpoilageControl_1756832305 (p2, c1, k60).
+1756832305: New connection from 172.19.0.7:60085 on port 1883.
+1756832305: New client connected from 172.19.0.7:60085 as TimerUsageControl_1756832305 (p2, c1, k60).
+1756832305: New connection from 172.19.0.5:44051 on port 1883.
+1756832305: New client connected from 172.19.0.5:44051 as InfluxDBAdaptor_1756832305 (p2, c1, k60).
+1756832409: Client FoodSpoilageControl_1756832305 closed its connection.
+1756832410: New connection from 172.19.0.6:32803 on port 1883.
+1756832410: New client connected from 172.19.0.6:32803 as FoodSpoilageControl_1756832410 (p2, c1, k60).
+1756832450: New connection from 172.19.0.1:41214 on port 1883.
+1756832450: New client connected from 172.19.0.1:41214 as fridge_SmartChill_DDEEFF_1756832450 (p2, c1, k60).
+1756832480: Client fridge_SmartChill_DDEEFF_1756832450 disconnected.
+1756832480: New connection from 172.19.0.1:50078 on port 1883.
+1756832480: New client connected from 172.19.0.1:50078 as fridge_SmartChill_DDEEFF_1756832480 (p2, c1, k60).
+1756832486: Client fridge_SmartChill_DDEEFF_1756832480 disconnected.
+1756832523: Client TimerUsageControl_1756832305 closed its connection.
+1756832524: New connection from 172.19.0.7:46131 on port 1883.
+1756832524: New client connected from 172.19.0.7:46131 as TimerUsageControl_1756832524 (p2, c1, k60).
+1756832702: Client TimerUsageControl_1756832524 closed its connection.
+1756832702: Client InfluxDBAdaptor_1756832305 closed its connection.
+1756832702: Client FoodSpoilageControl_1756832410 closed its connection.
+1756832703: mosquitto version 2.0.22 terminating
+1756832703: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756832779: mosquitto version 2.0.22 starting
+1756832779: Config loaded from /mosquitto/config/mosquitto.conf.
+1756832779: Opening ipv4 listen socket on port 1883.
+1756832779: Opening websockets listen socket on port 9001.
+1756832779: mosquitto version 2.0.22 running
+1756832780: New connection from 172.19.0.5:54761 on port 1883.
+1756832780: New client connected from 172.19.0.5:54761 as TimerUsageControl_1756832780 (p2, c1, k60).
+1756832780: New connection from 172.19.0.6:52533 on port 1883.
+1756832780: New client connected from 172.19.0.6:52533 as FoodSpoilageControl_1756832780 (p2, c1, k60).
+1756832781: New connection from 172.19.0.7:39219 on port 1883.
+1756832781: New client connected from 172.19.0.7:39219 as InfluxDBAdaptor_1756832781 (p2, c1, k60).
+1756832795: Client FoodSpoilageControl_1756832780 closed its connection.
+1756833016: Client TimerUsageControl_1756832780 closed its connection.
+1756833016: Client InfluxDBAdaptor_1756832781 closed its connection.
+1756833017: mosquitto version 2.0.22 terminating
+1756833017: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756833173: mosquitto version 2.0.22 starting
+1756833173: Config loaded from /mosquitto/config/mosquitto.conf.
+1756833173: Opening ipv4 listen socket on port 1883.
+1756833173: Opening websockets listen socket on port 9001.
+1756833173: mosquitto version 2.0.22 running
+1756833176: New connection from 172.19.0.5:49279 on port 1883.
+1756833176: New client connected from 172.19.0.5:49279 as InfluxDBAdaptor_1756833176 (p2, c1, k60).
+1756833177: New connection from 172.19.0.7:59627 on port 1883.
+1756833177: New client connected from 172.19.0.7:59627 as TimerUsageControl_1756833177 (p2, c1, k60).
+1756833424: New connection from 172.19.0.1:60196 on port 1883.
+1756833424: New client connected from 172.19.0.1:60196 as fridge_SmartChill_DDEEFF_1756833424 (p2, c1, k60).
+1756833473: Client fridge_SmartChill_DDEEFF_1756833424 disconnected.
+1756833473: New connection from 172.19.0.1:41724 on port 1883.
+1756833473: New client connected from 172.19.0.1:41724 as fridge_SmartChill_DDEEFF_1756833473 (p2, c1, k60).
+1756833474: Client fridge_SmartChill_DDEEFF_1756833473 disconnected.
+1756834818: New connection from 172.19.0.6:36457 on port 1883.
+1756834818: New client connected from 172.19.0.6:36457 as FoodSpoilageControl_1756834818 (p2, c1, k60).
+1756834974: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756835150: Client FoodSpoilageControl_1756834818 closed its connection.
+1756835150: Client InfluxDBAdaptor_1756833176 closed its connection.
+1756835150: Client TimerUsageControl_1756833177 closed its connection.
+1756835151: mosquitto version 2.0.22 terminating
+1756835151: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756907317: mosquitto version 2.0.22 starting
+1756907317: Config loaded from /mosquitto/config/mosquitto.conf.
+1756907317: Opening ipv4 listen socket on port 1883.
+1756907317: Opening websockets listen socket on port 9001.
+1756907317: mosquitto version 2.0.22 running
+1756907319: New connection from 172.19.0.5:52509 on port 1883.
+1756907319: New client connected from 172.19.0.5:52509 as FoodSpoilageControl_1756907319 (p2, c1, k60).
+1756907320: New connection from 172.19.0.6:48401 on port 1883.
+1756907320: New client connected from 172.19.0.6:48401 as InfluxDBAdaptor_1756907320 (p2, c1, k60).
+1756907321: New connection from 172.19.0.7:47969 on port 1883.
+1756907321: New client connected from 172.19.0.7:47969 as TimerUsageControl_1756907321 (p2, c1, k60).
+1756907446: Client FoodSpoilageControl_1756907319 closed its connection.
+1756907446: Client TimerUsageControl_1756907321 closed its connection.
+1756907446: Client InfluxDBAdaptor_1756907320 closed its connection.
+1756907448: mosquitto version 2.0.22 terminating
+1756907448: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756907500: mosquitto version 2.0.22 starting
+1756907500: Config loaded from /mosquitto/config/mosquitto.conf.
+1756907500: Opening ipv4 listen socket on port 1883.
+1756907500: Opening websockets listen socket on port 9001.
+1756907500: mosquitto version 2.0.22 running
+1756907502: New connection from 172.19.0.7:35125 on port 1883.
+1756907502: New client connected from 172.19.0.7:35125 as TimerUsageControl_1756907502 (p2, c1, k60).
+1756907502: New connection from 172.19.0.5:40127 on port 1883.
+1756907502: New client connected from 172.19.0.5:40127 as FoodSpoilageControl_1756907502 (p2, c1, k60).
+1756907503: New connection from 172.19.0.6:47927 on port 1883.
+1756907503: New client connected from 172.19.0.6:47927 as InfluxDBAdaptor_1756907503 (p2, c1, k60).
+1756909301: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756911102: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756912902: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756914703: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756920637: Client InfluxDBAdaptor_1756907503 closed its connection.
+1756920637: Client TimerUsageControl_1756907502 closed its connection.
+1756920637: Client FoodSpoilageControl_1756907502 closed its connection.
+1756920638: mosquitto version 2.0.22 terminating
+1756920638: Saving in-memory database to /mosquitto/data//mosquitto.db.

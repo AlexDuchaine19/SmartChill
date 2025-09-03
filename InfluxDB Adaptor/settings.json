@@ -1,0 +1,62 @@
+{
+    "serviceInfo": {
+      "serviceID": "InfluxDBAdaptor",
+      "serviceName": "InfluxDB Data Storage Adaptor",
+      "serviceDescription": "Receives sensor data via MQTT and stores it in an InfluxDB v2 instance.",
+      "serviceType": "database_adaptor",
+      "version": "1.0.0",
+      "endpoints": [
+        "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
+        "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
+        "MQTT Subscribe: Group17/SmartChill/Devices/+/+/light",
+        "MQTT Subscribe: Group17/SmartChill/Devices/+/+/gas",
+        "MQTT Subscribe: Group17/SmartChill/Devices/+/+/door_event",
+        "MQTT Subscribe: Group17/SmartChill/InfluxDBAdaptor/config_update",
+        "REST: GET /health (Port: 8002)",
+        "REST: GET /status (Port: 8002)",
+        "REST: GET /sensors/{sensor_type}?device=ID&last=24h (Port: 8002)",
+        "REST: GET /door_events?device=ID&last=24h (Port: 8002)",
+        "REST: GET /config (Port: 8002)",
+        "REST: PUT /config (Port: 8002)",
+        "REST: POST /write_test (Port: 8002)"
+      ]
+    },
+  
+    "catalog": {
+      "url": "http://catalog:8001",
+      "registration_interval_seconds": 300,
+      "ping_interval_seconds": 60
+    },
+  
+    "influxdb": {
+      "url": "http://influxdb:8086",
+      "org": "smartchill",
+      "bucket": "smartchill",
+      "measurement_name_sensors": "sensors_data",
+      "measurement_name_events": "door_events",
+  
+      "token": null,
+      "token_source": "env",
+      "token_env_var": "INFLUX_TOKEN",
+      "token_file": "/run/secrets/influx_token",
+  
+      "batch_size": 100,
+      "flush_interval_seconds": 10
+    },
+  
+    "mqtt": {
+      "brokerIP": "mosquitto",
+      "brokerPort": 1883,
+      "clientID_prefix": "InfluxDBAdaptor"
+    },
+  
+    "defaults": {
+      "data_retention_hours": 8760,
+      "enable_data_validation": true,
+      "max_queue_size": 1000
+    },
+  
+    "lastUpdate": "2025-08-29T14:30:00Z",
+    "configVersion": 2
+  }
+  

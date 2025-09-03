@@ -1,0 +1,45 @@
+{
+    "serviceInfo": {
+        "serviceID": "TimerUsageControl",
+        "serviceName": "Timer Usage Control Service",
+        "serviceDescription": "Monitors fridge door activity via MQTT and sends timeout alerts when doors remain open too long.",
+        "serviceType": "monitoring_service",
+        "version": "1.0.0",
+        "endpoints": [
+            "MQTT Subscribe: Group17/SmartChill/Devices/+/+/door_event",
+            "MQTT Subscribe: Group17/SmartChill/TimerUsageControl/config_update",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/DoorTimeout",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/DoorClosed"
+        ]
+    },
+    "catalog": {
+        "url": "http://catalog:8001",
+        "registration_interval_seconds": 300,
+        "ping_interval_seconds": 60
+    },
+    "mqtt": {
+        "brokerIP": "mosquitto",
+        "brokerPort": 1883,
+        "clientID_prefix": "TimerUsageControl"
+    },
+    "defaults": {
+        "max_door_open_seconds": 60,
+        "check_interval": 5,
+        "alert_severity": "warning",
+        "enable_door_closed_alerts": true
+    },
+    "devices": {
+        "SmartChill_445566": {
+            "max_door_open_seconds": 45,
+            "check_interval": 5,
+            "enable_door_closed_alerts": true
+        },
+        "SmartChill_DDEEFF": {
+            "max_door_open_seconds": 90,
+            "check_interval": 10,
+            "enable_door_closed_alerts": true
+        }
+    },
+    "lastUpdate": "2025-08-29T14:30:00Z",
+    "configVersion": 1
+}

@@ -1,0 +1,144 @@
+services:
+  catalog:
+    build:
+      context: ./Catalog
+      dockerfile: Dockerfile
+    container_name: smartchill_catalog
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./Catalog:/app
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  timer_usage_control:
+    build:
+      context: ./Timer Usage Control
+      dockerfile: Dockerfile
+    container_name: smartchill_timer_usage_control
+    volumes:
+      - ./Timer Usage Control:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - catalog
+      - mosquitto
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  food_spoilage_control:
+    build:
+      context: ./Food Spoilage Control
+      dockerfile: Dockerfile
+    container_name: smartchill_food_spoilage_control
+    volumes:
+      - ./Food Spoilage Control:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - catalog
+      - mosquitto
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  influxdb_adaptor:
+    build:
+      context: ./InfluxDB Adaptor
+      dockerfile: Dockerfile
+    container_name: smartchill_influxdb_adaptor
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./InfluxDB Adaptor:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_ORG=smartchill
+      - INFLUX_BUCKET=smartchill
+      - INFLUX_TOKEN=smartchill-token
+    restart: unless-stopped
+    depends_on:
+      - catalog
+      - mosquitto
+      - influxdb
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5); requests.get('http://influxdb:8086/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: smartchill_influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=smartchill123
+      - DOCKER_INFLUXDB_INIT_ORG=smartchill
+      - DOCKER_INFLUXDB_INIT_BUCKET=smartchill
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=smartchill-token
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    restart: unless-stopped
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: smartchill_mosquitto
+    ports:
+      - "1884:1883"
+      - "9002:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - smartchill_network
+
+networks:
+  smartchill_network:
+    driver: bridge
+
+volumes:
+  mosquitto_data:
+  mosquitto_log:
+  influxdb_data:
+  influxdb_config:
