@@ -611,3 +611,14 @@
 1756920637: Client FoodSpoilageControl_1756907502 closed its connection.
 1756920638: mosquitto version 2.0.22 terminating
 1756920638: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1756920715: mosquitto version 2.0.22 starting
+1756920715: Config loaded from /mosquitto/config/mosquitto.conf.
+1756920715: Opening ipv4 listen socket on port 1883.
+1756920715: Opening websockets listen socket on port 9001.
+1756920715: mosquitto version 2.0.22 running
+1756920717: New connection from 172.19.0.5:35937 on port 1883.
+1756920717: New client connected from 172.19.0.5:35937 as FoodSpoilageControl_1756920717 (p2, c1, k60).
+1756920719: New connection from 172.19.0.6:51071 on port 1883.
+1756920719: New client connected from 172.19.0.6:51071 as TimerUsageControl_1756920719 (p2, c1, k60).
+1756920818: New connection from 172.19.0.7:43005 on port 1883.
+1756920818: New client connected from 172.19.0.7:43005 as InfluxDBAdaptor_1756920818 (p2, c1, k60).
