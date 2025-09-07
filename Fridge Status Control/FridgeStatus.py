@@ -269,6 +269,65 @@ class FridgeStatusControl:
         except Exception as e:
             print(f"[ALERT] Error sending temperature alert: {e}")
     
+    def handle_humidity_reading(self, device_id, humidity, timestamp):
+            """Handle incoming temperature sensor reading"""
+            config = self.get_device_config(device_id)
+            threshold = config["humidity_threshold"]
+            enable_continuous = config["enable_continuous_alerts"]
+            
+            current_status = "high" if humidity > threshold else "normal"
+            previous_status = self.temperature_status.get(device_id, "normal")
+            
+            # Update temperature status
+            self.temperature_status[device_id] = current_status
+            
+            print(f"[Hunidity] {device_id}: {humidity}° (threshold: {threshold}) - Status: {current_status}")
+            
+            # Check if we should send an alert
+            should_alert = False
+            
+            if current_status == "high":
+                if enable_continuous:
+                    # Send alert if not in cooldown
+                    if not self.is_cooldown_active(device_id):
+                        should_alert = True
+                else:
+                    # Send alert only on transition from normal to high
+                    if previous_status == "normal":
+                        should_alert = True
+            
+            if should_alert:
+                self.send_humidity_alert(device_id, humidity, threshold, timestamp)
+
+    def send_humidity_alert(self, device_id, humidity, threshold, timestamp):
+        """Send temperature alert via MQTT"""
+        if not self.connected or not self.mqtt_client:
+            print(f"[ALERT] Cannot send temperature alert - MQTT not connected")
+            return
+        
+        config = self.get_device_config(device_id)
+        alert_topic = f"Group17/SmartChill/{device_id}/Alerts/Fridge"
+        alert_payload = {
+            "alert_type": "fridge_control",
+            "device_id": device_id,
+            "message": f"{humidity}° (threshold: {threshold})",
+            "humidity": humidity,
+            "threshold": threshold,
+            "over_threshold_by": humidity-threshold,
+            "severity": config.get("alert_severity", "warning"),
+            "timestamp": timestamp.isoformat() if isinstance(timestamp, datetime) else timestamp,
+            "service": self.service_id,
+            "config_version": self.settings["configVersion"],
+            "recommended_action": "Check fridge humidity"
+        }
+        
+        try:
+            self.mqtt_client.myPublish(alert_topic, alert_payload)
+            self.last_alert_time[device_id] = time.time()
+            print(f"[ALERT] humidity alert sent for {device_id} - humidity: {humidity} > {threshold}")
+        except Exception as e:
+            print(f"[ALERT] Error sending humidity alert: {e}")
+
     def parse_senml_payload(self, payload):
         """Parse SenML formatted payload and extract sensor data"""
         try:
@@ -339,7 +398,7 @@ class FridgeStatusControl:
                     timestamp = data_entry["timestamp"]
                     
                     # Only process temperature sensor data
-                    if sensor_name != "temperature":
+                    if sensor_name != "temperature" and sensor_name != "humidity":
                         continue
                     
                     # Check if we know this device - if not, verify with catalog
@@ -361,8 +420,14 @@ class FridgeStatusControl:
                         ts = datetime.now(timezone.utc)
                     
                     # Process temperature reading
-                    self.handle_temp_reading(device_id, float(value), ts)
-                    print(f"[SENML] Processed temperature data: {device_id} = {value}°")
+                    if sensor_name == "temperature":
+                        self.handle_temperature_reading(device_id, float(value), ts)
+                        print(f"[SENML] Processed temperature data: {device_id} = {value}°")
+                    elif sensor_name == "humidity":
+                        self.handle_humidity_reading(device_id, float(value), ts)
+                        print(f"[SENML] Processed temperature data: {device_id} = {value}°")
+                    else:
+                        print("[ERROR] ERROR IN NOTIFY FRIDGE STATUS, CONTINUED BUT NOR TEMP OR HUMIDITY")
             else:
                 print(f"[WARN] Unexpected topic format: {topic}")
                 

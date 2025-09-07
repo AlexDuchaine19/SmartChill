@@ -24,6 +24,7 @@
     "defaults": {
         "temperature_threshold_min": 4,
         "temperature_threshold_max": 6,
+        "humidity_threshold" : 70,
         "alert_severity": "warning",
         "enable_continuous_alerts": false,
         "alert_cooldown_minutes": 15
@@ -32,6 +33,7 @@
         "SmartChill_DDEEFF": {
             "temperature_threshold_min": 4,
             "temperature_threshold_max": 6,
+            "humidity_threshold" : 70,
             "enable_continuous_alerts": false,
             "alert_cooldown_minutes": 15
         }
