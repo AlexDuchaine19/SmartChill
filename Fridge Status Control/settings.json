@@ -1,0 +1,41 @@
+{
+    "serviceInfo": {
+        "serviceID": "Fridge Status Control",
+        "serviceName": "Fridge Status Control Service",
+        "serviceDescription": "",
+        "serviceType": "monitoring_service",
+        "version": "1.0.0",
+        "endpoints": [
+            "MQTT Subscribe: Group17/SmartChill/Devices/+/+/gas",
+            "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/config_update",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/Spoilage"
+        ]
+    },
+    "catalog": {
+        "url": "http://catalog:8001",
+        "registration_interval_seconds": 300,
+        "ping_interval_seconds": 60
+    },
+    "mqtt": {
+        "brokerIP": "mosquitto",
+        "brokerPort": 1883,
+        "clientID_prefix": "FridgeStatusControl"
+    },
+    "defaults": {
+        "temperature_threshold_min": 4,
+        "temperature_threshold_max": 6,
+        "alert_severity": "warning",
+        "enable_continuous_alerts": false,
+        "alert_cooldown_minutes": 15
+    },
+    "devices": {
+        "SmartChill_DDEEFF": {
+            "temperature_threshold_min": 4,
+            "temperature_threshold_max": 6,
+            "enable_continuous_alerts": false,
+            "alert_cooldown_minutes": 15
+        }
+    },
+    "lastUpdate": "",
+    "configVersion": 2
+}
