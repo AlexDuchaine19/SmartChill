@@ -94,6 +94,55 @@ services:
       retries: 3
       start_period: 30s
 
+  energy_optimization:
+    build:
+      context: ./Energy Optimization
+      dockerfile: Dockerfile
+    container_name: smartchill_energy_optimization
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./Energy Optimization:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - catalog
+      - mosquitto
+      - influxdb_adaptor
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 50s
+
+  data_analysis:
+    build:
+      context: ./Data Analysis
+      dockerfile: Dockerfile
+    container_name: smartchill_data_analysis
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./Data Analysis:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - catalog
+      - influxdb_adaptor
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 50s
+
   influxdb:
     image: influxdb:2.7
     container_name: smartchill_influxdb
@@ -133,6 +182,32 @@ services:
     networks:
       - smartchill_network
 
+  nodered:
+    image: nodered/node-red:latest
+    container_name: smartchill_nodered
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./nodered/data:/data
+    environment:
+      - TZ=Europe/Rome
+      - NODE_RED_ENABLE_PROJECTS=true
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+      - catalog
+      - energy_optimization
+      - influxdb_adaptor
+      - data_analysis
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1880"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
 networks:
   smartchill_network:
     driver: bridge
@@ -142,3 +217,4 @@ volumes:
   mosquitto_log:
   influxdb_data:
   influxdb_config:
+  nodered_data:

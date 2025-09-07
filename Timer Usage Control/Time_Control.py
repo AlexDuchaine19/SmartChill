@@ -194,7 +194,11 @@ class TimerUsageControl:
     def parse_senml_payload(self, payload):
         """Parse SenML formatted payload and extract door event data"""
         try:
-            # Parse JSON payload
+            # Decode se payload è bytes
+            if isinstance(payload, bytes):
+                payload = payload.decode("utf-8")
+
+            # Parse JSON
             senml_data = json.loads(payload) if isinstance(payload, str) else payload
             
             # Validate SenML structure

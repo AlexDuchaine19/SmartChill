@@ -1,0 +1,8 @@
+# Core Python dependencies for Data Analysis Service
+requests>=2.31.0
+cherrypy>=18.8.0
+numpy>=1.24.0
+
+# Optional but recommended for better performance and functionality
+scipy>=1.10.0
+pandas>=2.0.0

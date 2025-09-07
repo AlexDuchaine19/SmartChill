@@ -1,0 +1,55 @@
+{
+    "serviceInfo": {
+      "serviceID": "Energy Optimization Service",
+      "serviceName": "SmartChill Energy Optimization",
+      "serviceDescription": "Energy optimization and prediction service for SmartChill IoT platform - REST only",
+      "serviceType": "optimization",
+      "version": "2.0.0",
+      "endpoints": [
+        "REST: GET /health",
+        "REST: GET /status", 
+        "REST: GET /optimize/{device_id}",
+        "REST: GET /predictions/{device_id}"
+      ]
+    },
+    "catalog": {
+      "url": "http://catalog:8001",
+      "registration_interval_seconds": 300
+    },
+    "data_analysis": {
+      "base_url": "http://data_analysis:8004",
+      "timeout_seconds": 10
+    },
+    "ml": {
+      "enable_predictions": true,
+      "features": [
+        "avg_temperature",
+        "temperature_variance", 
+        "temp_stability_score",
+        "door_openings_per_day",
+        "avg_door_duration",
+        "usage_efficiency_score",
+        "temperature_trend_num",
+        "usage_trend_num",
+        "hour_of_day_factor",
+        "day_of_week_factor"
+      ],
+      "min_training_samples": 20
+    },
+    "cache": {
+      "duration_minutes": 30,
+      "max_entries": 100
+    },
+    "defaults": {
+      "fallback_power_specs": {
+        "base_power_watts": 150,
+        "door_penalty_watts": 25,
+        "temp_variance_penalty": 0.1,
+        "optimal_temp_range": [2.0, 6.0],
+        "temp_penalty_per_degree": 0.05,
+        "max_efficient_openings_per_day": 15
+      }
+    },
+    "configVersion": 1,
+    "lastUpdate": "2024-12-23T15:00:00Z"
+  }

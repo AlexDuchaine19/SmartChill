@@ -28,12 +28,12 @@
         "alert_cooldown_minutes": 15
     },
     "devices": {
-        "SmartChill_DDEEFF": {
+        "SmartChill_A4B2C3D91E7F": {
             "gas_threshold_ppm": 300,
             "enable_continuous_alerts": false,
             "alert_cooldown_minutes": 15
         }
     },
-    "lastUpdate": "2025-09-03T13:48:39.805477+00:00",
-    "configVersion": 2
+    "lastUpdate": "2025-09-04T18:58:24.530312+00:00",
+    "configVersion": 4
 }

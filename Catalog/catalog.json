@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "03-09-2025 17:43",
+    "lastUpdate": "07-09-2025 18:12",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -11,11 +11,26 @@
         "Samsung_RF28T5001SR": {
             "brand": "Samsung",
             "type": "Smart Refrigerator Premium",
+            "capacity_liters": 614,
+            "energy_class": "A+++",
             "sensors": [
                 "temperature",
                 "humidity",
-                "gas"
+                "gas",
+                "light"
             ],
+            "power_consumption": {
+                "base_power_watts": 120,
+                "door_penalty_watts": 30,
+                "temp_variance_penalty": 0.12,
+                "optimal_temp_range": [
+                    2.0,
+                    5.0
+                ],
+                "temp_penalty_per_degree": 0.04,
+                "max_efficient_openings_per_day": 12,
+                "annual_kwh_rating": 259
+            },
             "mqtt": {
                 "broker": "mosquitto:1883",
                 "topicTemplate": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
@@ -27,10 +42,54 @@
         "Whirlpool_WRF535SWHZ": {
             "brand": "Whirlpool",
             "type": "Standard Refrigerator",
+            "capacity_liters": 500,
+            "energy_class": "A++",
             "sensors": [
                 "temperature",
                 "humidity"
             ],
+            "power_consumption": {
+                "base_power_watts": 150,
+                "door_penalty_watts": 25,
+                "temp_variance_penalty": 0.1,
+                "optimal_temp_range": [
+                    2.5,
+                    6.0
+                ],
+                "temp_penalty_per_degree": 0.05,
+                "max_efficient_openings_per_day": 15,
+                "annual_kwh_rating": 320
+            },
+            "mqtt": {
+                "broker": "mosquitto:1883",
+                "topicTemplate": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
+                "events": [
+                    "door_event"
+                ]
+            }
+        },
+        "LG_LRMVS3006S": {
+            "brand": "LG",
+            "type": "Energy Efficient Refrigerator",
+            "capacity_liters": 680,
+            "energy_class": "A+++",
+            "sensors": [
+                "temperature",
+                "humidity",
+                "gas"
+            ],
+            "power_consumption": {
+                "base_power_watts": 110,
+                "door_penalty_watts": 28,
+                "temp_variance_penalty": 0.08,
+                "optimal_temp_range": [
+                    1.5,
+                    5.5
+                ],
+                "temp_penalty_per_degree": 0.03,
+                "max_efficient_openings_per_day": 10,
+                "annual_kwh_rating": 235
+            },
             "mqtt": {
                 "broker": "mosquitto:1883",
                 "topicTemplate": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
@@ -54,7 +113,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:42"
+            "lastUpdate": "07-09-2025 18:12"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -74,18 +133,14 @@
                 "REST: GET /config (Port: 8002)",
                 "REST: PUT /config (Port: 8002)",
                 "REST: POST /write_test (Port: 8002)",
-                "REST: GET /health (Port: 8002)",
-                "REST: GET /status (Port: 8002)",
-                "REST: GET /sensors/{sensor_type}?device=ID&last=24h (Port: 8002)",
-                "REST: GET /door_events?device=ID&last=24h (Port: 8002)",
-                "REST: GET /config (Port: 8002)",
-                "REST: PUT /config (Port: 8002)",
-                "REST: POST /write_test (Port: 8002)"
+                "REST: GET /sensors/{sensor_type}?last={duration}&device={device_id}",
+                "REST: GET /health",
+                "REST: GET /status"
             ],
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:43"
+            "lastUpdate": "07-09-2025 18:12"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -99,25 +154,81 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:41"
+            "lastUpdate": "07-09-2025 18:12"
+        },
+        {
+            "serviceID": "EnergyOptimization",
+            "name": "Energy Optimization Service",
+            "description": "Analyzes energy consumption patterns using ML prediction and provides optimization recommendations via MQTT and REST API.",
+            "endpoints": [
+                "MQTT Publish: Group17/SmartChill/+/Optimization/EnergyReport",
+                "MQTT Publish: Group17/SmartChill/+/Optimization/Predictions",
+                "MQTT Subscribe: Group17/SmartChill/EnergyOptimization/trigger_analysis",
+                "MQTT Subscribe: Group17/SmartChill/EnergyOptimization/config_update",
+                "REST: GET /optimize/{device_id}",
+                "REST: GET /predictions/{device_id}",
+                "REST: GET /events?device={device_id}&last={duration}&limit=100",
+                "REST: GET /health",
+                "REST: GET /status",
+                "REST: GET /health",
+                "REST: GET /status"
+            ],
+            "type": "analytics_service",
+            "version": "1.0.0",
+            "status": "active",
+            "lastUpdate": "07-09-2025 17:58"
+        },
+        {
+            "serviceID": "DataAnalysis",
+            "name": "Data Analysis Service",
+            "description": "Processes raw sensor data and generates statistical insights and trends for visualization and decision making.",
+            "endpoints": [
+                "REST: GET /analyze/{device_id}?period={duration}&metrics={list}",
+                "REST: GET /trends/{device_id}?period={duration}",
+                "REST: GET /patterns/{device_id}?type={usage|temperature|efficiency}",
+                "REST: GET /health",
+                "REST: GET /status"
+            ],
+            "type": "analytics_service",
+            "version": "1.0.0",
+            "status": "active",
+            "lastUpdate": "07-09-2025 18:12"
+        },
+        {
+            "serviceID": "energy_optimization_service",
+            "name": "SmartChill Energy Optimization",
+            "description": "Energy optimization and prediction service for SmartChill IoT platform - REST only",
+            "endpoints": [
+                "REST: GET /health",
+                "REST: GET /status",
+                "REST: GET /optimize/{device_id}",
+                "REST: GET /predictions/{device_id}"
+            ],
+            "type": "optimization",
+            "version": "2.0.0",
+            "status": "active",
+            "registration_time": "07-09-2025 18:12",
+            "lastUpdate": "07-09-2025 18:12"
         }
     ],
     "devicesList": [
         {
-            "deviceID": "SmartChill_DDEEFF",
-            "mac_address": "AA:BB:CC:DD:EE:FF",
+            "deviceID": "SmartChill_A4B2C3D91E7F",
+            "mac_address": "A4:B2:C3:D9:1E:7F",
             "model": "Samsung_RF28T5001SR",
             "firmware_version": "1.2.3",
             "sensors": [
                 "temperature",
                 "humidity",
-                "gas"
+                "gas",
+                "light"
             ],
             "mqtt_topics": [
-                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_DDEEFF/temperature",
-                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_DDEEFF/humidity",
-                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_DDEEFF/gas",
-                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_DDEEFF/door_event"
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_A4B2C3D91E7F/temperature",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_A4B2C3D91E7F/humidity",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_A4B2C3D91E7F/gas",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_A4B2C3D91E7F/light",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_A4B2C3D91E7F/door_event"
             ],
             "mqtt_config": {
                 "broker": "mosquitto:1883",
@@ -127,9 +238,12 @@
                 ]
             },
             "status": "registered",
-            "user_assigned": false,
-            "registration_time": "29-08-2025 15:05",
-            "last_sync": "02-09-2025 17:17"
+            "user_assigned": true,
+            "registration_time": "04-09-2025 18:58",
+            "last_sync": "06-09-2025 11:30",
+            "assigned_user": "alex",
+            "user_device_name": "Frigo di Alex",
+            "assignment_time": "04-09-2025 19:00"
         }
     ],
     "usersList": [
@@ -138,6 +252,18 @@
             "userName": "Administrator",
             "chatID": 123456789,
             "devicesList": []
+        },
+        {
+            "userID": "alex",
+            "userName": "Alex",
+            "chatID": null,
+            "devicesList": [
+                {
+                    "deviceID": "SmartChill_A4B2C3D91E7F",
+                    "deviceName": "Frigo di Alex"
+                }
+            ],
+            "registration_time": "04-09-2025 19:00"
         }
     ]
 }

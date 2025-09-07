@@ -157,7 +157,9 @@ class CatalogAPI:
                 "received_model": model
             })
 
-        device_id = generate_device_id(mac_address)
+        # Generate device_id using full MAC address (cleaned, uppercase)
+        clean_mac = mac_address.replace(":", "").replace("-", "").upper()
+        device_id = f"SmartChill_{clean_mac}"
 
         # Check if device already exists (sync scenario)
         for i, device in enumerate(catalog['devicesList']):
@@ -210,6 +212,7 @@ class CatalogAPI:
             "broker": catalog['broker'],
             "message": "Device registered successfully"
         }
+
 
     # ============= SERVICE REGISTRATION =============
     @cherrypy.tools.json_in()
