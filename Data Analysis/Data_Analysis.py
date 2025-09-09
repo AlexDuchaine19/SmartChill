@@ -7,7 +7,6 @@ import numpy as np
 import cherrypy
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
-import hashlib
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -21,10 +20,6 @@ class DataAnalysisService:
         self.service_id = self.service_info["serviceID"]
         self.catalog_url = self.settings["catalog"]["url"]
         self.influx_adaptor_url = self.settings["influxdb_adaptor"]["base_url"]
-        
-        # Cache for analysis results
-        self.cache = {}
-        self.cache_lock = threading.RLock()
         
         # Device management
         self.known_devices = set()
@@ -92,8 +87,8 @@ class DataAnalysisService:
             except requests.RequestException as e:
                 print(f"[REGISTER] Error registering (attempt {attempt+1}/{max_retries}): {e}")
             
-            if attempt < max_retries - 1:  # Don't sleep on last attempt
-                delay = base_delay * (2 ** attempt) + random.uniform(0, 1)  # Exponential backoff with jitter
+            if attempt < max_retries - 1:
+                delay = base_delay * (2 ** attempt) + random.uniform(0, 1)
                 print(f"[REGISTER] Retrying in {delay:.1f} seconds...")
                 time.sleep(delay)
         
@@ -143,38 +138,10 @@ class DataAnalysisService:
             print(f"[INIT] Error loading devices from catalog: {e}")
             return False
     
-    def get_cache_key(self, device_id, period, metrics):
-        """Generate cache key for analysis results"""
-        metrics_str = ",".join(sorted(metrics)) if isinstance(metrics, list) else str(metrics)
-        cache_string = f"{device_id}_{period}_{metrics_str}"
-        return hashlib.md5(cache_string.encode()).hexdigest()
-    
-    def get_cached_result(self, cache_key):
-        """Get cached analysis result if still valid"""
-        with self.cache_lock:
-            if cache_key in self.cache:
-                cached_data, timestamp = self.cache[cache_key]
-                cache_duration = self.settings["analysis"]["cache_duration_minutes"] * 60
-                
-                if time.time() - timestamp < cache_duration:
-                    print(f"[CACHE] Returning cached result for key: {cache_key[:8]}...")
-                    return cached_data
-                else:
-                    # Remove expired cache entry
-                    del self.cache[cache_key]
-            
-            return None
-    
-    def store_cached_result(self, cache_key, result):
-        """Store analysis result in cache"""
-        with self.cache_lock:
-            self.cache[cache_key] = (result, time.time())
-            
-            # Simple cache size management
-            if len(self.cache) > 100:  # Max cache entries
-                # Remove oldest entry
-                oldest_key = min(self.cache.keys(), key=lambda k: self.cache[k][1])
-                del self.cache[oldest_key]
+    def validate_period(self, period):
+        """Validate if the requested period is supported"""
+        supported = self.settings["analysis"]["supported_periods"]
+        return period in supported
     
     def fetch_sensor_data_from_adaptor(self, device_id, sensor_type, duration):
         """Fetch sensor data from InfluxDB Adaptor via REST API"""
@@ -230,41 +197,222 @@ class DataAnalysisService:
             print(f"[DATA] Error connecting to InfluxDB Adaptor for door events: {e}")
             return []
     
-    def validate_period(self, period):
-        """Validate if the requested period is supported"""
-        supported = self.settings["analysis"]["supported_periods"]
-        return period in supported
+    def analyze_temperature_data(self, temp_data, period):
+        """Analyze temperature data and return temperature metrics"""
+        if not temp_data:
+            return {
+                "avg_temperature": 0,
+                "min_temperature": 0,
+                "max_temperature": 0,
+                "temperature_variance": 0,
+                "stability_score": 0,
+                "out_of_range_time_percent": 100,
+                "data_points": 0
+            }
+        
+        temperatures = [point["value"] for point in temp_data]
+        
+        # Basic statistics
+        avg_temp = np.mean(temperatures)
+        min_temp = np.min(temperatures)
+        max_temp = np.max(temperatures)
+        temp_variance = np.var(temperatures)
+        temp_std = np.std(temperatures)
+        
+        # Temperature range analysis (ideal range 2-6°C)
+        optimal_range = [2.0, 6.0]
+        out_of_range_count = sum(1 for t in temperatures 
+                                if t < optimal_range[0] or t > optimal_range[1])
+        out_of_range_percent = (out_of_range_count / len(temperatures)) * 100
+        
+        # Stability score (based on standard deviation)
+        if temp_std < 0.5:
+            stability_score = 95
+        elif temp_std < 1.0:
+            stability_score = 85
+        elif temp_std < 1.5:
+            stability_score = 75
+        elif temp_std < 2.0:
+            stability_score = 65
+        else:
+            stability_score = max(0, 60 - (temp_std - 2.0) * 10)
+        
+        return {
+            "avg_temperature": round(avg_temp, 2),
+            "min_temperature": round(min_temp, 2),
+            "max_temperature": round(max_temp, 2),
+            "temperature_variance": round(temp_variance, 3),
+            "stability_score": round(stability_score, 1),
+            "out_of_range_time_percent": round(out_of_range_percent, 1),
+            "data_points": len(temp_data)
+        }
     
-    def cleanup_cache(self):
-        """Background thread to cleanup expired cache entries"""
-        while self.running:
-            try:
-                current_time = time.time()
-                cache_duration = self.settings["analysis"]["cache_duration_minutes"] * 60
+    def analyze_door_usage(self, door_events, period):
+        """Analyze door usage patterns and return usage metrics"""
+        if not door_events:
+            return {
+                "total_openings": 0,
+                "avg_daily_openings": 0,
+                "avg_duration_seconds": 0,
+                "max_duration_seconds": 0,
+                "efficiency_score": 0,
+                "events_analyzed": 0
+            }
+        
+        # Filter door_closed events with valid duration
+        closed_events = [event for event in door_events 
+                        if event.get("event_type") == "door_closed" 
+                        and event.get("duration") is not None
+                        and isinstance(event.get("duration"), (int, float))]
+        
+        if not closed_events:
+            return {
+                "total_openings": len(door_events),
+                "avg_daily_openings": 0,
+                "avg_duration_seconds": 0,
+                "max_duration_seconds": 0,
+                "efficiency_score": 0,
+                "events_analyzed": len(door_events)
+            }
+        
+        # Calculate duration statistics
+        durations = [event["duration"] for event in closed_events]
+        avg_duration = np.mean(durations)
+        max_duration = np.max(durations)
+        
+        # Calculate daily average
+        period_days = self.period_to_days(period)
+        avg_daily_openings = len(closed_events) / period_days if period_days > 0 else 0
+        
+        # Calculate efficiency score
+        efficiency_score = 100
+        
+        if avg_daily_openings > 15:
+            efficiency_score -= min(30, (avg_daily_openings - 15) * 2)
+        
+        if avg_duration > 60:
+            efficiency_score -= min(40, (avg_duration - 60) / 5)
+        
+        if max_duration > 180:
+            efficiency_score -= min(20, (max_duration - 180) / 10)
+        
+        efficiency_score = max(0, efficiency_score)
+        
+        return {
+            "total_openings": len(closed_events),
+            "avg_daily_openings": round(avg_daily_openings, 1),
+            "avg_duration_seconds": round(avg_duration, 1),
+            "max_duration_seconds": round(max_duration, 1),
+            "efficiency_score": round(efficiency_score, 1),
+            "events_analyzed": len(door_events)
+        }
+    
+    def analyze_trends(self, temp_data, door_events, period):
+        """Analyze trends in temperature and usage data"""
+        trends = {
+            "temperature_trend": "stable",
+            "usage_trend": "stable",
+            "period_analyzed": period
+        }
+        
+        # Temperature trend analysis
+        if temp_data and len(temp_data) > 10:
+            temperatures = [point["value"] for point in temp_data]
+            x = np.arange(len(temperatures))
+            slope = np.polyfit(x, temperatures, 1)[0]
+            
+            if slope > 0.05:
+                trends["temperature_trend"] = "increasing"
+            elif slope < -0.05:
+                trends["temperature_trend"] = "decreasing"
+            else:
+                trends["temperature_trend"] = "stable"
+        
+        # Usage trend analysis
+        if door_events and len(door_events) > 5:
+            daily_counts = defaultdict(int)
+            
+            for event in door_events:
+                if event.get("timestamp"):
+                    try:
+                        event_time = datetime.fromtimestamp(event["timestamp"])
+                        day_key = event_time.strftime("%Y-%m-%d")
+                        daily_counts[day_key] += 1
+                    except:
+                        continue
+            
+            if len(daily_counts) > 3:
+                daily_values = list(daily_counts.values())
+                x = np.arange(len(daily_values))
+                slope = np.polyfit(x, daily_values, 1)[0]
                 
-                with self.cache_lock:
-                    expired_keys = []
-                    for key, (_, timestamp) in self.cache.items():
-                        if current_time - timestamp >= cache_duration:
-                            expired_keys.append(key)
-                    
-                    for key in expired_keys:
-                        del self.cache[key]
-                    
-                    if expired_keys:
-                        print(f"[CACHE] Cleaned up {len(expired_keys)} expired cache entries")
-                
-                # Sleep for cache duration before next cleanup
-                time.sleep(cache_duration)
-                
-            except Exception as e:
-                print(f"[CACHE] Error in cache cleanup: {e}")
-                time.sleep(300)  # Sleep 5 minutes on error
+                if slope > 0.5:
+                    trends["usage_trend"] = "increasing"
+                elif slope < -0.5:
+                    trends["usage_trend"] = "decreasing"
+                else:
+                    trends["usage_trend"] = "stable"
+        
+        return trends
+    
+    def period_to_days(self, period):
+        """Convert period string to number of days"""
+        if period.endswith("d"):
+            return int(period[:-1])
+        elif period.endswith("h"):
+            return int(period[:-1]) / 24
+        elif period.endswith("m"):
+            return int(period[:-1]) / (24 * 60)
+        else:
+            return 7
+    
+    def perform_full_analysis(self, device_id, period, metrics_list):
+        """Perform complete analysis for a device"""
+        print(f"[ANALYSIS] Starting full analysis for {device_id} (period: {period})")
+        
+        result = {
+            "device_id": device_id,
+            "period": period,
+            "metrics_requested": metrics_list,
+            "analysis_timestamp": datetime.now(timezone.utc).isoformat(),
+            "service": self.service_id
+        }
+        
+        # Fetch data from InfluxDB Adaptor
+        temp_data = []
+        door_events = []
+        
+        if "temperature" in metrics_list:
+            temp_data = self.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
+            result["temperature_analysis"] = self.analyze_temperature_data(temp_data, period)
+        
+        if "usage_patterns" in metrics_list:
+            door_events = self.fetch_door_events_from_adaptor(device_id, period)
+            result["usage_analysis"] = self.analyze_door_usage(door_events, period)
+        
+        if "trends" in metrics_list:
+            if not temp_data:
+                temp_data = self.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
+            if not door_events:
+                door_events = self.fetch_door_events_from_adaptor(device_id, period)
+            
+            result["trends"] = self.analyze_trends(temp_data, door_events, period)
+        
+        # Add data summary
+        result["data_summary"] = {
+            "temperature_points": len(temp_data),
+            "door_events": len(door_events),
+            "period_days": self.period_to_days(period)
+        }
+        
+        print(f"[ANALYSIS] Completed analysis for {device_id}: "
+              f"{len(temp_data)} temp points, {len(door_events)} door events")
+        
+        return result
     
     def setup_rest_api(self):
         """Setup REST API using CherryPy"""
         try:
-            # Configure CherryPy
             cherrypy.config.update({
                 'server.socket_host': '0.0.0.0',
                 'server.socket_port': 8004,
@@ -272,7 +420,6 @@ class DataAnalysisService:
                 'log.screen': False
             })
             
-            # Mount REST API
             cherrypy.tree.mount(DataAnalysisRestAPI(self), '/', {
                 '/': {
                     'tools.response_headers.on': True,
@@ -280,14 +427,13 @@ class DataAnalysisService:
                 }
             })
             
-            # Start server in background thread
             def start_server():
                 cherrypy.engine.start()
                 print("[REST] REST API server started on port 8004")
             
             self.rest_server_thread = threading.Thread(target=start_server, daemon=True)
             self.rest_server_thread.start()
-            time.sleep(2)  # Allow server to start
+            time.sleep(2)
             
             return True
             
@@ -312,9 +458,7 @@ class DataAnalysisService:
             "status": "running" if self.running else "stopped",
             "rest_api_active": self.rest_server_thread is not None,
             "known_devices": len(self.known_devices),
-            "cache_entries": len(self.cache),
             "supported_periods": self.settings["analysis"]["supported_periods"],
-            "cache_duration_minutes": self.settings["analysis"]["cache_duration_minutes"],
             "config_version": self.settings["configVersion"]
         }
     
@@ -324,18 +468,18 @@ class DataAnalysisService:
         print("    SMARTCHILL DATA ANALYSIS SERVICE")
         print("=" * 60)
         
-        # Step 1: Setup REST API
+        # Setup REST API
         print("[INIT] Setting up REST API...")
         if not self.setup_rest_api():
             print("[ERROR] Failed to setup REST API")
             return
         
-        # Step 2: Register with catalog
+        # Register with catalog
         print("[INIT] Registering service with catalog...")
         if not self.register_with_catalog():
             print("[WARN] Failed to register with catalog - continuing anyway")
         
-        # Step 3: Load known devices from catalog
+        # Load known devices from catalog
         print("[INIT] Loading known devices from catalog...")
         self.load_known_devices_from_catalog()
         
@@ -343,16 +487,12 @@ class DataAnalysisService:
         print(f"[INIT] REST API available on port 8004")
         print(f"[INIT] Known devices: {len(self.known_devices)}")
         print(f"[INIT] Supported periods: {self.settings['analysis']['supported_periods']}")
-        print(f"[INIT] Cache duration: {self.settings['analysis']['cache_duration_minutes']} minutes")
         
-        # Start background threads
+        # Start background thread
         registration_thread = threading.Thread(target=self.periodic_registration, daemon=True)
-        cache_cleanup_thread = threading.Thread(target=self.cleanup_cache, daemon=True)
-        
         registration_thread.start()
-        cache_cleanup_thread.start()
         
-        # Main loop - keep service alive
+        # Main loop
         try:
             while self.running:
                 time.sleep(1)
@@ -365,7 +505,6 @@ class DataAnalysisService:
         print("[SHUTDOWN] Stopping Data Analysis service...")
         self.running = False
         
-        # Stop REST API
         if self.rest_server_thread:
             try:
                 cherrypy.engine.exit()
@@ -392,8 +531,7 @@ class DataAnalysisRestAPI:
                 "status": "healthy",
                 "service": "Data Analysis",
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "known_devices": len(self.service.known_devices),
-                "cache_entries": len(self.service.cache)
+                "known_devices": len(self.service.known_devices)
             }
         except Exception as e:
             cherrypy.response.status = 500
@@ -435,20 +573,11 @@ class DataAnalysisRestAPI:
                     "supported_periods": self.service.settings["analysis"]["supported_periods"]
                 }
             
-            # Check cache first
+            # Convert metrics to list
             metrics_list = metrics.split(",") if isinstance(metrics, str) else metrics
-            cache_key = self.service.get_cache_key(device_id, period, metrics_list)
-            cached_result = self.service.get_cached_result(cache_key)
             
-            if cached_result:
-                cached_result["cached"] = True
-                return cached_result
-            
-            # Perform analysis
+            # Perform analysis (no cache)
             result = self.service.perform_full_analysis(device_id, period, metrics_list)
-            
-            # Store in cache
-            self.service.store_cached_result(cache_key, result)
             
             return result
             
@@ -474,7 +603,7 @@ class DataAnalysisRestAPI:
                     cherrypy.response.status = 404
                     return {"error": f"Device {device_id} not found"}
             
-            period = params.get("period", "7d")  # Default to weekly trends
+            period = params.get("period", "7d")
             
             if not self.service.validate_period(period):
                 cherrypy.response.status = 400
@@ -538,7 +667,6 @@ class DataAnalysisRestAPI:
                 temp_analysis = self.service.analyze_temperature_data(temp_data, period)
                 usage_analysis = self.service.analyze_door_usage(door_events, period)
                 
-                # Combined efficiency score
                 combined_efficiency = (temp_analysis["stability_score"] + usage_analysis["efficiency_score"]) / 2
                 
                 result["patterns"] = {

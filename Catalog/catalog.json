@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "07-09-2025 18:12",
+    "lastUpdate": "09-09-2025 14:11",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -113,7 +113,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "07-09-2025 18:12"
+            "lastUpdate": "09-09-2025 14:11"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -140,7 +140,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "07-09-2025 18:12"
+            "lastUpdate": "09-09-2025 14:11"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -154,7 +154,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "07-09-2025 18:12"
+            "lastUpdate": "09-09-2025 14:11"
         },
         {
             "serviceID": "EnergyOptimization",
@@ -192,7 +192,7 @@
             "type": "analytics_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "07-09-2025 18:12"
+            "lastUpdate": "09-09-2025 14:09"
         },
         {
             "serviceID": "energy_optimization_service",
@@ -207,8 +207,37 @@
             "type": "optimization",
             "version": "2.0.0",
             "status": "active",
-            "registration_time": "07-09-2025 18:12",
-            "lastUpdate": "07-09-2025 18:12"
+            "lastUpdate": "08-09-2025 15:11"
+        },
+        {
+            "serviceID": "FridgeStatusControl",
+            "name": "Fridge Status Control Service",
+            "description": "Monitors fridge temperature and humidity via MQTT to detect malfunctions and send malfunction alerts when conditions are abnormal.",
+            "endpoints": [
+                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
+                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
+                "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/config_update",
+                "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction"
+            ],
+            "type": "monitoring_service",
+            "version": "1.0.0",
+            "status": "active",
+            "lastUpdate": "09-09-2025 14:11"
+        },
+        {
+            "serviceID": "Energy Optimization Service",
+            "name": "SmartChill Energy Optimization",
+            "description": "Energy optimization and prediction service for SmartChill IoT platform - REST only",
+            "endpoints": [
+                "REST: GET /health",
+                "REST: GET /status",
+                "REST: GET /optimize/{device_id}",
+                "REST: GET /predictions/{device_id}"
+            ],
+            "type": "optimization",
+            "version": "2.0.0",
+            "status": "active",
+            "lastUpdate": "09-09-2025 14:06"
         }
     ],
     "devicesList": [
@@ -240,7 +269,7 @@
             "status": "registered",
             "user_assigned": true,
             "registration_time": "04-09-2025 18:58",
-            "last_sync": "06-09-2025 11:30",
+            "last_sync": "08-09-2025 15:16",
             "assigned_user": "alex",
             "user_device_name": "Frigo di Alex",
             "assignment_time": "04-09-2025 19:00"

@@ -922,3 +922,59 @@
 1757268226: Client InfluxDBAdaptor_1757261308 closed its connection.
 1757268227: mosquitto version 2.0.22 terminating
 1757268227: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757268452: mosquitto version 2.0.22 starting
+1757268452: Config loaded from /mosquitto/config/mosquitto.conf.
+1757268452: Opening ipv4 listen socket on port 1883.
+1757268452: Opening websockets listen socket on port 9001.
+1757268452: mosquitto version 2.0.22 running
+1757268454: New connection from 172.19.0.6:53163 on port 1883.
+1757268454: New client connected from 172.19.0.6:53163 as FoodSpoilageControl_1757268454 (p2, c1, k60).
+1757268456: New connection from 172.19.0.5:36095 on port 1883.
+1757268456: New client connected from 172.19.0.5:36095 as TimerUsageControl_1757268456 (p2, c1, k60).
+1757268457: New connection from 172.19.0.7:54937 on port 1883.
+1757268457: New client connected from 172.19.0.7:54937 as InfluxDBAdaptor_1757268457 (p2, c1, k60).
+1757270252: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757272053: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757273854: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757275655: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757277456: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757279257: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757281058: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757282859: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757284660: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757286461: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757288262: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757290063: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757291864: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757293665: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757295465: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757297266: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757299069: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757300870: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757302671: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757304471: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757306272: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757308073: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757309874: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757311675: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757313476: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757315277: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757317078: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757318879: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757320680: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757322481: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757324282: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757326083: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757327883: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757329684: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757331485: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757333286: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757335087: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757336211: New connection from 172.19.0.1:45152 on port 1883.
+1757336211: New client connected from 172.19.0.1:45152 as fridge_SmartChill_A4B2C3D91E7F_1757336211 (p2, c1, k60).
+1757336888: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757344453: Client TimerUsageControl_1757268456 closed its connection.
+1757344453: Client FoodSpoilageControl_1757268454 closed its connection.
+1757344464: Client InfluxDBAdaptor_1757268457 closed its connection.
+1757344465: mosquitto version 2.0.22 terminating
+1757344465: Saving in-memory database to /mosquitto/data//mosquitto.db.

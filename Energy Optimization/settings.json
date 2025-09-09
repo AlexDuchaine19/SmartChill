@@ -36,10 +36,6 @@
       ],
       "min_training_samples": 20
     },
-    "cache": {
-      "duration_minutes": 30,
-      "max_entries": 100
-    },
     "defaults": {
       "fallback_power_specs": {
         "base_power_watts": 150,

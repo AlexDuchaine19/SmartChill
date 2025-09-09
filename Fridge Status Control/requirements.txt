@@ -1,0 +1,6 @@
+# Core Python dependencies for Fridge Status Control Service
+requests>=2.31.0
+paho-mqtt>=1.6.0
+
+# Optional but recommended for better JSON handling
+simplejson>=3.19.0

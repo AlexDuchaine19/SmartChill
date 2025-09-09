@@ -1,0 +1,43 @@
+{
+    "serviceInfo": {
+        "serviceID": "FridgeStatusControl",
+        "serviceName": "Fridge Status Control Service",
+        "serviceDescription": "Monitors fridge temperature and humidity via MQTT to detect malfunctions and send malfunction alerts when conditions are abnormal.",
+        "serviceType": "monitoring_service",
+        "version": "1.0.0",
+        "endpoints": [
+            "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
+            "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
+            "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/config_update",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction"
+        ]
+    },
+    "catalog": {
+        "url": "http://catalog:8001",
+        "registration_interval_seconds": 300,
+        "ping_interval_seconds": 60
+    },
+    "mqtt": {
+        "brokerIP": "mosquitto",
+        "brokerPort": 1883,
+        "clientID_prefix": "FridgeStatusControl"
+    },
+    "defaults": {
+        "temp_min_celsius": 0.0,
+        "temp_max_celsius": 8.0,
+        "humidity_max_percent": 85.0,
+        "enable_malfunction_alerts": true,
+        "alert_cooldown_minutes": 30
+    },
+    "devices": {
+        "SmartChill_A4B2C3D91E7F": {
+            "temp_min_celsius": 0.0,
+            "temp_max_celsius": 8.0,
+            "humidity_max_percent": 85.0,
+            "enable_malfunction_alerts": true,
+            "alert_cooldown_minutes": 30
+        }
+    },
+    "lastUpdate": "2025-09-08T15:15:59.008268+00:00",
+    "configVersion": 2
+}

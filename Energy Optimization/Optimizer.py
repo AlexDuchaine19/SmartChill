@@ -12,6 +12,7 @@ from sklearn.metrics import mean_absolute_error, r2_score
 import warnings
 warnings.filterwarnings('ignore')
 
+
 class EnergyOptimizationService:
     def __init__(self, settings_file="settings.json"):
         self.settings_file = settings_file
@@ -26,10 +27,6 @@ class EnergyOptimizationService:
         # ML models storage
         self.ml_models = {}  # {device_id: model_data}
         
-        # Cache for optimization results
-        self.optimization_cache = {}
-        self.cache_lock = threading.RLock()
-        
         # Device data loaded from catalog
         self.known_devices = set()
         self.device_models = {}  # {device_id: model_name}
@@ -42,7 +39,6 @@ class EnergyOptimizationService:
         print(f"[INIT] {self.service_id} starting...")
 
     def load_settings(self):
-        """Load settings from JSON file"""
         try:
             with open(self.settings_file, 'r') as f:
                 return json.load(f)
@@ -54,7 +50,6 @@ class EnergyOptimizationService:
             raise
 
     def register_with_catalog(self):
-        """Register service with catalog"""
         try:
             registration_data = {
                 "serviceID": self.service_info["serviceID"],
@@ -84,9 +79,7 @@ class EnergyOptimizationService:
             return False
 
     def load_devices_and_models_from_catalog(self):
-        """Load devices and power specifications from catalog"""
         try:
-            # Load devices
             response = requests.get(f"{self.catalog_url}/devices", timeout=5)
             if response.status_code == 200:
                 devices = response.json()
@@ -99,7 +92,6 @@ class EnergyOptimizationService:
                 
                 print(f"[INIT] Loaded {len(self.known_devices)} devices")
             
-            # Load device models with power specs
             response = requests.get(f"{self.catalog_url}/models", timeout=5)
             if response.status_code == 200:
                 models_data = response.json()
@@ -115,7 +107,6 @@ class EnergyOptimizationService:
             return False
 
     def get_device_power_specs(self, device_id):
-        """Get power specifications for a device"""
         if device_id not in self.device_models:
             return self.settings["defaults"]["fallback_power_specs"]
         
@@ -124,50 +115,15 @@ class EnergyOptimizationService:
         if model in self.models_power_specs:
             model_specs = self.models_power_specs[model]
             power_specs = model_specs.get("power_consumption", {})
-            # Merge with defaults for missing values
             default_specs = self.settings["defaults"]["fallback_power_specs"]
             return {**default_specs, **power_specs}
         else:
             return self.settings["defaults"]["fallback_power_specs"]
 
-    def get_cache_key(self, device_id, analysis_type="full"):
-        """Generate cache key"""
-        cache_window = int(time.time() // (self.settings["cache"]["duration_minutes"] * 60))
-        return f"{device_id}_{analysis_type}_{cache_window}"
-
-    def get_cached_result(self, cache_key):
-        """Get cached result if valid"""
-        with self.cache_lock:
-            if cache_key in self.optimization_cache:
-                cached_data, timestamp = self.optimization_cache[cache_key]
-                cache_duration = self.settings["cache"]["duration_minutes"] * 60
-                
-                if time.time() - timestamp < cache_duration:
-                    cached_data["cached"] = True
-                    return cached_data
-                else:
-                    del self.optimization_cache[cache_key]
-            return None
-
-    def store_cached_result(self, cache_key, result):
-        """Store result in cache"""
-        with self.cache_lock:
-            self.optimization_cache[cache_key] = (result, time.time())
-            
-            # Limit cache size
-            if len(self.optimization_cache) > self.settings["cache"]["max_entries"]:
-                oldest_key = min(self.optimization_cache.keys(), 
-                               key=lambda k: self.optimization_cache[k][1])
-                del self.optimization_cache[oldest_key]
-
     def fetch_analysis_data(self, device_id, period="7d"):
-        """Fetch data from Data Analysis Service"""
         try:
             url = f"{self.data_analysis_url}/analyze/{device_id}"
-            params = {
-                "period": period,
-                "metrics": "temperature,usage_patterns,trends"
-            }
+            params = {"period": period, "metrics": "temperature,usage_patterns,trends"}
             
             response = requests.get(url, params=params, 
                                   timeout=self.settings["data_analysis"]["timeout_seconds"])
@@ -175,7 +131,7 @@ class EnergyOptimizationService:
             if response.status_code == 200:
                 return response.json()
             else:
-                print(f"[DATA] Error fetching analysis: {response.status_code}")
+                print(f"[DATA] Error fetching analysis: {response.status_code} - {response.text}")
                 return None
                 
         except requests.RequestException as e:
@@ -369,7 +325,7 @@ class EnergyOptimizationService:
         training_data = []
         
         # Try to get real patterns first
-        analysis_data = self.fetch_analysis_data(device_id, period="30d")
+        analysis_data = self.fetch_analysis_data(device_id, period="7d")
         base_features = self.extract_features_from_analysis(analysis_data) if analysis_data else None
         
         for i in range(samples):
@@ -454,37 +410,25 @@ class EnergyOptimizationService:
         """Main energy analysis function"""
         print(f"[ANALYSIS] Analyzing {device_id}")
         
-        # Check cache
-        cache_key = self.get_cache_key(device_id, "full")
-        cached_result = self.get_cached_result(cache_key)
-        if cached_result:
-            print(f"[ANALYSIS] Returning cached result for {device_id}")
-            return cached_result
-        
         # Fetch analysis data
         analysis_data = self.fetch_analysis_data(device_id, period="7d")
         if not analysis_data:
             print(f"[ANALYSIS] No data available for {device_id}")
             return None
         
-        # Extract features
         features = self.extract_features_from_analysis(analysis_data)
         if not features:
             print(f"[ANALYSIS] Could not extract features for {device_id}")
             return None
         
-        # Calculate energy estimate
         energy_estimate = self.estimate_power_consumption(device_id, features)
         
-        # Generate predictions if enabled
         predictions = None
         if self.settings["ml"]["enable_predictions"]:
             predictions = self.predict_energy_consumption(device_id, future_days=7)
         
-        # Generate recommendations
         recommendations = self.generate_recommendations(device_id, analysis_data, energy_estimate)
         
-        # Compile result
         result = {
             "device_id": device_id,
             "model": self.device_models.get(device_id, "unknown"),
@@ -494,16 +438,12 @@ class EnergyOptimizationService:
             "ml_features": features,
             "predictions": predictions,
             "recommendations": recommendations,
-            "service": self.service_id,
-            "cached": False
+            "service": self.service_id
         }
-        
-        # Store in cache
-        self.store_cached_result(cache_key, result)
         
         print(f"[ANALYSIS] Completed analysis for {device_id}")
         return result
-
+    
     def setup_rest_api(self):
         """Setup REST API"""
         try:
@@ -545,13 +485,11 @@ class EnergyOptimizationService:
                 self.register_with_catalog()
 
     def get_status(self):
-        """Get service status"""
         return {
             "service_id": self.service_id,
             "status": "running" if self.running else "stopped",
             "known_devices": len(self.known_devices),
             "trained_models": len(self.ml_models),
-            "cached_results": len(self.optimization_cache),
             "data_analysis_service": self.data_analysis_url,
             "ml_enabled": self.settings["ml"]["enable_predictions"],
             "config_version": self.settings.get("configVersion", 1)
@@ -580,7 +518,6 @@ class EnergyOptimizationService:
         print(f"[INIT] Data Analysis Service: {self.data_analysis_url}")
         print(f"[INIT] Known devices: {len(self.known_devices)}")
         print(f"[INIT] REST API: http://localhost:8003")
-        print(f"[INIT] Cache duration: {self.settings['cache']['duration_minutes']} minutes")
         
         # Start background registration thread
         registration_thread = threading.Thread(target=self.periodic_registration, daemon=True)
@@ -777,9 +714,7 @@ class EnergyOptimizationRestAPI:
 
 
 def main():
-    """Main entry point"""
     service = EnergyOptimizationService()
-    
     try:
         service.run()
     except Exception as e:
