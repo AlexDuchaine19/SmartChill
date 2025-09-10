@@ -373,7 +373,6 @@ class CatalogAPI:
         new_user = {
             "userID": data['userID'],
             "userName": data['userName'],
-            "chatID": data.get('chatID', None),
             "devicesList": [],
             "registration_time": datetime.now().strftime("%d-%m-%Y %H:%M")
         }

@@ -20,6 +20,10 @@ def catalog_post(path, json=None, timeout=5):
     url = f"{CATALOG_BASE_URL}{path}"
     return requests.post(url, json=json, timeout=timeout)
 
+def from_dict_to_pretty_msg(data: dict) -> str:
+    return "\n".join(f"{key}: {value}" for key, value in data.items())
+
+
 
 class TelegramBot:
     def __init__(self, settings_file="telegram_settings.json"):
@@ -47,7 +51,8 @@ class TelegramBot:
             "/tastiera" : {"handler": self.tastiera_command, "help": "Fa apparire una tastiera"},
             "/help":  {"handler": self.help_command,  "help": "Mostra la lista dei comandi"},
             "/registrami":  {"handler": self.registrami_command,  "help": "Registrami ai topic MQTT"},
-
+            "/me":  {"handler": self.me_command,  "help": "Fai vedere miei topic"},
+            
         }
 
         # "id" : {cose}
@@ -109,9 +114,9 @@ class TelegramBot:
             print(f"[MQTT] Connection error: {e}")
             return False
 
-    def create_user(chat_id: int, username: str) -> dict:
+    def create_user(self, chat_id: int, username: str) -> dict:
         """
-        Attempts onobard: try to create user (POST /users)
+        Attempts onboard: try to create user (POST /users)
         If already existings, gets it (GET /users/user_id)
         """
         user_id = str(chat_id)
@@ -121,12 +126,18 @@ class TelegramBot:
         }
         req = requests.post(f"{CATALOG_BASE_URL}/users", json = payload, timeout = 5)
         if req.status_code == 201:
+            self.bot.sendMessage(chat_id, "REQUEST STATUS 201")
             return req.json()
         elif req.status_code == 409:
             g = requests.get(f"{CATALOG_BASE_URL}/users/{user_id}", json = payload, timeout = 5)
             g.raise_for_status()
-            return g.json
+            self.bot.sendMessage(chat_id, "REQUEST STATUS 409")
+            return g.json()
+        
+        self.bot.sendMessage(chat_id, "REQUEST STATUS ALTRO")
         req.raise_for_status()
+
+
 
     # --- HANDLER COMANDI (accettano *args per compatibilità) ---
     def start_command(self, chat_id, msg, *args):
@@ -140,15 +151,25 @@ class TelegramBot:
             "userName": msg.get("from", {}).get("first_name")
                         or msg.get("from", {}).get("last_name")
                         or msg.get("from", {}).get("username"),
-            "chatID": chat_id,
         }
         # TRASFORMO DIZIONARIO IN STRINGA LEGGIBILE
-        user_info = "\n".join(f"{key} : {value}" for key, value in user_info_dict.items())
-        self.bot.sendMessage(chat_id, f"These are the informations about you:\n{user_info}")
+        message_user_info = "\n".join(f"{key} : {value}" for key, value in user_info_dict.items())
+        self.bot.sendMessage(chat_id, f"These are the informations about you:\n{message_user_info}")
+        new_user_message = self.bot.sendMessage(chat_id, "Creating new user")
+        self.bot.sendChatAction(chat_id, action = "typing")
+        user_json = self.create_user(chat_id, user_info_dict["userName"])
+        self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Created!\nHere is your info on the catalog.json:\n{from_dict_to_pretty_msg(user_json)}")
+        
         # mostra help alla fine
         self.help_command(chat_id, msg)
 
 
+    def me_command(self, chat_id, msg, *args):
+        _content_type, _chat_type, chat_id = telepot.glance(msg)
+        self.bot.sendChatAction(chat_id, action = "typing")
+        req = requests.get(f"{CATALOG_BASE_URL}/users/{chat_id}", timeout = 5)
+        self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
+        self.bot.sendMessage(chat_id, f"You are:\n{from_dict_to_pretty_msg(req.json())}")
 
 
     def help_command(self, chat_id, msg, *args):
