@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "10-09-2025 18:08",
+    "lastUpdate": "11-09-2025 21:50",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -130,6 +130,34 @@
             "user_assigned": false,
             "registration_time": "29-08-2025 15:05",
             "last_sync": "02-09-2025 17:17"
+        },
+        {
+            "deviceID": "SmartChill_GGHHII",
+            "mac_address": "AA:BB:CC:CC:HH:FF",
+            "model": "Samsung_RF28T5001SR",
+            "firmware_version": "1.2.3",
+            "sensors": [
+                "temperature",
+                "humidity",
+                "gas"
+            ],
+            "mqtt_topics": [
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_GGHHII/temperature",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_GGHHII/humidity",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_GGHHII/gas",
+                "Group17/SmartChill/Devices/Samsung_RF28T5001SR/SmartChill_GGHHII/door_event"
+            ],
+            "mqtt_config": {
+                "broker": "mosquitto:1883",
+                "topicTemplate": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
+                "events": [
+                    "door_event"
+                ]
+            },
+            "status": "registered",
+            "user_assigned": false,
+            "registration_time": "01-09-2025 18:05",
+            "last_sync": "02-09-2025 18:17"
         }
     ],
     "usersList": [
@@ -142,7 +170,7 @@
             "userID": "6973198558",
             "userName": "Luca",
             "devicesList": [],
-            "registration_time": "10-09-2025 18:08"
+            "registration_time": "11-09-2025 21:50"
         }
     ]
 }

@@ -51,8 +51,13 @@ class TelegramBot:
             "/tastiera" : {"handler": self.tastiera_command, "help": "Fa apparire una tastiera"},
             "/help":  {"handler": self.help_command,  "help": "Mostra la lista dei comandi"},
             "/registrami":  {"handler": self.registrami_command,  "help": "Registrami ai topic MQTT"},
-            "/me":  {"handler": self.me_command,  "help": "Fai vedere miei topic"},
+            "/me":  {"handler": self.me_command,  "help": "Fai vedere me sul catalog"},
+            "/unassigneddevices":  {"handler": self.unassigned_devices_command,  "help": "Fammi vedere i free devices sul catalog"},
             
+        }
+
+        self.callbacks = {
+            "cb_sum": {"handler": self.cb_sum, "help": "fa una somma"},
         }
 
         # "id" : {cose}
@@ -137,6 +142,16 @@ class TelegramBot:
         self.bot.sendMessage(chat_id, "REQUEST STATUS ALTRO")
         req.raise_for_status()
 
+    # - CALLBACK ESEMPIO
+    def cb_sum(self, query_id, chat_id, msg, *args):
+        """Somma due numeri tra gli scelti"""
+        if not args:
+            self.bot.answerCallbackQuery(query_id, text = "mancano i numeri", show_alert = True)
+            return
+        self.bot.answerCallbackQuery(query_id) # scrivere sempre per evitare clessidra
+
+        num_list = list(map(int, args))
+        self.bot.sendMessage(chat_id, text = f"Hai passato: {args}\nLa somma è: {sum(num_list)}")
 
 
     # --- HANDLER COMANDI (accettano *args per compatibilità) ---
@@ -163,13 +178,25 @@ class TelegramBot:
         # mostra help alla fine
         self.help_command(chat_id, msg)
 
-
     def me_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
         self.bot.sendChatAction(chat_id, action = "typing")
         req = requests.get(f"{CATALOG_BASE_URL}/users/{chat_id}", timeout = 5)
         self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
         self.bot.sendMessage(chat_id, f"You are:\n{from_dict_to_pretty_msg(req.json())}")
+
+    def unassigned_devices_command(self, chat_id, msg, *args):
+        _content_type, _chat_type, chat_id = telepot.glance(msg)
+        self.bot.sendChatAction(chat_id, action = "typing")
+        req = requests.get(f"{CATALOG_BASE_URL}/devices/unassigned", timeout = 5) # returns a list
+        self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
+        list_of_devices = req.json()
+
+        buttons = [
+            [InlineKeyboardButton(text = f"{device['deviceID']}", callback_data = f'{device["deviceID"]}_QUALCOSACALLBACK')] for device in list_of_devices
+            ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard = buttons)
+        menu_devices = self.bot.sendMessage(chat_id, "Questa è la lista di device senza utenti.\nA quale device sei interessato?", reply_markup=keyboard)
 
 
     def help_command(self, chat_id, msg, *args):
@@ -183,13 +210,12 @@ class TelegramBot:
     def tastiera_command(self, chat_id, msg, *args):
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
                     [InlineKeyboardButton(text='Ping', callback_data = '/ping'), InlineKeyboardButton(text='Ping2', callback_data = '/ping')],
-                    [InlineKeyboardButton(text='Start', callback_data = '/start'), InlineKeyboardButton(text='Help', callback_data = '/help')],
+                    [InlineKeyboardButton(text='SOMMA 5+3', callback_data = 'cb_sum 5 3'), InlineKeyboardButton(text='SOMMA 5+6', callback_data = 'cb_sum 5 6')],
                     [InlineKeyboardButton(text='Scryfall', url = "https://scryfall.com/")],
                   ])
 
         self.bot.sendMessage(chat_id, 'Scegli una opzione', reply_markup = keyboard)
        
-
     def registrami_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
         base_topic = "Group17/SmartChill"
@@ -223,6 +249,8 @@ class TelegramBot:
             self.bot.sendMessage(chat_id, f"These are the info relevant for your sub:\n{user_info}")
 
             self.bot.sendMessage(chat_id, f"Here is the list of self.users:\n{json.dumps(self.users, indent = 2)}")
+
+
 
     # --- GESTORE MESSAGGI ---
     def on_chat_message(self, msg):
@@ -267,15 +295,46 @@ class TelegramBot:
         message_id = msg_query['message']['message_id']
         chat_id = msg_query['message']['chat']['id']
 
-        cmd = query_data
-        entry = self.commands.get(cmd)
-        if entry:
+        # controllo il tipo di query_data
+        if query_data.startswith("/"): # query che richiama un comando => esegui il comando
+            entry = self.commands.get(query_data)
+            if entry:
+                try:
+                    entry["handler"](chat_id, msg_query["message"],)
+                except Exception as e:
+                    self.bot.sendMessage(chat_id, f"Error in the execution of {query_data}: {e}")
+            else:
+                self.bot.sendMessage(chat_id, f"Command unknown: {query_data}. Use /help.")
+        elif query_data.startswith("cb"):
             try:
-                entry["handler"](chat_id, msg_query["message"],)
-            except Exception as e:
-                self.bot.sendMessage(chat_id, f"Errore nell'esecuzione di {cmd}: {e}")
+                parts = query_data.split()
+                action = parts[0].lower()
+                args = parts[1:]
+                entry = self.callbacks.get(action)
+
+                if not entry:
+                    self.bot.answerCallbackQuery(query_id, text=f"Azione sconosciuta: {action}", show_alert=False)
+                    if chat_id is not None:
+                        self.bot.sendMessage(chat_id, f"Azione sconosciuta: {action}")
+                    return
+                
+                try: #eseguo handler
+                    entry["handler"](query_id, chat_id, msg_query, *args)
+                except Exception as e:
+                    self.bot.answerCallbackQuery(query_id, text="Errore nell'azione.", show_alert=True)
+                    if chat_id is not None:
+                        self.bot.sendMessage(chat_id, f"Errore in {action}: {e}")
+            except Exception as e: # fallback di sicurezza
+                try:
+                    self.bot.answerCallbackQuery(query_id, text="Errore nella callback.", show_alert=True)
+                except:
+                    pass
+                if chat_id is not None:
+                    self.bot.sendMessage(chat_id, f"Errore nella callback: {e}")
         else:
-            self.bot.sendMessage(chat_id, f"Comando sconosciuto: {cmd}. Usa /help.")
+            self.bot.sendMessage(chat_id, f"Query unknown: {query_data}.")
+
+        
 
         # se voglio editare la tastiera inline dopo la query
         # self.bot.editMessageText((chat_id, message_id), text = "Opzione scelta!", reply_markup = None)
@@ -283,7 +342,7 @@ class TelegramBot:
 
     def notify(self, topic, msg: bytes):
         msg_dict = json.loads(msg)
-        tosend = f"NOTIFICA da {msg_dict["bn"]}\nRisorsa: {msg_dict["e"][0]["n"]}\nValore: {msg_dict["e"][0]["v"]} {msg_dict["e"][0]["u"]}."
+        tosend = f"NOTIFICA da {msg_dict['bn']}\nRisorsa: {msg_dict['e'][0]['n']}\nValore: {msg_dict['e'][0]['v']} {msg_dict['e'][0]['u']}."
         for user_ID in self.users:
             info = self.users[user_ID]          # <-- prendi il dict dell'utente
             if topic in info.get("MQTT_subs", []):
