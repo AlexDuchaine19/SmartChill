@@ -47,19 +47,26 @@ class TelegramBot:
         # Ogni entry: comando -> {"handler": funzione, "help": descrizione}
         self.commands = {
             "/start": {"handler": self.start_command, "help": "Avvia il bot e mostra le info utente"},
+            "/registerme": {"handler": self.register_me, "help": "Registra utente come user sul catalog"},
             "/ping":  {"handler": self.ping_command,  "help": "Risponde con 'pong'"},
-            "/tastiera" : {"handler": self.tastiera_command, "help": "Fa apparire una tastiera"},
+            "/tastiera" : {"handler": self.tastiera_command, "help": "Fa apparire una tastiera per testare query"},
             "/help":  {"handler": self.help_command,  "help": "Mostra la lista dei comandi"},
             "/registrami":  {"handler": self.registrami_command,  "help": "Registrami ai topic MQTT"},
             "/me":  {"handler": self.me_command,  "help": "Fai vedere me sul catalog"},
-            "/unassigneddevices":  {"handler": self.unassigned_devices_command,  "help": "Fammi vedere i free devices sul catalog"},
+            "/assigndevice":  {"handler": self.assign_device_command,  "help": "Fammi vedere i free devices sul catalog"},
             
         }
 
         self.callbacks = {
             "cb_sum": {"handler": self.cb_sum, "help": "fa una somma"},
+            "cb_ask_for_name": {"handler": self.cb_ask_for_name, "help": "Chiede se si vuole rinominare il frigo "},
+            "cb_yes_name_fridge" : {"handler": self.cb_yes_name_fridge, "help": "Assegna frigo con soprannome"},
+            "cb_no_name_fridge" : {"handler": self.cb_no_name_fridge, "help": "Assegna frigo senza soprannome"},
         }
 
+        self.user_statuses = {} # "chatID" : "status"
+
+        self.waiting_for_device_name = {}  # chatID: deviceID       serve per rinominare il device
         # "id" : {cose}
         self.users = {}
 
@@ -143,7 +150,7 @@ class TelegramBot:
         req.raise_for_status()
 
     # - CALLBACK ESEMPIO
-    def cb_sum(self, query_id, chat_id, msg, *args):
+    def cb_sum(self, query_id, chat_id, msg_query, *args):
         """Somma due numeri tra gli scelti"""
         if not args:
             self.bot.answerCallbackQuery(query_id, text = "mancano i numeri", show_alert = True)
@@ -153,6 +160,57 @@ class TelegramBot:
         num_list = list(map(int, args))
         self.bot.sendMessage(chat_id, text = f"Hai passato: {args}\nLa somma è: {sum(num_list)}")
 
+    # Manca la possibilità di personalizzare il deviceName
+    def cb_ask_for_name(self, query_id, chat_id, msg_query, *args):
+        """Assegna user a device"""
+        if not args:
+            self.bot.answerCallbackQuery(query_id, text = "Missing device to assign.", show_alert = True)
+            return
+        
+        device_id = " ".join(map(str, args))
+        printa_cose(device_id)
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard =[
+            [InlineKeyboardButton(text='Yes', callback_data = f'cb_yes_name_fridge {device_id}'),
+             InlineKeyboardButton(text='No', callback_data = f'cb_no_name_fridge {device_id}')],
+        ])
+        self.bot.editMessageText((chat_id, msg_query['message']['message_id']), 'Would you like to name the fridge?', reply_markup = keyboard)
+
+    def cb_yes_name_fridge(self, query_id, chat_id, msg_query, *args):
+        device_id = " ".join(map(str, args))
+        self.bot.answerCallbackQuery(query_id)
+        self.user_statuses.update(
+                {chat_id: {
+                    "status": "wait_for_fridge_name",
+                    "deviceID": device_id
+                    }
+                }) #INIZIO STATUS
+        self.bot.sendMessage(chat_id, text = f"il tuo nome è stato inserito negli status:\nuser_statuses:\n{from_dict_to_pretty_msg(self.user_statuses)}")
+        print(json.dumps(self.user_statuses, indent=2))
+        self.bot.editMessageText((chat_id, msg_query['message']['message_id']), 'Inserisci nome', )
+
+
+    def cb_no_name_fridge(self, query_id, chat_id, msg_query, *args):
+        device_id = " ".join(map(str, args))
+        payload_for_req = {
+            "device_id" : device_id,
+        }
+        
+        req = requests.post(f"{CATALOG_BASE_URL}/users/{chat_id}/assign-device", json = payload_for_req, timeout = 5)
+        if req.status_code == 200: # everything ok
+            string_toret = from_dict_to_pretty_msg(req.json()['device'])
+            self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), f"Done!\n\n{string_toret}")
+        if req.status_code == 404: # device not found
+            print("ERRORE 404")
+            self.bot.sendMessage(chat_id, text = from_dict_to_pretty_msg(req.json()))
+        elif req.status_code == 409: # device already assigned
+            print("ERRORE 409")
+            self.bot.sendMessage(chat_id, text = from_dict_to_pretty_msg(req.json()))
+        else:
+            req.raise_for_status()
+
+
+
 
     # --- HANDLER COMANDI (accettano *args per compatibilità) ---
     def start_command(self, chat_id, msg, *args):
@@ -160,7 +218,12 @@ class TelegramBot:
         # Send greetings in chat
         greetings = "Hi! This bot is an interface for the project 'Smart Chill' of Group 17."
         self.bot.sendMessage(chat_id, greetings)
+        
+        # mostra help alla fine
+        self.help_command(chat_id, msg)
 
+    def register_me(self, chat_id, msg, *args):
+        _content_type, _chat_type, chat_id = telepot.glance(msg)
         user_info_dict = {
             "userID" : chat_id,
             "userName": msg.get("from", {}).get("first_name")
@@ -174,9 +237,8 @@ class TelegramBot:
         self.bot.sendChatAction(chat_id, action = "typing")
         user_json = self.create_user(chat_id, user_info_dict["userName"])
         self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Created!\nHere is your info on the catalog.json:\n{from_dict_to_pretty_msg(user_json)}")
-        
-        # mostra help alla fine
-        self.help_command(chat_id, msg)
+
+
 
     def me_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
@@ -185,19 +247,20 @@ class TelegramBot:
         self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
         self.bot.sendMessage(chat_id, f"You are:\n{from_dict_to_pretty_msg(req.json())}")
 
-    def unassigned_devices_command(self, chat_id, msg, *args):
+    def assign_device_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
         self.bot.sendChatAction(chat_id, action = "typing")
         req = requests.get(f"{CATALOG_BASE_URL}/devices/unassigned", timeout = 5) # returns a list
         self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
         list_of_devices = req.json()
-
-        buttons = [
-            [InlineKeyboardButton(text = f"{device['deviceID']}", callback_data = f'{device["deviceID"]}_QUALCOSACALLBACK')] for device in list_of_devices
-            ]
-        keyboard = InlineKeyboardMarkup(inline_keyboard = buttons)
-        menu_devices = self.bot.sendMessage(chat_id, "Questa è la lista di device senza utenti.\nA quale device sei interessato?", reply_markup=keyboard)
-
+        if len(req.json()) != 0:
+            buttons = [
+                [InlineKeyboardButton(text = f"{device['deviceID']}", callback_data = f'cb_ask_for_name {device["deviceID"]}')] for device in list_of_devices
+                ]
+            keyboard = InlineKeyboardMarkup(inline_keyboard = buttons)
+            menu_devices = self.bot.sendMessage(chat_id, "Questa è la lista di device senza utenti.\nA quale device sei interessato?", reply_markup=keyboard)
+        else:
+            self.bot.sendMessage(chat_id, text = "Sorry, all devices are assigned.")
 
     def help_command(self, chat_id, msg, *args):
         lines = [f"{cmd} — {meta['help']}" for cmd, meta in self.commands.items()
@@ -211,7 +274,7 @@ class TelegramBot:
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
                     [InlineKeyboardButton(text='Ping', callback_data = '/ping'), InlineKeyboardButton(text='Ping2', callback_data = '/ping')],
                     [InlineKeyboardButton(text='SOMMA 5+3', callback_data = 'cb_sum 5 3'), InlineKeyboardButton(text='SOMMA 5+6', callback_data = 'cb_sum 5 6')],
-                    [InlineKeyboardButton(text='Scryfall', url = "https://scryfall.com/")],
+                    [InlineKeyboardButton(text='Already assigned', callback_data = 'cb_assign_device SmartChill_GGHHII'), InlineKeyboardButton(text='Missing device', callback_data = 'cb_assign_device SmartChill_GJAHDJ')],
                   ])
 
         self.bot.sendMessage(chat_id, 'Scegli una opzione', reply_markup = keyboard)
@@ -264,8 +327,26 @@ class TelegramBot:
 
         # estraggo testo
         text = msg["text"].strip()
+
+        # Controllo se la chat è in qualche stato
+        if chat_id in self.user_statuses:
+            if self.user_statuses.get(chat_id).get("status") == "wait_for_fridge_name":
+                print("SONO ENTRATO")
+                fridge_name = text
+                payload_for_req = {
+                    "device_id": self.user_statuses.get(chat_id).get("deviceID"),
+                    "device_name": fridge_name
+                }
+                req = requests.post(f"{CATALOG_BASE_URL}/users/{chat_id}/assign-device", json = payload_for_req, timeout = 5)
+                self.user_statuses.pop(chat_id)
+                print(f"Ora gli user status sono: {json.dumps(self.user_statuses, indent=2)}")
+                string_toret = from_dict_to_pretty_msg(req.json()['device'])
+                self.bot.sendMessage(chat_id, f"Done!\n\n{string_toret}")
+
+
+                
         # Comandi: "/cmd arg1 arg2 ..."
-        if text.startswith("/"):
+        elif text.startswith("/"):
             # normalizza e separa argomenti
             parts = text.split() # es. /help one two three -> ["/help", "one", "two", "three"]
             cmd = parts[0].lower() # "/help"
@@ -279,6 +360,7 @@ class TelegramBot:
                     self.bot.sendMessage(chat_id, f"Errore nell'esecuzione di {cmd}: {e}")
             else:
                 self.bot.sendMessage(chat_id, f"Comando sconosciuto: {cmd}. Usa /help.")
+
         else:
             self.bot.sendMessage(chat_id, "This is not a command!")
 

@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "11-09-2025 21:50",
+    "lastUpdate": "12-09-2025 16:48",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -165,12 +165,6 @@
             "userID": "admin",
             "userName": "Administrator",
             "devicesList": []
-        },
-        {
-            "userID": "6973198558",
-            "userName": "Luca",
-            "devicesList": [],
-            "registration_time": "11-09-2025 21:50"
         }
     ]
 }
