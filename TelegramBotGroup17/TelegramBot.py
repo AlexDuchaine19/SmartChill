@@ -54,7 +54,7 @@ class TelegramBot:
             "/registrami":  {"handler": self.registrami_command,  "help": "Registrami ai topic MQTT"},
             "/me":  {"handler": self.me_command,  "help": "Fai vedere me sul catalog"},
             "/assigndevice":  {"handler": self.assign_device_command,  "help": "Fammi vedere i free devices sul catalog"},
-            
+            "/deleteme" : {"handler": self.delete_me, "help": "Elimina utente come user sul catalog"}
         }
 
         self.callbacks = {
@@ -137,6 +137,27 @@ class TelegramBot:
             "userName" : username
         }
         req = requests.post(f"{CATALOG_BASE_URL}/users", json = payload, timeout = 5)
+        if req.status_code == 201:
+            self.bot.sendMessage(chat_id, "REQUEST STATUS 201")
+            return req.json()
+        elif req.status_code == 409:
+            g = requests.get(f"{CATALOG_BASE_URL}/users/{user_id}", json = payload, timeout = 5)
+            g.raise_for_status()
+            self.bot.sendMessage(chat_id, "REQUEST STATUS 409")
+            return g.json()
+        
+        self.bot.sendMessage(chat_id, "REQUEST STATUS ALTRO")
+        req.raise_for_status()
+
+    def delete_user(self, chat_id:int) -> dict:
+        """
+        Attempts onboard: try to delete user (POST /delete)
+        """
+        user_id = str(chat_id)
+        payload = {
+            "userID" : user_id,
+        }
+        req = requests.post(f"{CATALOG_BASE_URL}/delete", json = payload, timeout = 5)
         if req.status_code == 201:
             self.bot.sendMessage(chat_id, "REQUEST STATUS 201")
             return req.json()
@@ -238,7 +259,17 @@ class TelegramBot:
         user_json = self.create_user(chat_id, user_info_dict["userName"])
         self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Created!\nHere is your info on the catalog.json:\n{from_dict_to_pretty_msg(user_json)}")
 
-
+    def delete_me(self,chat_id, msg, *args):
+        _content_type, _chat_type, chat_id = telepot.glance(msg)
+        user_info_dict = {
+            "userID" : chat_id,
+            "userName": msg.get("from", {}).get("first_name")
+                        or msg.get("from", {}).get("last_name")
+                        or msg.get("from", {}).get("username"),
+        }
+        new_user_message = self.bot.sendMessage(chat_id, "Deleting user")
+        user_json = self.create_user(chat_id, user_info_dict["userName"])
+        self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Created!\nHere is your info on the catalog.json:\n{from_dict_to_pretty_msg(user_json)}")
 
     def me_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
