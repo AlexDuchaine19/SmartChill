@@ -150,25 +150,17 @@ class TelegramBot:
         req.raise_for_status()
 
     def delete_user(self, chat_id:int) -> dict:
-        """
-        Attempts onboard: try to delete user (POST /delete)
-        """
-        user_id = str(chat_id)
-        payload = {
-            "userID" : user_id,
-        }
-        req = requests.post(f"{CATALOG_BASE_URL}/delete", json = payload, timeout = 5)
-        if req.status_code == 201:
-            self.bot.sendMessage(chat_id, "REQUEST STATUS 201")
-            return req.json()
-        elif req.status_code == 409:
-            g = requests.get(f"{CATALOG_BASE_URL}/users/{user_id}", json = payload, timeout = 5)
-            g.raise_for_status()
-            self.bot.sendMessage(chat_id, "REQUEST STATUS 409")
-            return g.json()
-        
-        self.bot.sendMessage(chat_id, "REQUEST STATUS ALTRO")
-        req.raise_for_status()
+        req = requests.delete(f"{CATALOG_BASE_URL}/users/{chat_id}", timeout=5)
+        if req.status_code == 200:
+            self.bot.sendMessage(chat_id, "User Deleted")
+            return req.json() if req.content else {"status": "deleted"}
+        elif req.status_code == 404:
+            self.bot.sendMessage(chat_id, "User not found")
+            return {"status": "not_found"}
+        else:
+            self.bot.sendMessage(chat_id, f"Errore eliminazione: {req.status_code}")
+            req.raise_for_status()
+
 
     # - CALLBACK ESEMPIO
     def cb_sum(self, query_id, chat_id, msg_query, *args):
@@ -268,7 +260,7 @@ class TelegramBot:
                         or msg.get("from", {}).get("username"),
         }
         new_user_message = self.bot.sendMessage(chat_id, "Deleting user")
-        user_json = self.create_user(chat_id, user_info_dict["userName"])
+        user_json = self.delete_user(chat_id)
         self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Created!\nHere is your info on the catalog.json:\n{from_dict_to_pretty_msg(user_json)}")
 
     def me_command(self, chat_id, msg, *args):
