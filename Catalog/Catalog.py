@@ -324,6 +324,66 @@ class CatalogAPI:
         model_devices = [d for d in catalog['devicesList'] if d.get('model') == model]
         return model_devices
 
+    @cherrypy.tools.json_out()
+    def unassign_device(self, device_id: str):
+        """POST /devices/{device_id}/unassign"""
+        catalog = load_catalog()
+
+        # trovo device in catalog
+        device_to_unassign = next(
+            (d for d in catalog.get('devicesList', []) if d.get('deviceID') == device_id),
+            None
+        )
+        if not device_to_unassign:
+            return http_error(404, {"error": "Device not found"})
+
+        # if already assigned => response 200
+        if not device_to_unassign.get('user_assigned') and device_to_unassign.get('assigned_user') in (None, "", False):
+            return {
+                "message": f"Device {device_id} already unassigned",
+                "device_id": device_id,
+                "already_unassigned": True
+            }
+
+        # save previous info
+        previous_assignment_info = {
+            "assigned_user": device_to_unassign.get('assigned_user'),
+            "user_device_name": device_to_unassign.get('user_device_name'),
+            "assignment_time": device_to_unassign.get('assignment_time')
+        }
+        assigned_user_id = device_to_unassign.get('assigned_user')
+
+        # find user assigned and remove device from its list
+        user_to_update = next(
+            (u for u in catalog.get('usersList', []) if u.get('userID') == assigned_user_id),
+            None
+        )
+        if not user_to_update:
+            user_removed = False
+        else:
+            devices_list = user_to_update.get('devicesList', [])
+            for i, dev in enumerate(devices_list):
+                if dev.get('deviceID') == device_id:
+                    devices_list.pop(i)
+                    break
+            user_removed = True
+
+        # unassign device
+        device_to_unassign['user_assigned'] = False
+        device_to_unassign['assigned_user'] = None
+        device_to_unassign['user_device_name'] = None
+        device_to_unassign['assignment_time'] = None
+
+        save_catalog(catalog)
+
+        return {
+            "message": f"Device {device_id} unassigned successfully",
+            "device_id": device_id,
+            "previous_assignment_info": previous_assignment_info,
+            "user_devices_list_updated": user_removed,
+            "already_unassigned": False
+        }
+
     # ============= SERVICE DISCOVERY =============
     @cherrypy.tools.json_out()
     def get_services(self):
@@ -384,7 +444,7 @@ class CatalogAPI:
             "message": f"User {data['userID']} created successfully",
             "user": new_user
         }
-        
+
     @cherrypy.tools.json_out()
     def delete_user(self, user_id):
         """DELETE /users/{user_id}"""
@@ -558,6 +618,7 @@ def get_dispatcher():
     d.connect('device_exists', '/devices/:device_id/exists', controller=api, action='device_exists', conditions={'method': ['GET']})
     d.connect('unassigned', '/devices/unassigned', controller=api, action='get_unassigned_devices', conditions={'method': ['GET']})
     d.connect('devices_by_model', '/devices/by-model/:model', controller=api, action='get_devices_by_model', conditions={'method': ['GET']})
+    d.connect('unassign_device', '/devices/:device_id/unassign', controller=api, action='unassign_device', conditions={'method': ['POST']})
 
     # Users
     d.connect('users', '/users', controller=api, action='get_users', conditions={'method': ['GET']})

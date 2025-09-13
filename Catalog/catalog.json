@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "13-09-2025 15:45",
+    "lastUpdate": "13-09-2025 23:44",
     "broker": {
         "IP": "mosquitto",
         "port": 1883

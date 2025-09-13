@@ -2,6 +2,7 @@ import json
 import time
 import requests
 import telepot
+from typing import Tuple, Optional
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 from MyMQTT import *
@@ -49,6 +50,7 @@ class TelegramBot:
             "/start": {"handler": self.start_command, "help": "Avvia il bot e mostra le info utente"},
             "/registerme": {"handler": self.register_me_command, "help": "Registra utente come user sul catalog"},
             "/showme":  {"handler": self.show_me_command,  "help": "Fai vedere me sul catalog"},
+            "/mydevices":  {"handler": self.my_devices_command,  "help": "FAI VEDERE DEVICES"},
             "/assigndevice":  {"handler": self.assign_device_command,  "help": "Fammi vedere i free devices sul catalog"},
             "/deleteme" : {"handler": self.delete_me_command, "help": "Elimina utente come user sul catalog"},
             "/help":  {"handler": self.help_command,  "help": "Mostra la lista dei comandi"},
@@ -64,6 +66,10 @@ class TelegramBot:
             "cb_yes_name_fridge" : {"handler": self.cb_yes_name_fridge, "help": "Assegna frigo con soprannome"},
             "cb_no_name_fridge" : {"handler": self.cb_no_name_fridge, "help": "Assegna frigo senza soprannome"},
             "cb_ask_for_float_operation": {"handler": self.cb_ask_for_float_operation, "help": "Chiede numeri per operazione"},
+            "cb_quit_menu": {"handler": self.cb_quit_menu, "help": "Chiude un menu inline"},
+            "cb_device_menu": {"handler": self.cb_device_menu, "help": "Apre menu per device"},
+            "cb_device_info": {"handler": self.cb_device_info, "help": "Fetcha info per device"},
+            "cb_device_unassign": {"handler": self.cb_device_unassign, "help": "Scollega device"},
         }
 
         self.statuses_list = {
@@ -148,12 +154,11 @@ class TelegramBot:
         }
         req = requests.post(f"{CATALOG_BASE_URL}/users", json = payload, timeout = 5)
         if req.status_code == 201: # tutto ok, ritorna utente appena creato
-            self.bot.sendMessage(chat_id, "status code 201")
+            # self.bot.sendMessage(chat_id, "status code 201")
             return req.json()
-        elif req.status_code == 409: # utente già creato, quindi faccio get e prendo le info
-            self.bot.sendMessage(chat_id, "status code 409")
+        elif req.status_code == 409: # utente già creato, quindi faccio nuova richiesta get e passo le info
+            # self.bot.sendMessage(chat_id, "status code 409")
             g = requests.get(f"{CATALOG_BASE_URL}/users/{user_id}", json = payload, timeout = 5)
-            self.bot.sendMessage(chat_id, f"Eri già dentro il catalog con queste info:\n{from_dict_to_pretty_msg(g.json())}")
             return g.json()
         else:
             self.bot.sendMessage(chat_id, "REQUEST STATUS ALTRO")
@@ -169,6 +174,26 @@ class TelegramBot:
         else:
             self.bot.sendMessage(chat_id, f"Errore eliminazione: {req.status_code}")
             req.raise_for_status()
+
+    def is_registered_ex(self, chat_id: int) -> Tuple[bool, Optional[str]]:
+        """
+        Ritorna (exists, error).
+        - exists=True  se 200
+        - exists=False se 404
+        - error        contiene un messaggio se c'è stato un problema di rete o 5xx/altro
+        """
+        try:
+            r = requests.get(f"{CATALOG_BASE_URL}/users/{chat_id}", timeout=5)
+        except requests.RequestException as e:
+            return False, f"network_error: {e}"
+
+        if r.status_code == 200:
+            return True, None
+        if r.status_code == 404:
+            return False, None
+
+        return False, f"unexpected_status: {r.status_code}"
+
 
     # ---------------------------
 
@@ -190,54 +215,88 @@ class TelegramBot:
                         or msg.get("from", {}).get("last_name")
                         or msg.get("from", {}).get("username"),
         }
-        new_user_message = self.bot.sendMessage(chat_id, "Creating new user")
-        self.bot.sendChatAction(chat_id, action = "typing")
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
         user_json = self.create_user(chat_id, user_info_dict["userName"])
         printa_cose(user_json)
-        self.bot.editMessageText((chat_id, new_user_message["message_id"]), text = f"{user_json.get('message')}")
+        if user_json.get('message') == None: # Vuol dire che il request è 409
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"Eri già dentro il catalog con queste info:\n{from_dict_to_pretty_msg(user_json)}")
+        else: # vuol dire nuovo user => invia messaggio di risposta alla richiesta
+           self.bot.editMessageText((chat_id, checking_message["message_id"]), f"{user_json.get('message')}")
 
     def delete_me_command(self,chat_id, msg, *args):
-        _content_type, _chat_type, chat_id = telepot.glance(msg)
-        user_info_dict = {
-            "userID" : chat_id,
-            "userName": msg.get("from", {}).get("first_name")
-                        or msg.get("from", {}).get("last_name")
-                        or msg.get("from", {}).get("username"),
-        }
-        new_user_message = self.bot.sendMessage(chat_id, "Deleting user...")
-        self.delete_user(chat_id)
-        self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Deleted!")
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
+        # CONTROLLO SE ESISTE CON HELPER
+        exists, err = self.is_registered_ex(chat_id)
+
+        if err: # Errore: avvisa l’utente
+            self.bot.editMessageText((chat_id, checking_message['message_id']), "Sorry, there was an error checking your registration. Please try again.")
+            return
+
+        if not exists: # Non è registrato
+            self.bot.editMessageText((chat_id, checking_message['message_id']), "You are already not registered!")
+            return
+
+        # Esiste: procedi con la cancellazione
+        new_user_message = self.bot.editMessageText((chat_id, checking_message['message_id']), "Deleting user...")
+        try:
+            delete_response_json = self.delete_user(chat_id)
+        except Exception as e:
+            self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Delete failed. Please try again later.")
+            return
+
+        unassigned = delete_response_json.get("unassigned_devices", [])
+        if not unassigned:
+            self.bot.editMessageText((chat_id, new_user_message["message_id"]), "Deleted!\nYou had no devices to unassign.")
+        else:
+            devices_str = "\n".join(map(str, unassigned))
+            self.bot.editMessageText((chat_id, new_user_message["message_id"]), f"Deleted!\nThe devices that now are available are:\n{devices_str}")
 
     def show_me_command(self, chat_id, msg, *args):
-        _content_type, _chat_type, chat_id = telepot.glance(msg)
-        self.bot.sendChatAction(chat_id, action = "typing")
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
         req = requests.get(f"{CATALOG_BASE_URL}/users/{chat_id}", timeout = 5)
-        self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
+        # self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
         if req.status_code == 200: # tutto ok
-            self.bot.sendMessage(chat_id, f"You are:\n{from_dict_to_pretty_msg(req.json())}")
+            # formatto per il messaggio
+            data = req.json()
+            devices = data['devicesList']
+            devices_str = "Nessuno" if not devices else devices
+            string_toret = (
+                f"UserID: {data['userID']}\n"
+                f"Username: {data['userName']}\n"
+                f"Devices assigned: {devices_str}\n"
+                f"Registration date: {data['registration_time']}"
+            )
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"These are your informations:\n{string_toret}")
+
         elif req.status_code == 404: # manca user
-            self.bot.sendMessage(chat_id, f"You are not registered yet!\nUse /registerme to register to the catalog.")
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"You are not registered yet!\nUse /registerme to register to the catalog.")
         else:
-            self.bot.sendMessage(chat_id, f"{req.status_code}")
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"{req.status_code}")
 
     def assign_device_command(self, chat_id, msg, *args):
         _content_type, _chat_type, chat_id = telepot.glance(msg)
-        self.bot.sendChatAction(chat_id, action = "typing")
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
+        
+
         # AGGIUNGERE CONTROLLO (SOLO CHI è USER PUO' ASSEGNNARSI DEI DEVICE LIBERI)
         usersList = requests.get(f"{CATALOG_BASE_URL}/users", timeout = 5)
-        print(usersList.json())
-        # if any(user["userID"] == chat_id for user in usersList):
+
+        if not any(user["userID"] == str(chat_id) for user in usersList.json()):
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"You are not registered yet!\nUse /registerme to register to the catalog.")
+            return
+        
         req = requests.get(f"{CATALOG_BASE_URL}/devices/unassigned", timeout = 5) # returns a list
-        self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
+        # self.bot.sendMessage(chat_id, f"STATUS CODE: {req.status_code}")
         list_of_devices = req.json()
-        if len(req.json()) != 0:
+        if len(req.json()) != 0: # Se c'è almeno un device libero
             buttons = [
-                [InlineKeyboardButton(text = f"{device['deviceID']}", callback_data = f'cb_ask_for_name {device["deviceID"]}')] for device in list_of_devices
+                [InlineKeyboardButton(text = f"{device['deviceID']}", callback_data = f'cb_ask_for_name {device["deviceID"]}') for device in list_of_devices],
+                [InlineKeyboardButton(text = "Quit menu", callback_data = 'cb_quit_menu')]
                 ]
             keyboard = InlineKeyboardMarkup(inline_keyboard = buttons)
-            menu_devices = self.bot.sendMessage(chat_id, "Questa è la lista di device senza utenti.\nA quale device sei interessato?", reply_markup=keyboard)
+            menu_devices = self.bot.editMessageText((chat_id, checking_message['message_id']), "Questa è la lista di device senza utenti.\nA quale device sei interessato?", reply_markup=keyboard)
         else:
-            self.bot.sendMessage(chat_id, text = "Sorry, all devices are assigned.")
+            self.bot.editMessageText((chat_id, checking_message['message_id']), text = "Sorry, all devices are assigned.")
 
     def help_command(self, chat_id, msg, *args):
         lines = [f"{cmd} — {meta['help']}" for cmd, meta in self.commands.items() if cmd.startswith("/")]
@@ -245,7 +304,6 @@ class TelegramBot:
         if state_entry:
             lines.append(f"\nStato attuale: `{state_entry['state']}`")
         self.bot.sendMessage(chat_id, "Comandi disponibili:\n" + "\n".join(lines))
-
 
     def ping_command(self, chat_id, msg, *args):
          self.bot.sendMessage(chat_id, "pong")
@@ -302,6 +360,27 @@ class TelegramBot:
         self.bot.sendMessage(chat_id, f"Procedura '{state_name}' annullata.")
         print(f"SCHIACCIATO CANCEL, LISTA USER_STATUSES:\n{json.dumps(self.user_statuses)}")
 
+    def my_devices_command(self, chat_id, msg, *args):
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
+        # CONTROLLO SE ESISTE CON HELPER
+        exists, err = self.is_registered_ex(chat_id)
+        if err: # Errore: avvisa l’utente
+            self.bot.editMessageText((chat_id, checking_message['message_id']), "Sorry, there was an error. Please try again.")
+            return
+        if not exists: # Non è registrato
+            self.bot.editMessageText((chat_id, checking_message['message_id']), "You are not registered!")
+            return
+        
+        #se esiste:
+        device_list = requests.get(f"{CATALOG_BASE_URL}/users/{chat_id}/devices").json()
+        if device_list != []:
+            buttons = [[InlineKeyboardButton(text=device['user_device_name'], callback_data=f"cb_device_menu {device['deviceID']}")] for device in device_list]
+            buttons.append([InlineKeyboardButton(text="Quit menu", callback_data='cb_quit_menu')])
+            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"Here's the device list:", reply_markup = keyboard)
+        else:
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"You have no devices!\nUse /assigndevice to assign an unassigned device.")
+
 
     # --- HANDLER CALLBACK ---
     # NEI CB INIZIALIZZO LO STATO SE NECESSARIO
@@ -323,7 +402,6 @@ class TelegramBot:
             return
         
         device_id = " ".join(map(str, args))
-        printa_cose(device_id)
 
         keyboard = InlineKeyboardMarkup(inline_keyboard =[
             [InlineKeyboardButton(text='Yes', callback_data = f'cb_yes_name_fridge {device_id}'),
@@ -333,7 +411,6 @@ class TelegramBot:
 
     def cb_yes_name_fridge(self, query_id, chat_id, msg_query, *args):
         device_id = " ".join(map(str, args))
-        self.bot.answerCallbackQuery(query_id)
 
         # imposta lo stato con i dati necessari
         self.set_status(chat_id, "status_waiting_for_fridge_name", deviceID=device_id)
@@ -344,6 +421,7 @@ class TelegramBot:
                                  parse_mode="Markdown")
 
     def cb_no_name_fridge(self, query_id, chat_id, msg_query, *args):
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]),"Assigning device...")
         device_id = " ".join(map(str, args))
         payload_for_req = {
             "device_id" : device_id,
@@ -351,7 +429,12 @@ class TelegramBot:
         
         req = requests.post(f"{CATALOG_BASE_URL}/users/{chat_id}/assign-device", json = payload_for_req, timeout = 5)
         if req.status_code == 200: # everything ok
-            string_toret = from_dict_to_pretty_msg(req.json()['device'])
+            data = req.json()
+            # print(json.dumps(data, indent=2))
+            string_toret = (
+                f"DeviceID: {device_id}\n"
+                f"Device name: {data['device']['user_device_name']}"
+            )
             self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), f"Done!\n\n{string_toret}")
         if req.status_code == 404: # device not found
             print("ERRORE 404")
@@ -373,6 +456,46 @@ class TelegramBot:
         self.set_status(chat_id, "status_waiting_for_float", operation = operation_str)
         
         self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), f"Insert the numbers. (/cancel to cancel)")
+
+    def cb_quit_menu(self, query_id, chat_id, msg_query, *args):
+        """Closes a menu inline"""
+        status_entry = self.get_status(chat_id)
+        if status_entry:
+            self.clear_status(chat_id)
+            self.bot.editMessageText((chat_id, msg_query['message']['message_id']), "Menu chiuso, operazione annullata.")
+
+        else:
+            self.bot.editMessageText((chat_id, msg_query['message']['message_id']), "Menu chiuso.")
+
+    def cb_device_menu(self, query_id, chat_id, msg_query, *args):
+        device_id = " ".join(map(str, args))
+        buttons = [
+            [InlineKeyboardButton(text="Info", callback_data=f"cb_device_info {device_id}")],
+            [InlineKeyboardButton(text="Unassign", callback_data=f"cb_device_unassign {device_id}")],
+            [InlineKeyboardButton(text="Quit menu", callback_data='cb_quit_menu')]
+                   ]
+        keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = "What do you want to do?", reply_markup = keyboard)
+
+    def cb_device_info(self, query_id, chat_id, msg_query, *args):
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"Fetching info...")
+        device_id = " ".join(map(str, args))
+        # chiedo info
+        device_info_json = requests.get(f"{CATALOG_BASE_URL}/devices/{device_id}").json()
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"HERE INFO\n{from_dict_to_pretty_msg(device_info_json)}")
+
+    def cb_device_unassign(self, query_id, chat_id, msg_query, *args):
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"Unassigning device...")
+        device_id = " ".join(map(str, args))
+        unassign_info_json = requests.post(f"{CATALOG_BASE_URL}/devices/{device_id}/unassign").json()
+        # Formatto
+        data = unassign_info_json
+        string_toret = (
+                f"{data['message']}\n"
+                f"Device name: {data['previous_assignment_info']['user_device_name']}\n"
+                f"Unassigned from user: {data['previous_assignment_info']['assigned_user']}\n"
+            )
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"HERE INFO UNASSIGN\n{string_toret}")
 
 
     # UTILITY STATUSES
@@ -401,24 +524,27 @@ class TelegramBot:
             self.bot.sendMessage(chat_id, "Se vuoi annullare la procedura, usa /cancel. Altrimenti invia il nome del dispositivo.")
             return
 
-        # Nome inserito
         fridge_name = text.strip()
-        if not fridge_name:
-            self.bot.sendMessage(chat_id, "Il nome non può essere vuoto. Riprova oppure /cancel per annullare.")
-            return
-
+        assigning_message = self.bot.sendMessage(chat_id, f"Assigning {fridge_name}...")
         device_id = data.get("deviceID")
         payload_for_req = {"device_id": device_id, "device_name": fridge_name}
         try:
             req = requests.post(f"{CATALOG_BASE_URL}/users/{chat_id}/assign-device", json=payload_for_req, timeout=5)
             req.raise_for_status()
         except Exception as e:
-            self.bot.sendMessage(chat_id, f"Errore durante l'assegnazione: {e}")
+            self.bot.editMessageText((chat_id, assigning_message['message_id']), f"Errore durante l'assegnazione: {e}")
             return
 
         self.clear_status(chat_id)
         string_toret = from_dict_to_pretty_msg(req.json().get('device', {}))
-        self.bot.sendMessage(chat_id, f"Fatto!\n\n{string_toret}")
+
+        # Formatto messaggio
+        data = req.json()
+        string_toret = (
+                f"DeviceID: {device_id}\n"
+                f"Device name: {fridge_name}"
+            )
+        self.bot.editMessageText((chat_id, assigning_message['message_id']), f"Done!\n\n{string_toret}")
 
     def status_waiting_for_float(self, chat_id: int, msg: dict, data: dict, text: str):
         """Gestisce input numerico per SOMMA o MASSIMO"""
