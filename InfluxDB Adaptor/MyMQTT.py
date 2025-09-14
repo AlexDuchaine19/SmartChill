@@ -16,7 +16,7 @@ class MyMQTT:
         # register the callback
         self._paho_mqtt.on_connect = self.myOnConnect
         self._paho_mqtt.on_message = self.myOnMessageReceived
-    
+ 
  
     def myOnConnect (self, paho_mqtt, userdata, flags, rc):
         if rc == 0:
@@ -30,19 +30,10 @@ class MyMQTT:
         # ok i need to go to on.message = myOnMessageReceived, and say ok I need to take my notifier object and its notify method
         # it will go to self.notifier = notifier and look if it has a notify method
         # Metodo di notifica quando riceviamo un messaggio
-        print(f"DEBUG [MyMQTT]: myOnMessageReceived CALLED for topic {msg.topic}", flush=True)
         if self.notifier:
-            try:
-                #print(f"DEBUG [MyMQTT]: Attempting to call notifier.notify for topic {msg.topic}", flush=True) # <-- NUOVO DEBUG
-                self.notifier.notify(msg.topic, msg.payload)
-                #print(f"DEBUG [MyMQTT]: notifier.notify call completed for topic {msg.topic}", flush=True) # <-- NUOVO DEBUG
-            except Exception as e:
-                # Stampa qualsiasi errore si verifichi durante la chiamata a notify
-                print(f"ERROR [MyMQTT]: Exception occurred while calling notifier.notify: {e}", flush=True)
-                import traceback
-                print(traceback.format_exc(), flush=True) # Stampa lo stack trace completo
+            self.notifier.notify(msg.topic, msg.payload)
         else:
-            print(f"WARN [MyMQTT]: No notifier configured for message on topic {msg.topic}", flush=True)
+            print(f"Received message on {msg.topic}: {msg.payload}", flush=True)
         
 
     def myPublish (self, topic, msg):
@@ -56,14 +47,14 @@ class MyMQTT:
         # just to remember that it works also as a subscriber
         self._isSubscriber = True
         self._topic = topic
-        print(f"Subscribed to {topic}", flush=True)
+        #print(f"Subscribed to {topic}", flush=True)
  
     def start(self):
         #manage connection to broker
         try:
             self._paho_mqtt.connect(self.broker, self.port)
             self._paho_mqtt.loop_start()
-            print(f"Starting MQTT client with broker {self.broker} on port {self.port}", flush=True)
+            #print(f"Starting MQTT client with broker {self.broker} on port {self.port}", flush=True)
         except Exception as e:
             print(f"Failed to connect to MQTT broker: {e}", flush=True)
     

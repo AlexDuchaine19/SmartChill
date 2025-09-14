@@ -47,14 +47,14 @@ class MyMQTT:
         # just to remember that it works also as a subscriber
         self._isSubscriber = True
         self._topic = topic
-        print(f"Subscribed to {topic}", flush=True)
+        #print(f"Subscribed to {topic}", flush=True)
  
     def start(self):
         #manage connection to broker
         try:
             self._paho_mqtt.connect(self.broker, self.port)
             self._paho_mqtt.loop_start()
-            print(f"Starting MQTT client with broker {self.broker} on port {self.port}", flush=True)
+            #print(f"Starting MQTT client with broker {self.broker} on port {self.port}", flush=True)
         except Exception as e:
             print(f"Failed to connect to MQTT broker: {e}", flush=True)
     
