@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "17-09-2025 11:00",
+    "lastUpdate": "17-09-2025 15:49",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -54,7 +54,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "17-09-2025 10:58"
+            "lastUpdate": "17-09-2025 15:49"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -81,7 +81,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "17-09-2025 10:58"
+            "lastUpdate": "17-09-2025 15:49"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -95,7 +95,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "17-09-2025 10:58"
+            "lastUpdate": "17-09-2025 15:49"
         }
     ],
     "devicesList": [
@@ -154,12 +154,12 @@
                 ]
             },
             "status": "registered",
-            "user_assigned": false,
+            "user_assigned": true,
             "registration_time": "01-09-2025 18:05",
             "last_sync": "02-09-2025 18:17",
-            "assigned_user": null,
-            "user_device_name": null,
-            "assignment_time": null
+            "assigned_user": "6973198558",
+            "user_device_name": "My Fridge",
+            "assignment_time": "17-09-2025 15:41"
         }
     ],
     "usersList": [
@@ -167,6 +167,17 @@
             "userID": "admin",
             "userName": "Administrator",
             "devicesList": []
+        },
+        {
+            "userID": "6973198558",
+            "userName": "Luca",
+            "devicesList": [
+                {
+                    "deviceID": "SmartChill_GGHHII",
+                    "deviceName": "My Fridge"
+                }
+            ],
+            "registration_time": "17-09-2025 15:36"
         }
     ]
 }

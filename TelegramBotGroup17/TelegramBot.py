@@ -53,6 +53,7 @@ class TelegramBot:
             "/showme":  {"handler": self.show_me_command,  "help": "Fai vedere me sul catalog"},
             "/mydevices":  {"handler": self.my_devices_command,  "help": "FAI VEDERE DEVICES"},
             "/assigndevice":  {"handler": self.assign_device_command,  "help": "Fammi vedere i free devices sul catalog"},
+            "/alltopics":  {"handler": self.all_topics_command,  "help": "Fammi vedere tutti i topics che catalog gestisce"},
             "/deleteme" : {"handler": self.delete_me_command, "help": "Elimina utente come user sul catalog"},
             "/help":  {"handler": self.help_command,  "help": "Mostra la lista dei comandi"},
             "/cancel" : {"handler": self.cancel_command, "help": "Cancel current status"},
@@ -204,7 +205,7 @@ class TelegramBot:
         # Send greetings in chat
         greetings = "Hi! This bot is an interface for the project 'Smart Chill' of Group 17."
         self.bot.sendMessage(chat_id, greetings)
-        
+        time.sleep(1)
         # mostra help alla fine
         self.help_command(chat_id, msg)
 
@@ -220,9 +221,19 @@ class TelegramBot:
         user_json = self.create_user(chat_id, user_info_dict["userName"])
         printa_cose(user_json)
         if user_json.get('message') == None: # Vuol dire che il request è 409
-            self.bot.editMessageText((chat_id, checking_message['message_id']), f"Eri già dentro il catalog con queste info:\n{from_dict_to_pretty_msg(user_json)}")
+            if user_json.get('devicesList') == []:
+                devices_string_toret = "None"
+            else:
+                devices_string_toret = user_json.get('devicesList')
+            already_registered_message = (
+                f"Username: {user_json.get('userName')}\n"
+                f"ID: {user_json.get('userID')}\n"
+                f"Devices assigned: {devices_string_toret}\n"
+                f"Registration time: {user_json.get('registration_time')}"
+            )
+            self.bot.editMessageText((chat_id, checking_message['message_id']), f"You were already registered with these info:\n{already_registered_message}")
         else: # vuol dire nuovo user => invia messaggio di risposta alla richiesta
-           self.bot.editMessageText((chat_id, checking_message["message_id"]), f"{user_json.get('message')}")
+           self.bot.editMessageText((chat_id, checking_message["message_id"]), f"Ok {user_json.get('user').get('userName')}, a new user has been created!\nYour ID is: {user_json.get('user').get('userID')}")
 
     def delete_me_command(self,chat_id, msg, *args):
         checking_message = self.bot.sendMessage(chat_id, f"Checking...")
@@ -382,6 +393,13 @@ class TelegramBot:
         else:
             self.bot.editMessageText((chat_id, checking_message['message_id']), f"You have no devices!\nUse /assigndevice to assign an unassigned device.")
 
+    def all_topics_command(self, chat_id, msg, *args):
+        _content_type, _chat_type, chat_id = telepot.glance(msg)
+        checking_message = self.bot.sendMessage(chat_id, f"Checking...")
+        all_topics = requests.get(f"{CATALOG_BASE_URL}/mqtt/topics").json()
+        # print(f"-----\nALL TOPICS SCHIACCIATO\n{from_dict_to_pretty_msg(all_topics)}\n-----\n")
+        self.bot.editMessageText((chat_id, checking_message['message_id']), f"{from_dict_to_pretty_msg(all_topics)}")
+
 
     # --- HANDLER CALLBACK ---
     # NEI CB INIZIALIZZO LO STATO SE NECESSARIO
@@ -496,7 +514,7 @@ class TelegramBot:
                 f"Device name: {data['previous_assignment_info']['user_device_name']}\n"
                 f"Unassigned from user: {data['previous_assignment_info']['assigned_user']}\n"
             )
-        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"HERE INFO UNASSIGN\n{string_toret}")
+        self.bot.editMessageText((chat_id, msg_query["message"]["message_id"]), text = f"{string_toret}")
 
 
     # UTILITY STATUSES
