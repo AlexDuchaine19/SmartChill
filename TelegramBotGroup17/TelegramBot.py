@@ -2,12 +2,13 @@ import json
 import time
 import requests
 import telepot
+import os
 from typing import Tuple, Optional
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 from MyMQTT import *
 
-CATALOG_BASE_URL = "http://localhost:8001"
+CATALOG_BASE_URL = os.getenv("CATALOG_BASE_URL", "http://catalog:8001")
 
 # funzioni che mi aiutano
 def printa_cose(incognita):

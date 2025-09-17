@@ -32,8 +32,18 @@
             "gas_threshold_ppm": 300,
             "enable_continuous_alerts": false,
             "alert_cooldown_minutes": 15
+        },
+        "SmartChill_DDEEFF": {
+            "gas_threshold_ppm": 300,
+            "enable_continuous_alerts": false,
+            "alert_cooldown_minutes": 15
+        },
+        "SmartChill_GGHHII": {
+            "gas_threshold_ppm": 300,
+            "enable_continuous_alerts": false,
+            "alert_cooldown_minutes": 15
         }
     },
-    "lastUpdate": "2025-09-04T18:58:24.530312+00:00",
-    "configVersion": 4
+    "lastUpdate": "2025-09-14T16:01:39.924602+00:00",
+    "configVersion": 6
 }

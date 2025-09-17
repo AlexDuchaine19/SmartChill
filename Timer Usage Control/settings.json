@@ -33,8 +33,18 @@
             "max_door_open_seconds": 60,
             "check_interval": 5,
             "enable_door_closed_alerts": true
+        },
+        "SmartChill_DDEEFF": {
+            "max_door_open_seconds": 60,
+            "check_interval": 5,
+            "enable_door_closed_alerts": true
+        },
+        "SmartChill_GGHHII": {
+            "max_door_open_seconds": 60,
+            "check_interval": 5,
+            "enable_door_closed_alerts": true
         }
     },
-    "lastUpdate": "2025-09-04T21:29:50.492507+00:00",
-    "configVersion": 3
+    "lastUpdate": "2025-09-17T10:12:48.511842+00:00",
+    "configVersion": 5
 }

@@ -9,7 +9,7 @@ from queue import Queue
 from MyMQTT import MyMQTT
 import os
 
-SETTINGS_FILE = r"D:\PoliTo\Programming for Iot\SmartChill - Project\SmartChill v3\Device Connector\settings.json"
+SETTINGS_FILE = r"C:\Users\Luca\Desktop\Programmi\SmartChill2\Device Connector\settings.json"
 
 class FridgeSimulator:
     def __init__(self):

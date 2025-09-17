@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "14-09-2025 12:26",
+    "lastUpdate": "17-09-2025 11:00",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -54,7 +54,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:42"
+            "lastUpdate": "17-09-2025 10:58"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -74,18 +74,14 @@
                 "REST: GET /config (Port: 8002)",
                 "REST: PUT /config (Port: 8002)",
                 "REST: POST /write_test (Port: 8002)",
-                "REST: GET /health (Port: 8002)",
-                "REST: GET /status (Port: 8002)",
-                "REST: GET /sensors/{sensor_type}?device=ID&last=24h (Port: 8002)",
-                "REST: GET /door_events?device=ID&last=24h (Port: 8002)",
-                "REST: GET /config (Port: 8002)",
-                "REST: PUT /config (Port: 8002)",
-                "REST: POST /write_test (Port: 8002)"
+                "REST: GET /sensors/{sensor_type}?last={duration}&device={device_id}",
+                "REST: GET /health",
+                "REST: GET /status"
             ],
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:43"
+            "lastUpdate": "17-09-2025 10:58"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -99,7 +95,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "03-09-2025 17:41"
+            "lastUpdate": "17-09-2025 10:58"
         }
     ],
     "devicesList": [
@@ -171,12 +167,6 @@
             "userID": "admin",
             "userName": "Administrator",
             "devicesList": []
-        },
-        {
-            "userID": "6973198558",
-            "userName": "Luca",
-            "devicesList": [],
-            "registration_time": "14-09-2025 12:17"
         }
     ]
 }
