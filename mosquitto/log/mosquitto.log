@@ -1146,3 +1146,8 @@
 1758122361: New connection from 172.20.0.8:45177 on port 1883.
 1758122361: New client connected from 172.20.0.8:45177 as InfluxDBAdaptor_1758122361 (p2, c1, k60).
 1758124158: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758124313: Client TimerUsageControl_1758122359 closed its connection.
+1758124313: Client FoodSpoilageControl_1758122359 closed its connection.
+1758124313: Client InfluxDBAdaptor_1758122361 closed its connection.
+1758124313: mosquitto version 2.0.22 terminating
+1758124313: Saving in-memory database to /mosquitto/data//mosquitto.db.
