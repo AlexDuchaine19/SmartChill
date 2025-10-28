@@ -272,7 +272,7 @@ services:
     ports:
       - "1880:1880"
     volumes:
-      - nodered_data:/data # Use named volume for Node-RED data
+      - ./nodered_data:/data
     environment:
       - TZ=Europe/Rome
       - NODE_RED_ENABLE_PROJECTS=true
