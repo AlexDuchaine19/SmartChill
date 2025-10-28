@@ -213,7 +213,6 @@ class CatalogAPI:
             "message": "Device registered successfully"
         }
 
-
     # ============= SERVICE REGISTRATION =============
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
@@ -292,6 +291,55 @@ class CatalogAPI:
         """GET /devices"""
         catalog = load_catalog()
         return catalog['devicesList']
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def rename_device(self, device_id):
+        """POST /devices/{device_id}/rename"""
+        data = cherrypy.request.json or {}
+        new_name = data.get("user_device_name", "").strip()
+        
+        if not new_name:
+            return http_error(400, {"error": "user_device_name is required"})
+        
+        if len(new_name) > 50:
+            return http_error(400, {"error": "Device name too long (max 50 characters)"})
+        
+        catalog = load_catalog()
+        
+        # 1. Find and update device in devicesList
+        device_found = False
+        device_data = None
+        for device in catalog['devicesList']:
+            if device['deviceID'] == device_id:
+                device['user_device_name'] = new_name
+                device_data = device
+                device_found = True
+                break
+        
+        if not device_found:
+            return http_error(404, {"error": "Device not found"})
+        
+        # 2. Update device name in user's devicesList (if assigned)
+        if device_data.get('user_assigned') and device_data.get('assigned_user'):
+            assigned_user_id = device_data['assigned_user']
+            
+            for user in catalog['usersList']:
+                if user['userID'] == assigned_user_id:
+                    # Find and update the device in user's devicesList
+                    for user_device in user.get('devicesList', []):
+                        if user_device['deviceID'] == device_id:
+                            user_device['deviceName'] = new_name
+                            break
+                    break
+        
+        save_catalog(catalog)
+        
+        return {
+            "message": f"Device {device_id} renamed to '{new_name}'",
+            "device": device_data
+        }
 
     @cherrypy.tools.json_out()
     def get_device(self, device_id):
@@ -326,6 +374,66 @@ class CatalogAPI:
         catalog = load_catalog()
         model_devices = [d for d in catalog['devicesList'] if d.get('model') == model]
         return model_devices
+
+    @cherrypy.tools.json_out()
+    def unassign_device(self, device_id: str):
+        """POST /devices/{device_id}/unassign"""
+        catalog = load_catalog()
+
+        # trovo device in catalog
+        device_to_unassign = next(
+            (d for d in catalog.get('devicesList', []) if d.get('deviceID') == device_id),
+            None
+        )
+        if not device_to_unassign:
+            return http_error(404, {"error": "Device not found"})
+
+        # if already assigned => response 200
+        if not device_to_unassign.get('user_assigned') and device_to_unassign.get('assigned_user') in (None, "", False):
+            return {
+                "message": f"Device {device_id} already unassigned",
+                "device_id": device_id,
+                "already_unassigned": True
+            }
+
+        # save previous info
+        previous_assignment_info = {
+            "assigned_user": device_to_unassign.get('assigned_user'),
+            "user_device_name": device_to_unassign.get('user_device_name'),
+            "assignment_time": device_to_unassign.get('assignment_time')
+        }
+        assigned_user_id = device_to_unassign.get('assigned_user')
+
+        # find user assigned and remove device from its list
+        user_to_update = next(
+            (u for u in catalog.get('usersList', []) if u.get('userID') == assigned_user_id),
+            None
+        )
+        if not user_to_update:
+            user_removed = False
+        else:
+            devices_list = user_to_update.get('devicesList', [])
+            for i, dev in enumerate(devices_list):
+                if dev.get('deviceID') == device_id:
+                    devices_list.pop(i)
+                    break
+            user_removed = True
+
+        # unassign device
+        device_to_unassign['user_assigned'] = False
+        device_to_unassign['assigned_user'] = None
+        device_to_unassign['user_device_name'] = None
+        device_to_unassign['assignment_time'] = None
+
+        save_catalog(catalog)
+
+        return {
+            "message": f"Device {device_id} unassigned successfully",
+            "device_id": device_id,
+            "previous_assignment_info": previous_assignment_info,
+            "user_devices_list_updated": user_removed,
+            "already_unassigned": False
+        }
 
     # ============= SERVICE DISCOVERY =============
     @cherrypy.tools.json_out()
@@ -369,17 +477,19 @@ class CatalogAPI:
                 return http_error(400, {"error": f"Missing required field: {field}"})
 
         catalog = load_catalog()
+        # controllo duplicato (case-insensitive)
         for user in catalog['usersList']:
-            if user['userID'] == data['userID']:
+            if user['userID'].lower() == data['userID'].lower():
                 return http_error(409, {"error": "User already exists"})
 
         new_user = {
-            "userID": data['userID'],
+            "userID": data['userID'].lower(),  # normalizzi in minuscolo
             "userName": data['userName'],
-            "chatID": data.get('chatID', None),
+            "telegram_chat_id": data.get("telegram_chat_id", None),
             "devicesList": [],
             "registration_time": datetime.now().strftime("%d-%m-%Y %H:%M")
         }
+
         catalog['usersList'].append(new_user)
         save_catalog(catalog)
 
@@ -388,6 +498,55 @@ class CatalogAPI:
             "message": f"User {data['userID']} created successfully",
             "user": new_user
         }
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def delete_user(self, user_id):
+        """DELETE /users/{user_id} - Delete user and unassign devices (by userID)"""
+        try:
+            catalog = load_catalog()
+
+            # Normalizza a stringa (Telegram chat_id numerico passato nel path)
+            user_id_str = str(user_id)
+
+            # Trova utente per userID (non userName!)
+            user_found = False
+            user_to_delete = None
+            for i, user in enumerate(catalog.get('usersList', [])):
+                if str(user.get('userID')) == user_id_str:
+                    user_to_delete = catalog['usersList'].pop(i)
+                    user_found = True
+                    break
+
+            if not user_found:
+                cherrypy.response.status = 404
+                return {"error": f"User '{user_id_str}' not found"}
+
+            # Disassegna i device assegnati a quell'userID
+            unassigned_devices = []
+            for device in catalog.get('devicesList', []):
+                if str(device.get('assigned_user')) == user_id_str:
+                    device['user_assigned'] = False
+                    device['assigned_user'] = None
+                    device['user_device_name'] = None
+                    device['assignment_time'] = None
+                    unassigned_devices.append(device['deviceID'])
+
+            save_catalog(catalog)
+
+            return {
+                "message": f"User '{user_id_str}' deleted successfully",
+                "user": user_to_delete,
+                "unassigned_devices": unassigned_devices,
+                "unassigned_count": len(unassigned_devices)
+            }
+
+        except Exception as e:
+            print(f"[ERROR] delete_user exception: {e}")
+            import traceback; traceback.print_exc()
+            cherrypy.response.status = 500
+            return {"error": "Internal server error", "details": str(e)}
+
 
     @cherrypy.tools.json_out()
     def get_user_devices(self, user_id):
@@ -455,6 +614,31 @@ class CatalogAPI:
 
         save_catalog(catalog)
         return {"message": f"Device {device_id} assigned to user {user_id}", "device": device}
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def link_telegram(self, user_id):
+        """POST /users/{user_id}/link_telegram"""
+        data = cherrypy.request.json or {}
+        chat_id = str(data.get("chat_id", "")).strip()
+        if not chat_id:
+            return http_error(400, {"error": "Missing chat_id"})
+
+        catalog = load_catalog()
+
+        for user in catalog['usersList']:
+            if user['userID'].lower() == user_id.lower():
+                # OPZIONALE: Verifica se già linkato
+                if user.get('telegram_chat_id') == chat_id:
+                    return {"message": f"Chat {chat_id} already linked to user {user_id}"}
+                
+                user['telegram_chat_id'] = chat_id
+                save_catalog(catalog)
+                return {"message": f"Linked Telegram chat {chat_id} to user {user_id}"}
+
+        return http_error(404, {"error": "User not found"})
+
 
     # ============= DEVICE MODELS =============
     @cherrypy.tools.json_out()
@@ -530,13 +714,18 @@ def get_dispatcher():
     d.connect('device_exists', '/devices/:device_id/exists', controller=api, action='device_exists', conditions={'method': ['GET']})
     d.connect('unassigned', '/devices/unassigned', controller=api, action='get_unassigned_devices', conditions={'method': ['GET']})
     d.connect('devices_by_model', '/devices/by-model/:model', controller=api, action='get_devices_by_model', conditions={'method': ['GET']})
-
+    d.connect('unassign_device', '/devices/:device_id/unassign', controller=api, action='unassign_device', conditions={'method': ['POST']})
+    d.connect('rename_device', '/devices/:device_id/rename', controller=api, action='rename_device', conditions={'method': ['POST']})
+    
     # Users
     d.connect('users', '/users', controller=api, action='get_users', conditions={'method': ['GET']})
     d.connect('create_user', '/users', controller=api, action='create_user', conditions={'method': ['POST']})
     d.connect('user', '/users/:user_id', controller=api, action='get_user', conditions={'method': ['GET']})
     d.connect('user_devices', '/users/:user_id/devices', controller=api, action='get_user_devices', conditions={'method': ['GET']})
     d.connect('assign_device', '/users/:user_id/assign-device', controller=api, action='assign_device_to_user', conditions={'method': ['POST']})
+    d.connect('delete_user', '/users/:user_id', controller=api, action='delete_user', conditions={'method': ['DELETE']})
+
+    d.connect('link_telegram', '/users/:user_id/link_telegram', controller=api, action='link_telegram', conditions={'method': ['POST']})
 
     # Services
     d.connect('services', '/services', controller=api, action='get_services', conditions={'method': ['GET']})

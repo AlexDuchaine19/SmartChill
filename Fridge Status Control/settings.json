@@ -8,8 +8,11 @@
         "endpoints": [
             "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
             "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
-            "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/config_update",
-            "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction"
+            "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/+/config_update",
+            "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction",
+            "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_ack",
+            "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_error",
+            "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_data"
         ]
     },
     "catalog": {
@@ -31,6 +34,13 @@
     },
     "devices": {
         "SmartChill_A4B2C3D91E7F": {
+            "temp_min_celsius": 0,
+            "temp_max_celsius": 8,
+            "humidity_max_percent": 80,
+            "enable_malfunction_alerts": false,
+            "alert_cooldown_minutes": 10
+        },
+        "SmartChill_3C5AB49F2D71": {
             "temp_min_celsius": 0.0,
             "temp_max_celsius": 8.0,
             "humidity_max_percent": 85.0,
@@ -38,6 +48,6 @@
             "alert_cooldown_minutes": 30
         }
     },
-    "lastUpdate": "2025-09-08T15:15:59.008268+00:00",
-    "configVersion": 2
+    "lastUpdate": "2025-09-16T17:23:18.780816+00:00",
+    "configVersion": 7
 }

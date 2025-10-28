@@ -1038,3 +1038,1269 @@
 1757421996: Saving in-memory database to /mosquitto/data//mosquitto.db.
 1757423797: Saving in-memory database to /mosquitto/data//mosquitto.db.
 1757425598: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757427399: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757428328: Client fridge_SmartChill_A4B2C3D91E7F_1757344609 closed its connection.
+1757429200: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757431001: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757432454: mosquitto version 2.0.22 starting
+1757432454: Config loaded from /mosquitto/config/mosquitto.conf.
+1757432454: Opening ipv4 listen socket on port 1883.
+1757432454: Opening websockets listen socket on port 9001.
+1757432454: mosquitto version 2.0.22 running
+1757432456: New connection from 172.19.0.2:36839 on port 1883.
+1757432456: New client connected from 172.19.0.2:36839 as FridgeStatusControl_1757432456 (p2, c1, k60).
+1757432456: New connection from 172.19.0.11:49969 on port 1883.
+1757432456: New client connected from 172.19.0.11:49969 as FoodSpoilageControl_1757432456 (p2, c1, k60).
+1757432458: New connection from 172.19.0.8:56739 on port 1883.
+1757432458: New client connected from 172.19.0.8:56739 as TimerUsageControl_1757432458 (p2, c1, k60).
+1757432462: New connection from 172.19.0.4:38525 on port 1883.
+1757432462: New client connected from 172.19.0.4:38525 as InfluxDBAdaptor_1757432462 (p2, c1, k60).
+1757437474: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757439275: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757441076: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757442877: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757444678: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757446479: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757448280: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757450081: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757451882: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757453683: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757455484: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757457285: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757459085: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757460886: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757462687: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757464488: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757466289: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757468091: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757469891: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757471692: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757473493: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757475294: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757477095: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757478896: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757480697: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757482498: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757484299: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757486100: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757487901: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757489702: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757491504: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757493304: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757495105: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757496906: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757498707: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757500508: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757502309: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757504110: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757505911: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757507712: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757509513: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757511314: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757513115: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757514917: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757516717: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757518518: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757520319: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757522120: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757523921: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757525722: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757527523: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757529324: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757531125: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757532926: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757534727: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757536528: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757538329: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757540130: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757541931: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757543733: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757545533: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757547334: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757549135: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757550936: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757552737: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757554538: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757556339: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757558140: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757559941: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757561742: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757563543: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757565344: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757567145: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757568946: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757570748: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757572548: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757684516: mosquitto version 2.0.22 starting
+1757684516: Config loaded from /mosquitto/config/mosquitto.conf.
+1757684516: Opening ipv4 listen socket on port 1883.
+1757684516: Opening websockets listen socket on port 9001.
+1757684516: mosquitto version 2.0.22 running
+1757684516: New connection from 172.19.0.6:44351 on port 1883.
+1757684516: New client connected from 172.19.0.6:44351 as FridgeStatusControl_1757684516 (p2, c1, k60).
+1757684517: New connection from 172.19.0.3:43021 on port 1883.
+1757684517: New client connected from 172.19.0.3:43021 as FoodSpoilageControl_1757684517 (p2, c1, k60).
+1757684519: New connection from 172.19.0.9:46869 on port 1883.
+1757684519: New client connected from 172.19.0.9:46869 as TimerUsageControl_1757684519 (p2, c1, k60).
+1757684520: New connection from 172.19.0.8:46053 on port 1883.
+1757684520: New client connected from 172.19.0.8:46053 as InfluxDBAdaptor_1757684520 (p2, c1, k60).
+1757684536: Client FridgeStatusControl_1757684516 closed its connection.
+1757684536: Client FoodSpoilageControl_1757684517 closed its connection.
+1757684536: Client TimerUsageControl_1757684519 closed its connection.
+1757684569: Client InfluxDBAdaptor_1757684520 closed its connection.
+1757684569: mosquitto version 2.0.22 terminating
+1757684569: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757687551: mosquitto version 2.0.22 starting
+1757687551: Config loaded from /mosquitto/config/mosquitto.conf.
+1757687551: Opening ipv4 listen socket on port 1883.
+1757687551: Opening websockets listen socket on port 9001.
+1757687551: mosquitto version 2.0.22 running
+1757687554: New connection from 172.19.0.5:41221 on port 1883.
+1757687554: New connection from 172.19.0.6:44721 on port 1883.
+1757687554: New client connected from 172.19.0.5:41221 as FridgeStatusControl_1757687554 (p2, c1, k60).
+1757687554: New client connected from 172.19.0.6:44721 as TimerUsageControl_1757687554 (p2, c1, k60).
+1757687554: New connection from 172.19.0.7:53725 on port 1883.
+1757687554: New client connected from 172.19.0.7:53725 as FoodSpoilageControl_1757687554 (p2, c1, k60).
+1757687557: New connection from 172.19.0.8:39063 on port 1883.
+1757687557: New client connected from 172.19.0.8:39063 as InfluxDBAdaptor_1757687557 (p2, c1, k60).
+1757687623: New connection from 172.19.0.1:45830 on port 1883.
+1757687623: New client connected from 172.19.0.1:45830 as fridge_SmartChill_D91E7F_1757687623 (p2, c1, k60).
+1757687667: Client fridge_SmartChill_D91E7F_1757687623 disconnected.
+1757687674: New connection from 172.19.0.1:39450 on port 1883.
+1757687674: New client connected from 172.19.0.1:39450 as fridge_SmartChill_D91E7F_1757687674 (p2, c1, k60).
+1757687681: Client fridge_SmartChill_D91E7F_1757687674 disconnected.
+1757687767: New connection from 172.19.0.1:35598 on port 1883.
+1757687767: New client connected from 172.19.0.1:35598 as fridge_SmartChill_D91E7F_1757687767 (p2, c1, k60).
+1757687777: Client fridge_SmartChill_D91E7F_1757687767 disconnected.
+1757687881: New connection from 172.19.0.1:42964 on port 1883.
+1757687881: New client connected from 172.19.0.1:42964 as fridge_SmartChill_D91E7F_1757687881 (p2, c1, k60).
+1757687884: Client fridge_SmartChill_D91E7F_1757687881 disconnected.
+1757687927: New connection from 172.19.0.1:57808 on port 1883.
+1757687927: New client connected from 172.19.0.1:57808 as fridge_SmartChill_D91E7F_1757687927 (p2, c1, k60).
+1757687932: Client fridge_SmartChill_D91E7F_1757687927 disconnected.
+1757688097: New connection from 172.19.0.1:43760 on port 1883.
+1757688097: New client connected from 172.19.0.1:43760 as fridge_SmartChill_A4B2C3D91E7F_1757688097 (p2, c1, k60).
+1757689352: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757691153: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757691165: Client fridge_SmartChill_A4B2C3D91E7F_1757688097 disconnected.
+1757691246: New connection from 172.19.0.1:36400 on port 1883.
+1757691246: New client connected from 172.19.0.1:36400 as fridge_SmartChill_A4B2C3D91E7F_1757691246 (p2, c1, k60).
+1757692954: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757694755: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757696556: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757698356: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757699198: Client fridge_SmartChill_A4B2C3D91E7F_1757691246 disconnected.
+1757699204: New connection from 172.19.0.1:35182 on port 1883.
+1757699204: New client connected from 172.19.0.1:35182 as fridge_SmartChill_A4B2C3D91E7F_1757699204 (p2, c1, k60).
+1757699700: Client fridge_SmartChill_A4B2C3D91E7F_1757699204 disconnected.
+1757699708: New connection from 172.19.0.1:49726 on port 1883.
+1757699708: New client connected from 172.19.0.1:49726 as fridge_SmartChill_A4B2C3D91E7F_1757699708 (p2, c1, k60).
+1757700157: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757701958: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757703759: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757705560: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757705660: Client fridge_SmartChill_A4B2C3D91E7F_1757699708 closed its connection.
+1757707361: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757718921: mosquitto version 2.0.22 starting
+1757718921: Config loaded from /mosquitto/config/mosquitto.conf.
+1757718921: Opening ipv4 listen socket on port 1883.
+1757718921: Opening websockets listen socket on port 9001.
+1757718921: mosquitto version 2.0.22 running
+1757718924: New connection from 172.19.0.8:37715 on port 1883.
+1757718924: New client connected from 172.19.0.8:37715 as FridgeStatusControl_1757718924 (p2, c1, k60).
+1757718925: New connection from 172.19.0.10:36771 on port 1883.
+1757718925: New client connected from 172.19.0.10:36771 as FoodSpoilageControl_1757718925 (p2, c1, k60).
+1757718925: New connection from 172.19.0.4:49247 on port 1883.
+1757718925: New client connected from 172.19.0.4:49247 as TimerUsageControl_1757718925 (p2, c1, k60).
+1757718931: New connection from 172.19.0.9:34413 on port 1883.
+1757718931: New client connected from 172.19.0.9:34413 as InfluxDBAdaptor_1757718931 (p2, c1, k60).
+1757718945: New connection from 172.19.0.1:49010 on port 1883.
+1757718945: New client connected from 172.19.0.1:49010 as fridge_SmartChill_A4B2C3D91E7F_1757718945 (p2, c1, k60).
+1757720721: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757722522: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757724323: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757726124: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757727925: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757729726: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757731527: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757733328: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757735129: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757736929: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757738730: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757740531: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757742332: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757743664: Client fridge_SmartChill_A4B2C3D91E7F_1757718945 closed its connection.
+1757744133: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757745934: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757747735: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757749536: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757751337: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757753138: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757754939: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757756740: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757758541: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757760342: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757762143: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757763944: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757765745: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757767546: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757769347: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757771148: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757772949: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757774750: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757776551: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757778352: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757780153: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757781954: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757783755: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757785556: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757787357: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757789158: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757790959: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757792760: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757794561: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757796362: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757798163: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757799964: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757801765: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757803566: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757805236: mosquitto version 2.0.22 starting
+1757805236: Config loaded from /mosquitto/config/mosquitto.conf.
+1757805236: Opening ipv4 listen socket on port 1883.
+1757805236: Opening websockets listen socket on port 9001.
+1757805236: mosquitto version 2.0.22 running
+1757805237: New connection from 172.19.0.2:55205 on port 1883.
+1757805237: New client connected from 172.19.0.2:55205 as FoodSpoilageControl_1757805237 (p2, c1, k60).
+1757805238: New connection from 172.19.0.5:51223 on port 1883.
+1757805238: New client connected from 172.19.0.5:51223 as FridgeStatusControl_1757805238 (p2, c1, k60).
+1757805239: New connection from 172.19.0.4:51221 on port 1883.
+1757805239: New client connected from 172.19.0.4:51221 as TimerUsageControl_1757805239 (p2, c1, k60).
+1757805245: New connection from 172.19.0.3:41455 on port 1883.
+1757805245: New client connected from 172.19.0.3:41455 as InfluxDBAdaptor_1757805245 (p2, c1, k60).
+1757805258: Client TimerUsageControl_1757805239 closed its connection.
+1757805258: Client FridgeStatusControl_1757805238 closed its connection.
+1757805258: Client FoodSpoilageControl_1757805237 closed its connection.
+1757805291: Client InfluxDBAdaptor_1757805245 closed its connection.
+1757805292: mosquitto version 2.0.22 terminating
+1757805292: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757932964: mosquitto version 2.0.22 starting
+1757932964: Config loaded from /mosquitto/config/mosquitto.conf.
+1757932964: Opening ipv4 listen socket on port 1883.
+1757932964: Opening websockets listen socket on port 9001.
+1757932964: mosquitto version 2.0.22 running
+1757932966: New connection from 172.19.0.8:54651 on port 1883.
+1757932966: New client connected from 172.19.0.8:54651 as FridgeStatusControl_1757932966 (p2, c1, k60).
+1757932966: New connection from 172.19.0.7:50941 on port 1883.
+1757932966: New client connected from 172.19.0.7:50941 as FoodSpoilageControl_1757932966 (p2, c1, k60).
+1757932968: New connection from 172.19.0.5:45115 on port 1883.
+1757932968: New client connected from 172.19.0.5:45115 as TimerUsageControl_1757932968 (p2, c1, k60).
+1757932969: New connection from 172.19.0.6:59413 on port 1883.
+1757932969: New client connected from 172.19.0.6:59413 as InfluxDBAdaptor_1757932969 (p2, c1, k60).
+1757933467: New connection from 172.19.0.1:53844 on port 1883.
+1757933467: New client connected from 172.19.0.1:53844 as fridge_SmartChill_A4B2C3D91E7F_1757933467 (p2, c1, k60).
+1757934764: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757936565: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757937551: Client fridge_SmartChill_A4B2C3D91E7F_1757933467 disconnected.
+1757938205: New connection from 172.19.0.12:46643 on port 1883.
+1757938205: New client connected from 172.19.0.12:46643 as fridge_SmartChill_A4B2C3D91E7F_1757938205 (p2, c1, k60).
+1757938232: Client fridge_SmartChill_A4B2C3D91E7F_1757938205 closed its connection.
+1757938232: New connection from 172.19.0.12:53373 on port 1883.
+1757938232: New client connected from 172.19.0.12:53373 as fridge_SmartChill_A4B2C3D91E7F_1757938232 (p2, c1, k60).
+1757938366: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757940167: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757941968: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757943769: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757945570: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757947371: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757948276: New connection from 172.19.0.11:40158 on port 1883.
+1757948276: New client connected from 172.19.0.11:40158 as nodered_dashboard (p2, c1, k60).
+1757948867: Client nodered_dashboard disconnected.
+1757948867: New connection from 172.19.0.11:54272 on port 1883.
+1757948867: New client connected from 172.19.0.11:54272 as nodered_dashboard (p2, c1, k60).
+1757948900: Client nodered_dashboard disconnected.
+1757948900: New connection from 172.19.0.11:35980 on port 1883.
+1757948900: New client connected from 172.19.0.11:35980 as nodered_dashboard (p2, c1, k60).
+1757948990: Client nodered_dashboard disconnected.
+1757948990: New connection from 172.19.0.11:48562 on port 1883.
+1757948990: New client connected from 172.19.0.11:48562 as nodered_dashboard (p2, c1, k60).
+1757949024: Client nodered_dashboard disconnected.
+1757949024: New connection from 172.19.0.11:54172 on port 1883.
+1757949024: New client connected from 172.19.0.11:54172 as nodered_dashboard (p2, c1, k60).
+1757949135: Client nodered_dashboard disconnected.
+1757949135: New connection from 172.19.0.11:33538 on port 1883.
+1757949135: New client connected from 172.19.0.11:33538 as nodered_dashboard (p2, c1, k60).
+1757949172: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757949179: Client nodered_dashboard disconnected.
+1757949179: New connection from 172.19.0.11:48752 on port 1883.
+1757949179: New client connected from 172.19.0.11:48752 as nodered_dashboard (p2, c1, k60).
+1757949203: Client nodered_dashboard disconnected.
+1757949203: New connection from 172.19.0.11:45136 on port 1883.
+1757949203: New client connected from 172.19.0.11:45136 as nodered_dashboard (p2, c1, k60).
+1757949225: Client nodered_dashboard disconnected.
+1757949225: New connection from 172.19.0.11:52294 on port 1883.
+1757949225: New client connected from 172.19.0.11:52294 as nodered_dashboard (p2, c1, k60).
+1757949456: Client TimerUsageControl_1757932968 closed its connection.
+1757949482: New connection from 172.19.0.5:59107 on port 1883.
+1757949482: New client connected from 172.19.0.5:59107 as TimerUsageControl_1757949482 (p2, c1, k60).
+1757949753: Client TimerUsageControl_1757949482 closed its connection.
+1757949765: New connection from 172.19.0.5:43853 on port 1883.
+1757949765: New client connected from 172.19.0.5:43853 as TimerUsageControl_1757949765 (p2, c1, k60).
+1757949900: Client nodered_dashboard disconnected.
+1757949900: New connection from 172.19.0.11:57270 on port 1883.
+1757949900: New client connected from 172.19.0.11:57270 as nodered_dashboard (p2, c1, k60).
+1757950250: Client nodered_dashboard disconnected.
+1757950250: New connection from 172.19.0.11:48620 on port 1883.
+1757950250: New client connected from 172.19.0.11:48620 as nodered_dashboard (p2, c1, k60).
+1757950300: Client nodered_dashboard disconnected.
+1757950300: New connection from 172.19.0.11:55290 on port 1883.
+1757950300: New client connected from 172.19.0.11:55290 as nodered_dashboard (p2, c1, k60).
+1757950486: Client nodered_dashboard disconnected.
+1757950486: New connection from 172.19.0.11:48070 on port 1883.
+1757950486: New client connected from 172.19.0.11:48070 as nodered_dashboard (p2, c1, k60).
+1757950527: Client nodered_dashboard disconnected.
+1757950527: New connection from 172.19.0.11:55766 on port 1883.
+1757950527: New client connected from 172.19.0.11:55766 as nodered_dashboard (p2, c1, k60).
+1757950631: Client nodered_dashboard disconnected.
+1757950631: New connection from 172.19.0.11:59000 on port 1883.
+1757950631: New client connected from 172.19.0.11:59000 as nodered_dashboard (p2, c1, k60).
+1757950708: Client nodered_dashboard disconnected.
+1757950708: New connection from 172.19.0.11:53700 on port 1883.
+1757950708: New client connected from 172.19.0.11:53700 as nodered_dashboard (p2, c1, k60).
+1757950887: Client nodered_dashboard disconnected.
+1757950887: New connection from 172.19.0.11:58434 on port 1883.
+1757950887: New client connected from 172.19.0.11:58434 as nodered_dashboard (p2, c1, k60).
+1757950973: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757951117: Client TimerUsageControl_1757949765 closed its connection.
+1757951120: New connection from 172.19.0.5:45693 on port 1883.
+1757951120: New client connected from 172.19.0.5:45693 as TimerUsageControl_1757951120 (p2, c1, k60).
+1757951215: Client nodered_dashboard disconnected.
+1757951216: New connection from 172.19.0.11:60368 on port 1883.
+1757951216: New client connected from 172.19.0.11:60368 as nodered_dashboard (p2, c1, k60).
+1757951403: Client nodered_dashboard disconnected.
+1757951403: New connection from 172.19.0.11:52770 on port 1883.
+1757951403: New client connected from 172.19.0.11:52770 as nodered_dashboard (p2, c1, k60).
+1757951528: Client TimerUsageControl_1757951120 closed its connection.
+1757951530: New connection from 172.19.0.5:50715 on port 1883.
+1757951530: New client connected from 172.19.0.5:50715 as TimerUsageControl_1757951530 (p2, c1, k60).
+1757951600: Client nodered_dashboard disconnected.
+1757951600: New connection from 172.19.0.11:48744 on port 1883.
+1757951600: New client connected from 172.19.0.11:48744 as nodered_dashboard (p2, c1, k60).
+1757951635: Client nodered_dashboard disconnected.
+1757951635: New connection from 172.19.0.11:48058 on port 1883.
+1757951635: New client connected from 172.19.0.11:48058 as nodered_dashboard (p2, c1, k60).
+1757951692: Client nodered_dashboard disconnected.
+1757951692: New connection from 172.19.0.11:52652 on port 1883.
+1757951692: New client connected from 172.19.0.11:52652 as nodered_dashboard (p2, c1, k60).
+1757951734: Client nodered_dashboard disconnected.
+1757951734: New connection from 172.19.0.11:49520 on port 1883.
+1757951734: New client connected from 172.19.0.11:49520 as nodered_dashboard (p2, c1, k60).
+1757951948: Client nodered_dashboard disconnected.
+1757951948: New connection from 172.19.0.11:57396 on port 1883.
+1757951948: New client connected from 172.19.0.11:57396 as nodered_dashboard (p2, c1, k60).
+1757951999: Client nodered_dashboard disconnected.
+1757951999: New connection from 172.19.0.11:52128 on port 1883.
+1757951999: New client connected from 172.19.0.11:52128 as nodered_dashboard (p2, c1, k60).
+1757952049: Client nodered_dashboard disconnected.
+1757952049: New connection from 172.19.0.11:36604 on port 1883.
+1757952049: New client connected from 172.19.0.11:36604 as nodered_dashboard (p2, c1, k60).
+1757952122: Client nodered_dashboard disconnected.
+1757952122: New connection from 172.19.0.11:42076 on port 1883.
+1757952122: New client connected from 172.19.0.11:42076 as nodered_dashboard (p2, c1, k60).
+1757952145: Client nodered_dashboard disconnected.
+1757952145: New connection from 172.19.0.11:53892 on port 1883.
+1757952145: New client connected from 172.19.0.11:53892 as nodered_dashboard (p2, c1, k60).
+1757952168: Client nodered_dashboard disconnected.
+1757952168: New connection from 172.19.0.11:59852 on port 1883.
+1757952168: New client connected from 172.19.0.11:59852 as nodered_dashboard (p2, c1, k60).
+1757952173: Client nodered_dashboard disconnected.
+1757952173: New connection from 172.19.0.11:47048 on port 1883.
+1757952173: New client connected from 172.19.0.11:47048 as nodered_dashboard (p2, c1, k60).
+1757952233: Client nodered_dashboard disconnected.
+1757952233: New connection from 172.19.0.11:56040 on port 1883.
+1757952233: New client connected from 172.19.0.11:56040 as nodered_dashboard (p2, c1, k60).
+1757952372: Client nodered_dashboard disconnected.
+1757952372: New connection from 172.19.0.11:46100 on port 1883.
+1757952372: New client connected from 172.19.0.11:46100 as nodered_dashboard (p2, c1, k60).
+1757952486: Client nodered_dashboard disconnected.
+1757952486: New connection from 172.19.0.11:55444 on port 1883.
+1757952486: New client connected from 172.19.0.11:55444 as nodered_dashboard (p2, c1, k60).
+1757952774: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757952783: Client nodered_dashboard disconnected.
+1757952783: New connection from 172.19.0.11:55128 on port 1883.
+1757952783: New client connected from 172.19.0.11:55128 as nodered_dashboard (p2, c1, k60).
+1757952874: Client nodered_dashboard disconnected.
+1757952874: New connection from 172.19.0.11:54182 on port 1883.
+1757952875: New client connected from 172.19.0.11:54182 as nodered_dashboard (p2, c1, k60).
+1757952905: Client nodered_dashboard disconnected.
+1757952905: New connection from 172.19.0.11:42086 on port 1883.
+1757952905: New client connected from 172.19.0.11:42086 as nodered_dashboard (p2, c1, k60).
+1757953027: Client nodered_dashboard disconnected.
+1757953027: New connection from 172.19.0.11:45224 on port 1883.
+1757953027: New client connected from 172.19.0.11:45224 as nodered_dashboard (p2, c1, k60).
+1757953222: Client nodered_dashboard disconnected.
+1757953223: New connection from 172.19.0.11:49718 on port 1883.
+1757953223: New client connected from 172.19.0.11:49718 as nodered_dashboard (p2, c1, k60).
+1757953346: Client nodered_dashboard disconnected.
+1757953346: New connection from 172.19.0.11:41458 on port 1883.
+1757953346: New client connected from 172.19.0.11:41458 as nodered_dashboard (p2, c1, k60).
+1757953427: Client nodered_dashboard disconnected.
+1757953427: New connection from 172.19.0.11:48444 on port 1883.
+1757953427: New client connected from 172.19.0.11:48444 as nodered_dashboard (p2, c1, k60).
+1757953667: Client nodered_dashboard disconnected.
+1757953667: New connection from 172.19.0.11:33304 on port 1883.
+1757953667: New client connected from 172.19.0.11:33304 as nodered_dashboard (p2, c1, k60).
+1757953907: Client nodered_dashboard disconnected.
+1757953907: New connection from 172.19.0.11:46222 on port 1883.
+1757953907: New client connected from 172.19.0.11:46222 as nodered_dashboard (p2, c1, k60).
+1757954015: Client nodered_dashboard disconnected.
+1757954015: New connection from 172.19.0.11:53868 on port 1883.
+1757954015: New client connected from 172.19.0.11:53868 as nodered_dashboard (p2, c1, k60).
+1757954046: Client nodered_dashboard disconnected.
+1757954046: New connection from 172.19.0.11:51870 on port 1883.
+1757954046: New client connected from 172.19.0.11:51870 as nodered_dashboard (p2, c1, k60).
+1757954097: Client nodered_dashboard disconnected.
+1757954097: New connection from 172.19.0.11:57732 on port 1883.
+1757954097: New client connected from 172.19.0.11:57732 as nodered_dashboard (p2, c1, k60).
+1757954560: Client nodered_dashboard disconnected.
+1757954560: New connection from 172.19.0.11:54878 on port 1883.
+1757954560: New client connected from 172.19.0.11:54878 as nodered_dashboard (p2, c1, k60).
+1757954575: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757954733: Client nodered_dashboard disconnected.
+1757954733: New connection from 172.19.0.11:56178 on port 1883.
+1757954733: New client connected from 172.19.0.11:56178 as nodered_dashboard (p2, c1, k60).
+1757954849: Client nodered_dashboard disconnected.
+1757954849: New connection from 172.19.0.11:56140 on port 1883.
+1757954849: New client connected from 172.19.0.11:56140 as nodered_dashboard (p2, c1, k60).
+1757954890: Client nodered_dashboard disconnected.
+1757954890: New connection from 172.19.0.11:54648 on port 1883.
+1757954890: New client connected from 172.19.0.11:54648 as nodered_dashboard (p2, c1, k60).
+1757955004: Client nodered_dashboard disconnected.
+1757955004: New connection from 172.19.0.11:48648 on port 1883.
+1757955004: New client connected from 172.19.0.11:48648 as nodered_dashboard (p2, c1, k60).
+1757956376: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757958176: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757959977: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757961778: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757963579: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757965380: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757967184: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757968985: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757970786: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1757972587: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758013954: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758014894: Client nodered_dashboard disconnected.
+1758014894: New connection from 172.19.0.11:44916 on port 1883.
+1758014894: New client connected from 172.19.0.11:44916 as nodered_dashboard (p2, c1, k60).
+1758014922: Client nodered_dashboard disconnected.
+1758014922: New connection from 172.19.0.11:43458 on port 1883.
+1758014922: New client connected from 172.19.0.11:43458 as nodered_dashboard (p2, c1, k60).
+1758015225: Client nodered_dashboard disconnected.
+1758015225: New connection from 172.19.0.11:49154 on port 1883.
+1758015225: New client connected from 172.19.0.11:49154 as nodered_dashboard (p2, c1, k60).
+1758015263: Client nodered_dashboard disconnected.
+1758015263: New connection from 172.19.0.11:53904 on port 1883.
+1758015263: New client connected from 172.19.0.11:53904 as nodered_dashboard (p2, c1, k60).
+1758015414: Client fridge_SmartChill_A4B2C3D91E7F_1757938232 closed its connection.
+1758015423: New connection from 172.19.0.12:49681 on port 1883.
+1758015423: New client connected from 172.19.0.12:49681 as fridge_SmartChill_A4B2C3D91E7F_1758015423 (p2, c1, k60).
+1758015742: Client FridgeStatusControl_1757932966 closed its connection.
+1758015752: New connection from 172.19.0.8:43585 on port 1883.
+1758015752: New client connected from 172.19.0.8:43585 as FridgeStatusControl_1758015752 (p2, c1, k60).
+1758015755: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758016091: Client nodered_dashboard disconnected.
+1758016091: New connection from 172.19.0.11:47158 on port 1883.
+1758016091: New client connected from 172.19.0.11:47158 as nodered_dashboard (p2, c1, k60).
+1758016105: Client nodered_dashboard disconnected.
+1758016105: New connection from 172.19.0.11:49594 on port 1883.
+1758016105: New client connected from 172.19.0.11:49594 as nodered_dashboard (p2, c1, k60).
+1758016222: Client FridgeStatusControl_1758015752 closed its connection.
+1758016228: New connection from 172.19.0.8:47195 on port 1883.
+1758016228: New client connected from 172.19.0.8:47195 as FridgeStatusControl_1758016228 (p2, c1, k60).
+1758016251: Client FridgeStatusControl_1758016228 closed its connection.
+1758016254: New connection from 172.19.0.8:55309 on port 1883.
+1758016254: New client connected from 172.19.0.8:55309 as FridgeStatusControl_1758016254 (p2, c1, k60).
+1758016726: Client FoodSpoilageControl_1757932966 closed its connection.
+1758016771: New connection from 172.19.0.7:41927 on port 1883.
+1758016771: New client connected from 172.19.0.7:41927 as FoodSpoilageControl_1758016771 (p2, c1, k60).
+1758016782: Client nodered_dashboard disconnected.
+1758016782: New connection from 172.19.0.11:39680 on port 1883.
+1758016782: New client connected from 172.19.0.11:39680 as nodered_dashboard (p2, c1, k60).
+1758016912: Client nodered_dashboard disconnected.
+1758016912: New connection from 172.19.0.11:34550 on port 1883.
+1758016912: New client connected from 172.19.0.11:34550 as nodered_dashboard (p2, c1, k60).
+1758016967: Client nodered_dashboard disconnected.
+1758016967: New connection from 172.19.0.11:57542 on port 1883.
+1758016967: New client connected from 172.19.0.11:57542 as nodered_dashboard (p2, c1, k60).
+1758016998: Client nodered_dashboard disconnected.
+1758016998: New connection from 172.19.0.11:40070 on port 1883.
+1758016998: New client connected from 172.19.0.11:40070 as nodered_dashboard (p2, c1, k60).
+1758017026: Client nodered_dashboard disconnected.
+1758017026: New connection from 172.19.0.11:35122 on port 1883.
+1758017026: New client connected from 172.19.0.11:35122 as nodered_dashboard (p2, c1, k60).
+1758017080: Client FoodSpoilageControl_1758016771 closed its connection.
+1758017133: New connection from 172.19.0.7:46923 on port 1883.
+1758017133: New client connected from 172.19.0.7:46923 as FoodSpoilageControl_1758017133 (p2, c1, k60).
+1758017166: Client nodered_dashboard disconnected.
+1758017166: New connection from 172.19.0.11:58668 on port 1883.
+1758017166: New client connected from 172.19.0.11:58668 as nodered_dashboard (p2, c1, k60).
+1758017204: Client nodered_dashboard disconnected.
+1758017204: New connection from 172.19.0.11:47618 on port 1883.
+1758017204: New client connected from 172.19.0.11:47618 as nodered_dashboard (p2, c1, k60).
+1758017250: Client FoodSpoilageControl_1758017133 closed its connection.
+1758017253: New connection from 172.19.0.7:40171 on port 1883.
+1758017253: New client connected from 172.19.0.7:40171 as FoodSpoilageControl_1758017253 (p2, c1, k60).
+1758017400: Client nodered_dashboard disconnected.
+1758017401: New connection from 172.19.0.11:40314 on port 1883.
+1758017401: New client connected from 172.19.0.11:40314 as nodered_dashboard (p2, c1, k60).
+1758017556: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758017556: Client nodered_dashboard disconnected.
+1758017556: New connection from 172.19.0.11:50652 on port 1883.
+1758017556: New client connected from 172.19.0.11:50652 as nodered_dashboard (p2, c1, k60).
+1758019356: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758021157: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758022958: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758024759: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758026560: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758028361: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758029897: Client nodered_dashboard disconnected.
+1758029897: New connection from 172.19.0.11:51470 on port 1883.
+1758029897: New client connected from 172.19.0.11:51470 as nodered_dashboard (p2, c1, k60).
+1758030163: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758030608: Client nodered_dashboard disconnected.
+1758030608: New connection from 172.19.0.11:35814 on port 1883.
+1758030608: New client connected from 172.19.0.11:35814 as nodered_dashboard (p2, c1, k60).
+1758031532: Client nodered_dashboard disconnected.
+1758031532: New connection from 172.19.0.11:50136 on port 1883.
+1758031532: New client connected from 172.19.0.11:50136 as nodered_dashboard (p2, c1, k60).
+1758031559: Client nodered_dashboard disconnected.
+1758031559: New connection from 172.19.0.11:48488 on port 1883.
+1758031559: New client connected from 172.19.0.11:48488 as nodered_dashboard (p2, c1, k60).
+1758031583: Client nodered_dashboard disconnected.
+1758031583: New connection from 172.19.0.11:50330 on port 1883.
+1758031583: New client connected from 172.19.0.11:50330 as nodered_dashboard (p2, c1, k60).
+1758031592: Client nodered_dashboard disconnected.
+1758031592: New connection from 172.19.0.11:48640 on port 1883.
+1758031592: New client connected from 172.19.0.11:48640 as nodered_dashboard (p2, c1, k60).
+1758031659: Client nodered_dashboard disconnected.
+1758031659: New connection from 172.19.0.11:33022 on port 1883.
+1758031659: New client connected from 172.19.0.11:33022 as nodered_dashboard (p2, c1, k60).
+1758031689: Client nodered_dashboard disconnected.
+1758031690: New connection from 172.19.0.11:58032 on port 1883.
+1758031690: New client connected from 172.19.0.11:58032 as nodered_dashboard (p2, c1, k60).
+1758031767: Client nodered_dashboard disconnected.
+1758031767: New connection from 172.19.0.11:60542 on port 1883.
+1758031767: New client connected from 172.19.0.11:60542 as nodered_dashboard (p2, c1, k60).
+1758031964: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758032019: Client nodered_dashboard disconnected.
+1758032019: New connection from 172.19.0.11:35396 on port 1883.
+1758032019: New client connected from 172.19.0.11:35396 as nodered_dashboard (p2, c1, k60).
+1758032106: Client nodered_dashboard disconnected.
+1758032106: New connection from 172.19.0.11:45462 on port 1883.
+1758032106: New client connected from 172.19.0.11:45462 as nodered_dashboard (p2, c1, k60).
+1758032354: Client nodered_dashboard disconnected.
+1758032354: New connection from 172.19.0.11:58288 on port 1883.
+1758032354: New client connected from 172.19.0.11:58288 as nodered_dashboard (p2, c1, k60).
+1758032406: Client nodered_dashboard disconnected.
+1758032406: New connection from 172.19.0.11:46506 on port 1883.
+1758032406: New client connected from 172.19.0.11:46506 as nodered_dashboard (p2, c1, k60).
+1758032447: Client nodered_dashboard disconnected.
+1758032448: New connection from 172.19.0.11:42662 on port 1883.
+1758032448: New client connected from 172.19.0.11:42662 as nodered_dashboard (p2, c1, k60).
+1758032574: Client nodered_dashboard disconnected.
+1758032574: New connection from 172.19.0.11:60276 on port 1883.
+1758032574: New client connected from 172.19.0.11:60276 as nodered_dashboard (p2, c1, k60).
+1758032599: Client nodered_dashboard disconnected.
+1758032599: New connection from 172.19.0.11:60664 on port 1883.
+1758032599: New client connected from 172.19.0.11:60664 as nodered_dashboard (p2, c1, k60).
+1758032960: Client nodered_dashboard disconnected.
+1758032960: New connection from 172.19.0.11:37288 on port 1883.
+1758032960: New client connected from 172.19.0.11:37288 as nodered_dashboard (p2, c1, k60).
+1758033764: Client nodered_dashboard disconnected.
+1758033764: New connection from 172.19.0.11:57470 on port 1883.
+1758033764: New client connected from 172.19.0.11:57470 as nodered_dashboard (p2, c1, k60).
+1758033765: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758034071: Client nodered_dashboard disconnected.
+1758034071: New connection from 172.19.0.11:37202 on port 1883.
+1758034071: New client connected from 172.19.0.11:37202 as nodered_dashboard (p2, c1, k60).
+1758034160: Client nodered_dashboard disconnected.
+1758034160: New connection from 172.19.0.11:58972 on port 1883.
+1758034160: New client connected from 172.19.0.11:58972 as nodered_dashboard (p2, c1, k60).
+1758034308: Client nodered_dashboard disconnected.
+1758034308: New connection from 172.19.0.11:54032 on port 1883.
+1758034308: New client connected from 172.19.0.11:54032 as nodered_dashboard (p2, c1, k60).
+1758034564: Client nodered_dashboard disconnected.
+1758034564: New connection from 172.19.0.11:54482 on port 1883.
+1758034564: New client connected from 172.19.0.11:54482 as nodered_dashboard (p2, c1, k60).
+1758034659: Client nodered_dashboard disconnected.
+1758034659: New connection from 172.19.0.11:54876 on port 1883.
+1758034659: New client connected from 172.19.0.11:54876 as nodered_dashboard (p2, c1, k60).
+1758034724: Client nodered_dashboard disconnected.
+1758034724: New connection from 172.19.0.11:46788 on port 1883.
+1758034724: New client connected from 172.19.0.11:46788 as nodered_dashboard (p2, c1, k60).
+1758034931: Client nodered_dashboard disconnected.
+1758034931: New connection from 172.19.0.11:35370 on port 1883.
+1758034931: New client connected from 172.19.0.11:35370 as nodered_dashboard (p2, c1, k60).
+1758035072: Client nodered_dashboard disconnected.
+1758035072: New connection from 172.19.0.11:39312 on port 1883.
+1758035072: New client connected from 172.19.0.11:39312 as nodered_dashboard (p2, c1, k60).
+1758035116: Client nodered_dashboard disconnected.
+1758035116: New connection from 172.19.0.11:45334 on port 1883.
+1758035116: New client connected from 172.19.0.11:45334 as nodered_dashboard (p2, c1, k60).
+1758035149: Client nodered_dashboard disconnected.
+1758035149: New connection from 172.19.0.11:46218 on port 1883.
+1758035149: New client connected from 172.19.0.11:46218 as nodered_dashboard (p2, c1, k60).
+1758035205: Client nodered_dashboard disconnected.
+1758035205: New connection from 172.19.0.11:53186 on port 1883.
+1758035205: New client connected from 172.19.0.11:53186 as nodered_dashboard (p2, c1, k60).
+1758035301: Client nodered_dashboard disconnected.
+1758035301: New connection from 172.19.0.11:43142 on port 1883.
+1758035301: New client connected from 172.19.0.11:43142 as nodered_dashboard (p2, c1, k60).
+1758035566: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758035610: Client nodered_dashboard disconnected.
+1758035610: New connection from 172.19.0.11:36244 on port 1883.
+1758035610: New client connected from 172.19.0.11:36244 as nodered_dashboard (p2, c1, k60).
+1758035739: Client nodered_dashboard disconnected.
+1758035739: New connection from 172.19.0.11:52192 on port 1883.
+1758035739: New client connected from 172.19.0.11:52192 as nodered_dashboard (p2, c1, k60).
+1758035807: Client nodered_dashboard disconnected.
+1758035807: New connection from 172.19.0.11:38046 on port 1883.
+1758035807: New client connected from 172.19.0.11:38046 as nodered_dashboard (p2, c1, k60).
+1758035826: Client nodered_dashboard disconnected.
+1758035827: New connection from 172.19.0.11:36778 on port 1883.
+1758035827: New client connected from 172.19.0.11:36778 as nodered_dashboard (p2, c1, k60).
+1758035882: Client nodered_dashboard disconnected.
+1758035882: New connection from 172.19.0.11:54604 on port 1883.
+1758035882: New client connected from 172.19.0.11:54604 as nodered_dashboard (p2, c1, k60).
+1758035916: Client nodered_dashboard disconnected.
+1758035916: New connection from 172.19.0.11:60036 on port 1883.
+1758035916: New client connected from 172.19.0.11:60036 as nodered_dashboard (p2, c1, k60).
+1758035925: Client nodered_dashboard disconnected.
+1758035925: New connection from 172.19.0.11:33508 on port 1883.
+1758035925: New client connected from 172.19.0.11:33508 as nodered_dashboard (p2, c1, k60).
+1758035936: Client nodered_dashboard disconnected.
+1758035936: New connection from 172.19.0.11:41392 on port 1883.
+1758035936: New client connected from 172.19.0.11:41392 as nodered_dashboard (p2, c1, k60).
+1758035990: Client nodered_dashboard disconnected.
+1758035990: New connection from 172.19.0.11:59516 on port 1883.
+1758035990: New client connected from 172.19.0.11:59516 as nodered_dashboard (p2, c1, k60).
+1758036116: Client nodered_dashboard disconnected.
+1758036116: New connection from 172.19.0.11:60088 on port 1883.
+1758036116: New client connected from 172.19.0.11:60088 as nodered_dashboard (p2, c1, k60).
+1758036175: Client nodered_dashboard disconnected.
+1758036175: New connection from 172.19.0.11:50094 on port 1883.
+1758036175: New client connected from 172.19.0.11:50094 as nodered_dashboard (p2, c1, k60).
+1758036368: Client nodered_dashboard disconnected.
+1758036368: New connection from 172.19.0.11:33138 on port 1883.
+1758036368: New client connected from 172.19.0.11:33138 as nodered_dashboard (p2, c1, k60).
+1758036409: Client nodered_dashboard disconnected.
+1758036409: New connection from 172.19.0.11:46490 on port 1883.
+1758036409: New client connected from 172.19.0.11:46490 as nodered_dashboard (p2, c1, k60).
+1758036888: Client nodered_dashboard disconnected.
+1758036888: New connection from 172.19.0.11:59722 on port 1883.
+1758036888: New client connected from 172.19.0.11:59722 as nodered_dashboard (p2, c1, k60).
+1758036934: Client nodered_dashboard disconnected.
+1758036934: New connection from 172.19.0.11:50338 on port 1883.
+1758036934: New client connected from 172.19.0.11:50338 as nodered_dashboard (p2, c1, k60).
+1758037010: Client nodered_dashboard disconnected.
+1758037010: New connection from 172.19.0.11:33012 on port 1883.
+1758037010: New client connected from 172.19.0.11:33012 as nodered_dashboard (p2, c1, k60).
+1758037148: Client nodered_dashboard disconnected.
+1758037148: New connection from 172.19.0.11:58978 on port 1883.
+1758037148: New client connected from 172.19.0.11:58978 as nodered_dashboard (p2, c1, k60).
+1758037328: Client nodered_dashboard disconnected.
+1758037328: New connection from 172.19.0.11:43598 on port 1883.
+1758037328: New client connected from 172.19.0.11:43598 as nodered_dashboard (p2, c1, k60).
+1758037367: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758037401: Client nodered_dashboard disconnected.
+1758037401: New connection from 172.19.0.11:41278 on port 1883.
+1758037401: New client connected from 172.19.0.11:41278 as nodered_dashboard (p2, c1, k60).
+1758037498: Client nodered_dashboard disconnected.
+1758037498: New connection from 172.19.0.11:57008 on port 1883.
+1758037498: New client connected from 172.19.0.11:57008 as nodered_dashboard (p2, c1, k60).
+1758037561: Client nodered_dashboard disconnected.
+1758037561: New connection from 172.19.0.11:33450 on port 1883.
+1758037561: New client connected from 172.19.0.11:33450 as nodered_dashboard (p2, c1, k60).
+1758037628: Client nodered_dashboard disconnected.
+1758037628: New connection from 172.19.0.11:42418 on port 1883.
+1758037628: New client connected from 172.19.0.11:42418 as nodered_dashboard (p2, c1, k60).
+1758037708: Client nodered_dashboard disconnected.
+1758037708: New connection from 172.19.0.11:35452 on port 1883.
+1758037708: New client connected from 172.19.0.11:35452 as nodered_dashboard (p2, c1, k60).
+1758037749: Client nodered_dashboard disconnected.
+1758037749: New connection from 172.19.0.11:59084 on port 1883.
+1758037749: New client connected from 172.19.0.11:59084 as nodered_dashboard (p2, c1, k60).
+1758037855: Client nodered_dashboard disconnected.
+1758037855: New connection from 172.19.0.11:42194 on port 1883.
+1758037855: New client connected from 172.19.0.11:42194 as nodered_dashboard (p2, c1, k60).
+1758039168: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758039352: Client nodered_dashboard disconnected.
+1758039352: New connection from 172.19.0.11:35264 on port 1883.
+1758039352: New client connected from 172.19.0.11:35264 as nodered_dashboard (p2, c1, k60).
+1758039368: Client TimerUsageControl_1757951530 closed its connection.
+1758039375: New connection from 172.19.0.5:60217 on port 1883.
+1758039375: New client connected from 172.19.0.5:60217 as TimerUsageControl_1758039375 (p2, c1, k60).
+1758039479: Client nodered_dashboard disconnected.
+1758039479: New connection from 172.19.0.11:34644 on port 1883.
+1758039479: New client connected from 172.19.0.11:34644 as nodered_dashboard (p2, c1, k60).
+1758039778: Client FridgeStatusControl_1758016254 closed its connection.
+1758039782: Client FoodSpoilageControl_1758017253 closed its connection.
+1758039786: New connection from 172.19.0.7:53139 on port 1883.
+1758039786: New client connected from 172.19.0.7:53139 as FoodSpoilageControl_1758039786 (p2, c1, k60).
+1758039789: New connection from 172.19.0.8:36309 on port 1883.
+1758039789: New client connected from 172.19.0.8:36309 as FridgeStatusControl_1758039789 (p2, c1, k60).
+1758039875: Client nodered_dashboard disconnected.
+1758039875: New connection from 172.19.0.11:55408 on port 1883.
+1758039875: New client connected from 172.19.0.11:55408 as nodered_dashboard (p2, c1, k60).
+1758039907: Client nodered_dashboard disconnected.
+1758039907: New connection from 172.19.0.11:39762 on port 1883.
+1758039907: New client connected from 172.19.0.11:39762 as nodered_dashboard (p2, c1, k60).
+1758039973: Client nodered_dashboard disconnected.
+1758039973: New connection from 172.19.0.11:45594 on port 1883.
+1758039973: New client connected from 172.19.0.11:45594 as nodered_dashboard (p2, c1, k60).
+1758040051: Client nodered_dashboard disconnected.
+1758040052: New connection from 172.19.0.11:37464 on port 1883.
+1758040052: New client connected from 172.19.0.11:37464 as nodered_dashboard (p2, c1, k60).
+1758040164: Client nodered_dashboard disconnected.
+1758040164: New connection from 172.19.0.11:49054 on port 1883.
+1758040164: New client connected from 172.19.0.11:49054 as nodered_dashboard (p2, c1, k60).
+1758040219: Client nodered_dashboard disconnected.
+1758040219: New connection from 172.19.0.11:58338 on port 1883.
+1758040219: New client connected from 172.19.0.11:58338 as nodered_dashboard (p2, c1, k60).
+1758040346: Client nodered_dashboard disconnected.
+1758040346: New connection from 172.19.0.11:59150 on port 1883.
+1758040346: New client connected from 172.19.0.11:59150 as nodered_dashboard (p2, c1, k60).
+1758040385: Client nodered_dashboard disconnected.
+1758040385: New connection from 172.19.0.11:39324 on port 1883.
+1758040385: New client connected from 172.19.0.11:39324 as nodered_dashboard (p2, c1, k60).
+1758040412: Client nodered_dashboard disconnected.
+1758040412: New connection from 172.19.0.11:35316 on port 1883.
+1758040412: New client connected from 172.19.0.11:35316 as nodered_dashboard (p2, c1, k60).
+1758040548: Client nodered_dashboard disconnected.
+1758040548: New connection from 172.19.0.11:57572 on port 1883.
+1758040548: New client connected from 172.19.0.11:57572 as nodered_dashboard (p2, c1, k60).
+1758040570: Client nodered_dashboard disconnected.
+1758040571: New connection from 172.19.0.11:54116 on port 1883.
+1758040571: New client connected from 172.19.0.11:54116 as nodered_dashboard (p2, c1, k60).
+1758040686: Client nodered_dashboard disconnected.
+1758040686: New connection from 172.19.0.11:48546 on port 1883.
+1758040686: New client connected from 172.19.0.11:48546 as nodered_dashboard (p2, c1, k60).
+1758040732: Client nodered_dashboard disconnected.
+1758040732: New connection from 172.19.0.11:42872 on port 1883.
+1758040732: New client connected from 172.19.0.11:42872 as nodered_dashboard (p2, c1, k60).
+1758040769: Client nodered_dashboard disconnected.
+1758040769: New connection from 172.19.0.11:53616 on port 1883.
+1758040769: New client connected from 172.19.0.11:53616 as nodered_dashboard (p2, c1, k60).
+1758040969: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758041038: Client nodered_dashboard disconnected.
+1758041038: New connection from 172.19.0.11:41210 on port 1883.
+1758041038: New client connected from 172.19.0.11:41210 as nodered_dashboard (p2, c1, k60).
+1758041216: Client FoodSpoilageControl_1758039786 closed its connection.
+1758041219: Client FridgeStatusControl_1758039789 closed its connection.
+1758041222: New connection from 172.19.0.7:56797 on port 1883.
+1758041222: New client connected from 172.19.0.7:56797 as FridgeStatusControl_1758041222 (p2, c1, k60).
+1758041223: New connection from 172.19.0.8:46065 on port 1883.
+1758041223: New client connected from 172.19.0.8:46065 as FoodSpoilageControl_1758041223 (p2, c1, k60).
+1758041338: Client FridgeStatusControl_1758041222 closed its connection.
+1758041342: Client FoodSpoilageControl_1758041223 closed its connection.
+1758041345: New connection from 172.19.0.7:52895 on port 1883.
+1758041345: New client connected from 172.19.0.7:52895 as FoodSpoilageControl_1758041345 (p2, c1, k60).
+1758041347: New connection from 172.19.0.8:43011 on port 1883.
+1758041347: New client connected from 172.19.0.8:43011 as FridgeStatusControl_1758041347 (p2, c1, k60).
+1758041359: Client nodered_dashboard disconnected.
+1758041359: New connection from 172.19.0.11:40204 on port 1883.
+1758041359: New client connected from 172.19.0.11:40204 as nodered_dashboard (p2, c1, k60).
+1758041530: Client nodered_dashboard disconnected.
+1758041530: New connection from 172.19.0.11:57460 on port 1883.
+1758041530: New client connected from 172.19.0.11:57460 as nodered_dashboard (p2, c1, k60).
+1758041545: Client nodered_dashboard disconnected.
+1758041545: New connection from 172.19.0.11:46468 on port 1883.
+1758041545: New client connected from 172.19.0.11:46468 as nodered_dashboard (p2, c1, k60).
+1758041710: Client nodered_dashboard disconnected.
+1758041710: New connection from 172.19.0.11:45090 on port 1883.
+1758041710: New client connected from 172.19.0.11:45090 as nodered_dashboard (p2, c1, k60).
+1758041772: Client nodered_dashboard disconnected.
+1758041772: New connection from 172.19.0.11:40576 on port 1883.
+1758041772: New client connected from 172.19.0.11:40576 as nodered_dashboard (p2, c1, k60).
+1758041787: Client nodered_dashboard disconnected.
+1758041787: New connection from 172.19.0.11:42994 on port 1883.
+1758041787: New client connected from 172.19.0.11:42994 as nodered_dashboard (p2, c1, k60).
+1758041893: Client nodered_dashboard disconnected.
+1758041893: New connection from 172.19.0.11:47866 on port 1883.
+1758041893: New client connected from 172.19.0.11:47866 as nodered_dashboard (p2, c1, k60).
+1758041970: Client nodered_dashboard disconnected.
+1758041970: New connection from 172.19.0.11:54174 on port 1883.
+1758041970: New client connected from 172.19.0.11:54174 as nodered_dashboard (p2, c1, k60).
+1758042095: Client nodered_dashboard disconnected.
+1758042095: New connection from 172.19.0.11:57152 on port 1883.
+1758042095: New client connected from 172.19.0.11:57152 as nodered_dashboard (p2, c1, k60).
+1758042770: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758042985: Client fridge_SmartChill_A4B2C3D91E7F_1758015423 closed its connection.
+1758042991: New connection from 172.19.0.12:45385 on port 1883.
+1758042991: New client connected from 172.19.0.12:45385 as fridge_SmartChill_9F2D71_1758042991 (p2, c1, k60).
+1758043321: Client nodered_dashboard disconnected.
+1758043321: New connection from 172.19.0.11:35236 on port 1883.
+1758043322: New client connected from 172.19.0.11:35236 as nodered_dashboard (p2, c1, k60).
+1758043381: Client fridge_SmartChill_9F2D71_1758042991 closed its connection.
+1758043396: New connection from 172.19.0.12:48995 on port 1883.
+1758043396: New client connected from 172.19.0.12:48995 as fridge_SmartChill_3C5AB49F2D71_1758043396 (p2, c1, k60).
+1758043748: Client fridge_SmartChill_3C5AB49F2D71_1758043396 closed its connection.
+1758043753: New connection from 172.19.0.12:52411 on port 1883.
+1758043753: New client connected from 172.19.0.12:52411 as fridge_SmartChill_3C5AB49F2D71_1758043753 (p2, c1, k60).
+1758044129: Client nodered_dashboard disconnected.
+1758044129: New connection from 172.19.0.11:39942 on port 1883.
+1758044129: New client connected from 172.19.0.11:39942 as nodered_dashboard (p2, c1, k60).
+1758044232: Client nodered_dashboard disconnected.
+1758044232: New connection from 172.19.0.11:55528 on port 1883.
+1758044232: New client connected from 172.19.0.11:55528 as nodered_dashboard (p2, c1, k60).
+1758044441: Client nodered_dashboard disconnected.
+1758044441: New connection from 172.19.0.11:38020 on port 1883.
+1758044441: New client connected from 172.19.0.11:38020 as nodered_dashboard (p2, c1, k60).
+1758044570: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758044754: Client nodered_dashboard disconnected.
+1758044754: New connection from 172.19.0.11:56174 on port 1883.
+1758044754: New client connected from 172.19.0.11:56174 as nodered_dashboard (p2, c1, k60).
+1758044759: Client nodered_dashboard disconnected.
+1758044759: New connection from 172.19.0.11:56176 on port 1883.
+1758044759: New client connected from 172.19.0.11:56176 as nodered_dashboard (p2, c1, k60).
+1758044787: Client nodered_dashboard disconnected.
+1758044787: New connection from 172.19.0.11:58162 on port 1883.
+1758044787: New client connected from 172.19.0.11:58162 as nodered_dashboard (p2, c1, k60).
+1758044809: Client nodered_dashboard disconnected.
+1758044809: New connection from 172.19.0.11:39028 on port 1883.
+1758044809: New client connected from 172.19.0.11:39028 as nodered_dashboard (p2, c1, k60).
+1758044872: Client nodered_dashboard disconnected.
+1758044872: New connection from 172.19.0.11:37478 on port 1883.
+1758044872: New client connected from 172.19.0.11:37478 as nodered_dashboard (p2, c1, k60).
+1758046155: Client nodered_dashboard disconnected.
+1758046155: New connection from 172.19.0.11:36520 on port 1883.
+1758046155: New client connected from 172.19.0.11:36520 as nodered_dashboard (p2, c1, k60).
+1758046159: Client nodered_dashboard disconnected.
+1758046159: New connection from 172.19.0.11:36532 on port 1883.
+1758046159: New client connected from 172.19.0.11:36532 as nodered_dashboard (p2, c1, k60).
+1758046186: Client nodered_dashboard disconnected.
+1758046186: New connection from 172.19.0.11:57812 on port 1883.
+1758046186: New client connected from 172.19.0.11:57812 as nodered_dashboard (p2, c1, k60).
+1758046211: Client nodered_dashboard disconnected.
+1758046211: New connection from 172.19.0.11:60806 on port 1883.
+1758046211: New client connected from 172.19.0.11:60806 as nodered_dashboard (p2, c1, k60).
+1758046225: Client nodered_dashboard disconnected.
+1758046225: New connection from 172.19.0.11:57806 on port 1883.
+1758046225: New client connected from 172.19.0.11:57806 as nodered_dashboard (p2, c1, k60).
+1758046267: Client nodered_dashboard disconnected.
+1758046267: New connection from 172.19.0.11:55812 on port 1883.
+1758046267: New client connected from 172.19.0.11:55812 as nodered_dashboard (p2, c1, k60).
+1758046371: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758046447: Client nodered_dashboard disconnected.
+1758046447: New connection from 172.19.0.11:57084 on port 1883.
+1758046447: New client connected from 172.19.0.11:57084 as nodered_dashboard (p2, c1, k60).
+1758046515: Client nodered_dashboard disconnected.
+1758046515: New connection from 172.19.0.11:41750 on port 1883.
+1758046515: New client connected from 172.19.0.11:41750 as nodered_dashboard (p2, c1, k60).
+1758046746: Client nodered_dashboard disconnected.
+1758046746: New connection from 172.19.0.11:35520 on port 1883.
+1758046746: New client connected from 172.19.0.11:35520 as nodered_dashboard (p2, c1, k60).
+1758046920: Client nodered_dashboard disconnected.
+1758046920: New connection from 172.19.0.11:33070 on port 1883.
+1758046920: New client connected from 172.19.0.11:33070 as nodered_dashboard (p2, c1, k60).
+1758047012: Client nodered_dashboard disconnected.
+1758047012: New connection from 172.19.0.11:33762 on port 1883.
+1758047012: New client connected from 172.19.0.11:33762 as nodered_dashboard (p2, c1, k60).
+1758047062: Client nodered_dashboard disconnected.
+1758047063: New connection from 172.19.0.11:34922 on port 1883.
+1758047063: New client connected from 172.19.0.11:34922 as nodered_dashboard (p2, c1, k60).
+1758047494: Client nodered_dashboard disconnected.
+1758047494: New connection from 172.19.0.11:35646 on port 1883.
+1758047494: New client connected from 172.19.0.11:35646 as nodered_dashboard (p2, c1, k60).
+1758047558: Client nodered_dashboard disconnected.
+1758047558: New connection from 172.19.0.11:34350 on port 1883.
+1758047558: New client connected from 172.19.0.11:34350 as nodered_dashboard (p2, c1, k60).
+1758047613: Client nodered_dashboard disconnected.
+1758047613: New connection from 172.19.0.11:38026 on port 1883.
+1758047613: New client connected from 172.19.0.11:38026 as nodered_dashboard (p2, c1, k60).
+1758047647: Client nodered_dashboard disconnected.
+1758047647: New connection from 172.19.0.11:53220 on port 1883.
+1758047647: New client connected from 172.19.0.11:53220 as nodered_dashboard (p2, c1, k60).
+1758047680: Client nodered_dashboard disconnected.
+1758047680: New connection from 172.19.0.11:36296 on port 1883.
+1758047680: New client connected from 172.19.0.11:36296 as nodered_dashboard (p2, c1, k60).
+1758047722: Client nodered_dashboard disconnected.
+1758047722: New connection from 172.19.0.11:59272 on port 1883.
+1758047722: New client connected from 172.19.0.11:59272 as nodered_dashboard (p2, c1, k60).
+1758047782: Client nodered_dashboard disconnected.
+1758047782: New connection from 172.19.0.11:58024 on port 1883.
+1758047782: New client connected from 172.19.0.11:58024 as nodered_dashboard (p2, c1, k60).
+1758047840: Client nodered_dashboard disconnected.
+1758047840: New connection from 172.19.0.11:36872 on port 1883.
+1758047840: New client connected from 172.19.0.11:36872 as nodered_dashboard (p2, c1, k60).
+1758047849: Client nodered_dashboard disconnected.
+1758047849: New connection from 172.19.0.11:44420 on port 1883.
+1758047849: New client connected from 172.19.0.11:44420 as nodered_dashboard (p2, c1, k60).
+1758047893: Client nodered_dashboard disconnected.
+1758047893: New connection from 172.19.0.11:60078 on port 1883.
+1758047893: New client connected from 172.19.0.11:60078 as nodered_dashboard (p2, c1, k60).
+1758047926: Client nodered_dashboard disconnected.
+1758047926: New connection from 172.19.0.11:54640 on port 1883.
+1758047926: New client connected from 172.19.0.11:54640 as nodered_dashboard (p2, c1, k60).
+1758047963: Client nodered_dashboard disconnected.
+1758047963: New connection from 172.19.0.11:41382 on port 1883.
+1758047963: New client connected from 172.19.0.11:41382 as nodered_dashboard (p2, c1, k60).
+1758047980: Client nodered_dashboard disconnected.
+1758047980: New connection from 172.19.0.11:33826 on port 1883.
+1758047980: New client connected from 172.19.0.11:33826 as nodered_dashboard (p2, c1, k60).
+1758048172: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758048235: Client nodered_dashboard disconnected.
+1758048235: New connection from 172.19.0.11:49160 on port 1883.
+1758048235: New client connected from 172.19.0.11:49160 as nodered_dashboard (p2, c1, k60).
+1758048264: Client nodered_dashboard disconnected.
+1758048265: New connection from 172.19.0.11:56798 on port 1883.
+1758048265: New client connected from 172.19.0.11:56798 as nodered_dashboard (p2, c1, k60).
+1758048419: Client nodered_dashboard disconnected.
+1758048419: New connection from 172.19.0.11:43300 on port 1883.
+1758048419: New client connected from 172.19.0.11:43300 as nodered_dashboard (p2, c1, k60).
+1758048524: Client nodered_dashboard disconnected.
+1758048524: New connection from 172.19.0.11:58214 on port 1883.
+1758048524: New client connected from 172.19.0.11:58214 as nodered_dashboard (p2, c1, k60).
+1758048802: Client nodered_dashboard disconnected.
+1758048802: New connection from 172.19.0.11:34728 on port 1883.
+1758048802: New client connected from 172.19.0.11:34728 as nodered_dashboard (p2, c1, k60).
+1758048988: Client nodered_dashboard disconnected.
+1758048988: New connection from 172.19.0.11:55846 on port 1883.
+1758048988: New client connected from 172.19.0.11:55846 as nodered_dashboard (p2, c1, k60).
+1758049146: Client nodered_dashboard disconnected.
+1758049146: New connection from 172.19.0.11:35164 on port 1883.
+1758049146: New client connected from 172.19.0.11:35164 as nodered_dashboard (p2, c1, k60).
+1758049195: Client nodered_dashboard disconnected.
+1758049195: New connection from 172.19.0.11:33166 on port 1883.
+1758049195: New client connected from 172.19.0.11:33166 as nodered_dashboard (p2, c1, k60).
+1758049248: Client nodered_dashboard disconnected.
+1758049248: New connection from 172.19.0.11:48794 on port 1883.
+1758049248: New client connected from 172.19.0.11:48794 as nodered_dashboard (p2, c1, k60).
+1758049264: Client nodered_dashboard disconnected.
+1758049265: New connection from 172.19.0.11:42914 on port 1883.
+1758049265: New client connected from 172.19.0.11:42914 as nodered_dashboard (p2, c1, k60).
+1758049302: Client nodered_dashboard disconnected.
+1758049302: New connection from 172.19.0.11:55180 on port 1883.
+1758049302: New client connected from 172.19.0.11:55180 as nodered_dashboard (p2, c1, k60).
+1758049334: Client nodered_dashboard disconnected.
+1758049334: New connection from 172.19.0.11:46858 on port 1883.
+1758049334: New client connected from 172.19.0.11:46858 as nodered_dashboard (p2, c1, k60).
+1758049398: Client nodered_dashboard disconnected.
+1758049398: New connection from 172.19.0.11:46532 on port 1883.
+1758049398: New client connected from 172.19.0.11:46532 as nodered_dashboard (p2, c1, k60).
+1758049505: Client nodered_dashboard disconnected.
+1758049505: New connection from 172.19.0.11:59476 on port 1883.
+1758049505: New client connected from 172.19.0.11:59476 as nodered_dashboard (p2, c1, k60).
+1758049536: Client nodered_dashboard disconnected.
+1758049536: New connection from 172.19.0.11:58320 on port 1883.
+1758049536: New client connected from 172.19.0.11:58320 as nodered_dashboard (p2, c1, k60).
+1758049570: Client nodered_dashboard disconnected.
+1758049570: New connection from 172.19.0.11:41584 on port 1883.
+1758049570: New client connected from 172.19.0.11:41584 as nodered_dashboard (p2, c1, k60).
+1758049722: Client nodered_dashboard disconnected.
+1758049722: New connection from 172.19.0.11:59874 on port 1883.
+1758049722: New client connected from 172.19.0.11:59874 as nodered_dashboard (p2, c1, k60).
+1758049745: Client nodered_dashboard disconnected.
+1758049745: New connection from 172.19.0.11:55908 on port 1883.
+1758049745: New client connected from 172.19.0.11:55908 as nodered_dashboard (p2, c1, k60).
+1758049973: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758119634: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758121435: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758123236: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758125036: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758126837: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758128638: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758130439: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758132240: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758134041: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758135842: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758137643: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758139444: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758141245: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758143045: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758144846: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758146647: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758148448: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758150249: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758152050: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758153851: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758155652: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758157453: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758159254: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758161054: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758162855: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758164656: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758166457: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758168258: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758170059: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758171860: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758173661: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758175462: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758177262: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758179063: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758180864: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758182665: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758184466: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758186267: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758188068: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758189869: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758191670: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758193471: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758195272: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758197072: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758198873: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758200674: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758202475: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758204276: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758206077: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758207878: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758209679: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758211480: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758213281: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758215081: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758216882: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758218683: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758220484: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758222285: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758224086: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758225887: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758227688: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758230358: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758232159: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758233960: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758235761: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758237562: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758239363: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758241164: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758242964: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758244765: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758246567: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758248368: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758250169: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758251970: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758253771: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758255572: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758257373: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758259174: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758260975: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758262776: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758264577: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758266378: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758268179: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758268774: Client nodered_dashboard disconnected.
+1758268774: New connection from 172.19.0.11:56134 on port 1883.
+1758268774: New client connected from 172.19.0.11:56134 as nodered_dashboard (p2, c1, k60).
+1758268917: Client nodered_dashboard disconnected.
+1758268917: New connection from 172.19.0.11:52136 on port 1883.
+1758268917: New client connected from 172.19.0.11:52136 as nodered_dashboard (p2, c1, k60).
+1758269979: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758271780: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758273581: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758275382: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758277183: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758278984: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1758815650: mosquitto version 2.0.22 starting
+1758815650: Config loaded from /mosquitto/config/mosquitto.conf.
+1758815650: Opening ipv4 listen socket on port 1883.
+1758815650: Opening websockets listen socket on port 9001.
+1758815650: mosquitto version 2.0.22 running
+1758815651: New connection from 172.19.0.6:43005 on port 1883.
+1758815651: New client connected from 172.19.0.6:43005 as FoodSpoilageControl_1758815651 (p2, c1, k60).
+1758815651: New connection from 172.19.0.11:58927 on port 1883.
+1758815651: New client connected from 172.19.0.11:58927 as FridgeStatusControl_1758815651 (p2, c1, k60).
+1758815651: New connection from 172.19.0.12:42333 on port 1883.
+1758815651: New client connected from 172.19.0.12:42333 as fridge_SmartChill_9F2D71_1758815651 (p2, c1, k60).
+1758815653: New connection from 172.19.0.9:45935 on port 1883.
+1758815653: New client connected from 172.19.0.9:45935 as TimerUsageControl_1758815653 (p2, c1, k60).
+1758815655: New connection from 172.19.0.5:33769 on port 1883.
+1758815655: New client connected from 172.19.0.5:33769 as InfluxDBAdaptor_1758815655 (p2, c1, k60).
+1758815672: Client FoodSpoilageControl_1758815651 closed its connection.
+1758815672: Client FridgeStatusControl_1758815651 closed its connection.
+1758815672: Client fridge_SmartChill_9F2D71_1758815651 closed its connection.
+1758815672: Client TimerUsageControl_1758815653 closed its connection.
+1758815702: Client InfluxDBAdaptor_1758815655 closed its connection.
+1758815702: mosquitto version 2.0.22 terminating
+1758815702: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761155941: mosquitto version 2.0.22 starting
+1761155941: Config loaded from /mosquitto/config/mosquitto.conf.
+1761155941: Opening ipv4 listen socket on port 1883.
+1761155941: Opening websockets listen socket on port 9001.
+1761155941: mosquitto version 2.0.22 running
+1761155942: New connection from 172.19.0.7:48647 on port 1883.
+1761155942: New client connected from 172.19.0.7:48647 as TimerUsageControl_1761155942 (p2, c1, k60).
+1761155942: New connection from 172.19.0.8:52947 on port 1883.
+1761155942: New client connected from 172.19.0.8:52947 as fridge_SmartChill_3C5AB49F2D71_1761155942 (p2, c1, k60).
+1761155942: New connection from 172.19.0.6:57649 on port 1883.
+1761155942: New client connected from 172.19.0.6:57649 as FridgeStatusControl_1761155942 (p2, c1, k60).
+1761155942: New connection from 172.19.0.9:48879 on port 1883.
+1761155942: New client connected from 172.19.0.9:48879 as FoodSpoilageControl_1761155942 (p2, c1, k60).
+1761155946: New connection from 172.19.0.5:51389 on port 1883.
+1761155946: New client connected from 172.19.0.5:51389 as InfluxDBAdaptor_1761155946 (p2, c1, k60).
+1761155953: Client FridgeStatusControl_1761155942 closed its connection.
+1761155959: New connection from 172.19.0.12:53894 on port 1883.
+1761155959: New client connected from 172.19.0.12:53894 as nodered_dashboard (p2, c1, k60).
+1761155975: New connection from 172.19.0.6:60103 on port 1883.
+1761155975: New client connected from 172.19.0.6:60103 as FridgeStatusControl_1761155975 (p2, c1, k60).
+1761156218: Client fridge_SmartChill_3C5AB49F2D71_1761155942 closed its connection.
+1761156219: New connection from 172.19.0.8:57669 on port 1883.
+1761156219: New client connected from 172.19.0.8:57669 as fridge_SmartChill_3C5AB49F2D71_1761156219 (p2, c1, k60).
+1761156311: Client nodered_dashboard disconnected.
+1761156311: New connection from 172.19.0.12:40926 on port 1883.
+1761156311: New client connected from 172.19.0.12:40926 as nodered_dashboard (p2, c1, k60).
+1761157741: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761158749: Client fridge_SmartChill_3C5AB49F2D71_1761156219 closed its connection.
+1761158905: New connection from 172.19.0.8:60841 on port 1883.
+1761158905: New client connected from 172.19.0.8:60841 as fridge_SmartChill_3C5AB49F2D71_1761158905 (p2, c1, k60).
+1761159542: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761161219: Client nodered_dashboard disconnected.
+1761161219: New connection from 172.19.0.12:37008 on port 1883.
+1761161219: New client connected from 172.19.0.12:37008 as nodered_dashboard (p2, c1, k60).
+1761161343: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761161535: Client nodered_dashboard disconnected.
+1761161535: New connection from 172.19.0.12:44490 on port 1883.
+1761161535: New client connected from 172.19.0.12:44490 as nodered_dashboard (p2, c1, k60).
+1761161723: Client nodered_dashboard disconnected.
+1761161723: New connection from 172.19.0.12:54384 on port 1883.
+1761161723: New client connected from 172.19.0.12:54384 as nodered_dashboard (p2, c1, k60).
+1761161936: Client nodered_dashboard disconnected.
+1761161937: New connection from 172.19.0.12:41464 on port 1883.
+1761161937: New client connected from 172.19.0.12:41464 as nodered_dashboard (p2, c1, k60).
+1761162177: Client nodered_dashboard disconnected.
+1761162177: New connection from 172.19.0.12:41564 on port 1883.
+1761162177: New client connected from 172.19.0.12:41564 as nodered_dashboard (p2, c1, k60).
+1761162415: Client nodered_dashboard disconnected.
+1761162415: New connection from 172.19.0.12:34822 on port 1883.
+1761162416: New client connected from 172.19.0.12:34822 as nodered_dashboard (p2, c1, k60).
+1761162529: Client nodered_dashboard disconnected.
+1761162529: New connection from 172.19.0.12:32900 on port 1883.
+1761162529: New client connected from 172.19.0.12:32900 as nodered_dashboard (p2, c1, k60).
+1761162621: Client nodered_dashboard disconnected.
+1761162621: New connection from 172.19.0.12:60222 on port 1883.
+1761162621: New client connected from 172.19.0.12:60222 as nodered_dashboard (p2, c1, k60).
+1761162704: Client nodered_dashboard disconnected.
+1761162704: New connection from 172.19.0.12:57118 on port 1883.
+1761162704: New client connected from 172.19.0.12:57118 as nodered_dashboard (p2, c1, k60).
+1761162778: Client nodered_dashboard disconnected.
+1761162778: New connection from 172.19.0.12:38508 on port 1883.
+1761162778: New client connected from 172.19.0.12:38508 as nodered_dashboard (p2, c1, k60).
+1761162940: Client nodered_dashboard disconnected.
+1761162940: New connection from 172.19.0.12:35058 on port 1883.
+1761162940: New client connected from 172.19.0.12:35058 as nodered_dashboard (p2, c1, k60).
+1761163144: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761163467: Client nodered_dashboard disconnected.
+1761163467: New connection from 172.19.0.12:50134 on port 1883.
+1761163467: New client connected from 172.19.0.12:50134 as nodered_dashboard (p2, c1, k60).
+1761163537: Client nodered_dashboard disconnected.
+1761163537: New connection from 172.19.0.12:59682 on port 1883.
+1761163537: New client connected from 172.19.0.12:59682 as nodered_dashboard (p2, c1, k60).
+1761163608: Client nodered_dashboard disconnected.
+1761163608: New connection from 172.19.0.12:40816 on port 1883.
+1761163608: New client connected from 172.19.0.12:40816 as nodered_dashboard (p2, c1, k60).
+1761164088: Client nodered_dashboard disconnected.
+1761164088: New connection from 172.19.0.12:50138 on port 1883.
+1761164088: New client connected from 172.19.0.12:50138 as nodered_dashboard (p2, c1, k60).
+1761164126: Client nodered_dashboard disconnected.
+1761164126: New connection from 172.19.0.12:46376 on port 1883.
+1761164126: New client connected from 172.19.0.12:46376 as nodered_dashboard (p2, c1, k60).
+1761164206: Client nodered_dashboard disconnected.
+1761164206: New connection from 172.19.0.12:52670 on port 1883.
+1761164206: New client connected from 172.19.0.12:52670 as nodered_dashboard (p2, c1, k60).
+1761164245: Client nodered_dashboard disconnected.
+1761164245: New connection from 172.19.0.12:59772 on port 1883.
+1761164245: New client connected from 172.19.0.12:59772 as nodered_dashboard (p2, c1, k60).
+1761164889: Client nodered_dashboard disconnected.
+1761164889: New connection from 172.19.0.12:37476 on port 1883.
+1761164889: New client connected from 172.19.0.12:37476 as nodered_dashboard (p2, c1, k60).
+1761164945: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761165277: Client nodered_dashboard disconnected.
+1761165277: New connection from 172.19.0.12:40254 on port 1883.
+1761165277: New client connected from 172.19.0.12:40254 as nodered_dashboard (p2, c1, k60).
+1761166746: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761168547: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761170348: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761172149: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761173950: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761175751: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761177552: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761179352: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761181153: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761182954: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761184755: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761186556: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761188357: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761190158: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761191959: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761218083: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761218307: Client nodered_dashboard disconnected.
+1761218307: New connection from 172.19.0.12:42690 on port 1883.
+1761218307: New client connected from 172.19.0.12:42690 as nodered_dashboard (p2, c1, k60).
+1761218899: Client nodered_dashboard disconnected.
+1761218899: New connection from 172.19.0.12:46204 on port 1883.
+1761218899: New client connected from 172.19.0.12:46204 as nodered_dashboard (p2, c1, k60).
+1761219884: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761221685: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761223486: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761260058: Client fridge_SmartChill_3C5AB49F2D71_1761158905 closed its connection.
+1761260058: New connection from 172.19.0.8:45179 on port 1883.
+1761260058: New client connected from 172.19.0.8:45179 as fridge_SmartChill_3C5AB49F2D71_1761260058 (p2, c1, k60).
+1761260110: Client nodered_dashboard disconnected.
+1761260110: New connection from 172.19.0.12:50778 on port 1883.
+1761260110: New client connected from 172.19.0.12:50778 as nodered_dashboard (p2, c1, k60).
+1761261117: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761262918: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761264719: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761266520: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761268321: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761270122: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761271922: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761273723: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761275524: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761277325: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761279126: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761280927: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761282728: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761284529: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761286330: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761299080: Client nodered_dashboard disconnected.
+1761299080: New connection from 172.19.0.12:43992 on port 1883.
+1761299080: New client connected from 172.19.0.12:43992 as nodered_dashboard (p2, c1, k60).
+1761299164: Client nodered_dashboard disconnected.
+1761299164: New connection from 172.19.0.12:44828 on port 1883.
+1761299164: New client connected from 172.19.0.12:44828 as nodered_dashboard (p2, c1, k60).
+1761299168: Client nodered_dashboard disconnected.
+1761299168: New connection from 172.19.0.12:41210 on port 1883.
+1761299168: New client connected from 172.19.0.12:41210 as nodered_dashboard (p2, c1, k60).
+1761299402: Client nodered_dashboard disconnected.
+1761299402: New connection from 172.19.0.12:47568 on port 1883.
+1761299402: New client connected from 172.19.0.12:47568 as nodered_dashboard (p2, c1, k60).
+1761299648: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761299672: Client nodered_dashboard disconnected.
+1761299672: New connection from 172.19.0.12:35990 on port 1883.
+1761299672: New client connected from 172.19.0.12:35990 as nodered_dashboard (p2, c1, k60).
+1761300575: Client nodered_dashboard disconnected.
+1761300575: New connection from 172.19.0.12:41822 on port 1883.
+1761300575: New client connected from 172.19.0.12:41822 as nodered_dashboard (p2, c1, k60).
+1761301449: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761303250: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761303585: Client nodered_dashboard disconnected.
+1761303585: New connection from 172.19.0.12:59290 on port 1883.
+1761303585: New client connected from 172.19.0.12:59290 as nodered_dashboard (p2, c1, k60).
+1761305051: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761306851: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761308652: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761310453: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761312254: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761314055: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761315856: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761317657: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761319458: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1761320702: New connection from 172.19.0.1:53942 on port 1883.
+1761320702: New client connected from 172.19.0.1:53942 as telegram_bot_service_1761320702 (p2, c1, k60).
+1761320702: Client telegram_bot_service_1761320702 closed its connection.
+1761320818: New connection from 172.19.0.1:49032 on port 1883.
+1761320818: New client connected from 172.19.0.1:49032 as telegram_bot_service_1761320818 (p2, c1, k60).
+1761320818: Client telegram_bot_service_1761320818 closed its connection.
+1761320927: New connection from 172.19.0.1:54710 on port 1883.
+1761320927: New client connected from 172.19.0.1:54710 as telegram_bot_service_1761320927 (p2, c1, k60).
+1761320927: Client telegram_bot_service_1761320927 closed its connection.
+1761321250: mosquitto version 2.0.22 terminating
+1761321250: Saving in-memory database to /mosquitto/data//mosquitto.db.

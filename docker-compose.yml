@@ -9,17 +9,34 @@ services:
     volumes:
       - ./Catalog:/app
     environment:
-      - FLASK_ENV=production
-      - PYTHONUNBUFFERED=1
+      - PYTHONUNBUFFERED=1 # Changed from FLASK_ENV for consistency
     restart: unless-stopped
     networks:
       - smartchill_network
+
+  device_connector:
+    build:
+      context: ./Device Connector
+      dockerfile: Dockerfile
+    container_name: smartchill_device_connector
+    volumes:
+      - ./Device Connector:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started # Mosquitto image has no healthcheck
+    networks:
+      - smartchill_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "pgrep", "-f", "Fridge.py"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 20s
 
   timer_usage_control:
     build:
@@ -32,16 +49,13 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - catalog
-      - mosquitto
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started
     networks:
       - smartchill_network
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+    # Removed healthcheck as it was just pinging catalog
 
   food_spoilage_control:
     build:
@@ -54,16 +68,13 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - catalog
-      - mosquitto
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started
     networks:
       - smartchill_network
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+    # Removed healthcheck
 
   fridge_status_control:
     build:
@@ -76,8 +87,10 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - catalog
-      - mosquitto
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started
     networks:
       - smartchill_network
     healthcheck:
@@ -98,19 +111,27 @@ services:
       - ./InfluxDB Adaptor:/app
     environment:
       - PYTHONUNBUFFERED=1
+      # These use Docker service names now
       - INFLUX_URL=http://influxdb:8086
       - INFLUX_ORG=smartchill
       - INFLUX_BUCKET=smartchill
       - INFLUX_TOKEN=smartchill-token
     restart: unless-stopped
     depends_on:
-      - catalog
-      - mosquitto
-      - influxdb
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      influxdb:
+        condition: service_healthy
     networks:
       - smartchill_network
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://catalog:8001/health', timeout=5); requests.get('http://influxdb:8086/health', timeout=5)"]
+      # Checks connection to dependent services from within the container
+      test: >
+        python -c "import requests;
+        requests.get('http://catalog:8001/health', timeout=5).raise_for_status();
+        requests.get('http://influxdb:8086/health', timeout=5).raise_for_status()"
       interval: 30s
       timeout: 10s
       retries: 3
@@ -129,8 +150,12 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - catalog
-      - data_analysis
+      catalog:
+        condition: service_started
+      # Energy Optimization now depends on InfluxDB Adaptor, not Data Analysis
+      influxdb_adaptor:
+        condition: service_healthy
+      # Removed data_analysis dependency
     networks:
       - smartchill_network
     healthcheck:
@@ -153,8 +178,10 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - catalog
-      - influxdb_adaptor
+      catalog:
+        condition: service_started
+      influxdb_adaptor:
+        condition: service_healthy
     networks:
       - smartchill_network
     healthcheck:
@@ -163,6 +190,37 @@ services:
       timeout: 10s
       retries: 3
       start_period: 50s
+
+  # --- NEW SERVICE: Telegram Bot ---
+  telegram_bot:
+    build:
+      # Adjust context if your bot code is in a different folder
+      context: ./TelegramBot 
+      dockerfile: Dockerfile
+    container_name: smartchill_telegram_bot
+    volumes:
+      # Mount your bot code directory
+      - ./TelegramBot:/app 
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Optional: Pass token via environment if not hardcoded in settings.json
+      # - TELEGRAM_TOKEN=YOUR_ACTUAL_TOKEN 
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+    healthcheck:
+      # Simple check: Is the Python process running?
+      test: ["CMD", "pgrep", "-f", "TelegramBot.py"] 
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  # --- End of Telegram Bot ---
 
   influxdb:
     image: influxdb:2.7
@@ -193,33 +251,51 @@ services:
     image: eclipse-mosquitto:2.0
     container_name: smartchill_mosquitto
     ports:
-      - "1884:1883"
-      - "9002:9001"
+      # Keep local port 1884 mapping to internal 1883
+      - "1884:1883" 
+      - "9002:9001" 
     volumes:
       - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+      # Ensure data and log volumes are correctly defined below
+      - mosquitto_data:/mosquitto/data 
+      - mosquitto_log:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto.conf # Ensure config is loaded
     restart: unless-stopped
     networks:
       - smartchill_network
+    # Mosquitto image doesn't have a built-in healthcheck
 
   nodered:
     image: nodered/node-red:latest
     container_name: smartchill_nodered
+    user: "1000:1000"
     ports:
       - "1880:1880"
     volumes:
-      - ./nodered/data:/data
+      - nodered_data:/data # Use named volume for Node-RED data
     environment:
       - TZ=Europe/Rome
       - NODE_RED_ENABLE_PROJECTS=true
+      - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
     restart: unless-stopped
     depends_on:
-      - mosquitto
-      - catalog
-      - energy_optimization
-      - influxdb_adaptor
-      - data_analysis
+      # Add telegram_bot dependency if Node-RED calls it
+      mosquitto:
+        condition: service_started
+      catalog:
+        condition: service_started
+      energy_optimization:
+        condition: service_started
+      influxdb_adaptor:
+        condition: service_started
+      data_analysis:
+        condition: service_started
+      device_connector:
+        condition: service_started
+      telegram_bot:
+          condition: service_started # Assuming Node-RED might interact with it
+    entrypoint: >
+      /bin/bash -c "git config --global --add safe.directory /data/projects/SmartChill && npm start --cache /data/.npm -- --userDir /data"
     networks:
       - smartchill_network
     healthcheck:
@@ -234,6 +310,7 @@ networks:
     driver: bridge
 
 volumes:
+  # Define named volumes for persistent data
   mosquitto_data:
   mosquitto_log:
   influxdb_data:

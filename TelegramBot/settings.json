@@ -1,0 +1,31 @@
+{
+    "serviceInfo": {
+      "serviceID": "TelegramBot",
+      "serviceName": "SmartChill Telegram Bot",
+      "serviceDescription": "Provides a Telegram interface for users to manage devices and receive alerts.",
+      "serviceType": "interface_bot",
+      "version": "1.0.0",
+      "endpoints": [
+        "Telegram Commands",
+        "MQTT Subscribe: Group17/SmartChill/+/Alerts/Malfunction",
+        "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorTimeout",
+        "MQTT Subscribe: Group17/SmartChill/+/Alerts/Spoilage",
+        "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorClosed"
+      ]
+    },
+    "telegram": {
+      "TOKEN": "8381660177:AAEVv5Fbb1eszVGPBxhkPPI1X-fy2ZHvWDI" 
+    },
+    "catalog": {
+      "url": "http://catalog:8001" 
+    },
+    "mqtt": {
+      "brokerIP": "mosquitto",
+      "brokerPort": 1883,
+      "clientID_prefix": "TelegramBot_Service"
+    },
+    "optimizer": { "base_url": "http://optimizer:8003" },
+    "data_analysis": { "base_url": "http://data-analysis:8004" },
+    "nodered": { "dashboard_url": "http://nodered:1880/ui" },
+     "defaults": { "alert_cooldown_minutes": 15 }
+ }

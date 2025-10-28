@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "09-09-2025 14:31",
+    "lastUpdate": "28-10-2025 11:22",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -101,19 +101,56 @@
     },
     "servicesList": [
         {
+            "serviceID": "FridgeStatusControl",
+            "name": "Fridge Status Control Service",
+            "description": "Monitors fridge temperature and humidity via MQTT to detect malfunctions and send malfunction alerts when conditions are abnormal.",
+            "endpoints": [
+                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
+                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
+                "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/+/config_update",
+                "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction",
+                "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_ack",
+                "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_error",
+                "MQTT Publish: Group17/SmartChill/FridgeStatusControl/+/config_data"
+            ],
+            "type": "monitoring_service",
+            "version": "1.0.0",
+            "status": "active",
+            "lastUpdate": "28-10-2025 11:22"
+        },
+        {
             "serviceID": "TimerUsageControl",
             "name": "Timer Usage Control Service",
             "description": "Monitors fridge door activity via MQTT and sends timeout alerts when doors remain open too long.",
             "endpoints": [
                 "MQTT Subscribe: Group17/SmartChill/Devices/+/+/door_event",
-                "MQTT Subscribe: Group17/SmartChill/TimerUsageControl/config_update",
+                "MQTT Subscribe: Group17/SmartChill/TimerUsageControl/+/config_update",
                 "MQTT Publish: Group17/SmartChill/+/Alerts/DoorTimeout",
-                "MQTT Publish: Group17/SmartChill/+/Alerts/DoorClosed"
+                "MQTT Publish: Group17/SmartChill/+/Alerts/DoorClosed",
+                "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_ack",
+                "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_error",
+                "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_data"
             ],
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "09-09-2025 14:31"
+            "lastUpdate": "28-10-2025 11:22"
+        },
+        {
+            "serviceID": "DataAnalysis",
+            "name": "Data Analysis Service",
+            "description": "Processes raw sensor data and generates statistical insights and trends for visualization and decision making.",
+            "endpoints": [
+                "REST: GET /analyze/{device_id}?period={duration}&metrics={list}",
+                "REST: GET /trends/{device_id}?period={duration}",
+                "REST: GET /patterns/{device_id}?type={usage|temperature|efficiency}",
+                "REST: GET /health",
+                "REST: GET /status"
+            ],
+            "type": "analytics_service",
+            "version": "1.0.0",
+            "status": "active",
+            "lastUpdate": "28-10-2025 11:22"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -140,7 +177,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "09-09-2025 14:31"
+            "lastUpdate": "28-10-2025 11:22"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -148,96 +185,48 @@
             "description": "Monitors fridge gas sensor via MQTT and sends spoilage alerts when gas levels indicate potential food spoilage.",
             "endpoints": [
                 "MQTT Subscribe: Group17/SmartChill/Devices/+/+/gas",
-                "MQTT Subscribe: Group17/SmartChill/FoodSpoilageControl/config_update",
-                "MQTT Publish: Group17/SmartChill/+/Alerts/Spoilage"
+                "MQTT Subscribe: Group17/SmartChill/FoodSpoilageControl/+/config_update",
+                "MQTT Publish: Group17/SmartChill/+/Alerts/Spoilage",
+                "MQTT Publish: Group17/SmartChill/FoodSpoilageControl/+/config_ack",
+                "MQTT Publish: Group17/SmartChill/FoodSpoilageControl/+/config_error",
+                "MQTT Publish: Group17/SmartChill/FoodSpoilageControl/+/config_data"
             ],
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "09-09-2025 14:31"
+            "lastUpdate": "28-10-2025 11:22"
         },
         {
             "serviceID": "EnergyOptimization",
-            "name": "Energy Optimization Service",
-            "description": "Analyzes energy consumption patterns using ML prediction and provides optimization recommendations via MQTT and REST API.",
+            "name": "SmartChill Energy Optimization",
+            "description": "Energy optimization service using compressor duty cycle analysis and runtime prediction",
             "endpoints": [
-                "MQTT Publish: Group17/SmartChill/+/Optimization/EnergyReport",
-                "MQTT Publish: Group17/SmartChill/+/Optimization/Predictions",
-                "MQTT Subscribe: Group17/SmartChill/EnergyOptimization/trigger_analysis",
-                "MQTT Subscribe: Group17/SmartChill/EnergyOptimization/config_update",
+                "REST: GET /health",
+                "REST: GET /status",
                 "REST: GET /optimize/{device_id}",
                 "REST: GET /predictions/{device_id}",
-                "REST: GET /events?device={device_id}&last={duration}&limit=100",
-                "REST: GET /health",
-                "REST: GET /status",
-                "REST: GET /health",
-                "REST: GET /status"
-            ],
-            "type": "analytics_service",
-            "version": "1.0.0",
-            "status": "active",
-            "lastUpdate": "07-09-2025 17:58"
-        },
-        {
-            "serviceID": "DataAnalysis",
-            "name": "Data Analysis Service",
-            "description": "Processes raw sensor data and generates statistical insights and trends for visualization and decision making.",
-            "endpoints": [
-                "REST: GET /analyze/{device_id}?period={duration}&metrics={list}",
-                "REST: GET /trends/{device_id}?period={duration}",
-                "REST: GET /patterns/{device_id}?type={usage|temperature|efficiency}",
-                "REST: GET /health",
-                "REST: GET /status"
-            ],
-            "type": "analytics_service",
-            "version": "1.0.0",
-            "status": "active",
-            "lastUpdate": "09-09-2025 14:29"
-        },
-        {
-            "serviceID": "energy_optimization_service",
-            "name": "SmartChill Energy Optimization",
-            "description": "Energy optimization and prediction service for SmartChill IoT platform - REST only",
-            "endpoints": [
-                "REST: GET /health",
-                "REST: GET /status",
-                "REST: GET /optimize/{device_id}",
-                "REST: GET /predictions/{device_id}"
+                "REST: GET /runtime/{device_id}"
             ],
             "type": "optimization",
-            "version": "2.0.0",
+            "version": "3.1.0",
             "status": "active",
-            "lastUpdate": "08-09-2025 15:11"
+            "lastUpdate": "28-10-2025 10:52"
         },
         {
-            "serviceID": "FridgeStatusControl",
-            "name": "Fridge Status Control Service",
-            "description": "Monitors fridge temperature and humidity via MQTT to detect malfunctions and send malfunction alerts when conditions are abnormal.",
+            "serviceID": "TelegramBot",
+            "name": "SmartChill Telegram Bot",
+            "description": "Provides a Telegram interface for users to manage devices and receive alerts.",
             "endpoints": [
-                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/temperature",
-                "MQTT Subscribe: Group17/SmartChill/Devices/+/+/humidity",
-                "MQTT Subscribe: Group17/SmartChill/FridgeStatusControl/config_update",
-                "MQTT Publish: Group17/SmartChill/+/Alerts/Malfunction"
+                "Telegram Commands",
+                "MQTT Subscribe: Group17/SmartChill/+/Alerts/Malfunction",
+                "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorTimeout",
+                "MQTT Subscribe: Group17/SmartChill/+/Alerts/Spoilage",
+                "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorClosed"
             ],
-            "type": "monitoring_service",
+            "type": "interface_bot",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "09-09-2025 14:31"
-        },
-        {
-            "serviceID": "Energy Optimization Service",
-            "name": "SmartChill Energy Optimization",
-            "description": "Energy optimization and prediction service for SmartChill IoT platform - REST only",
-            "endpoints": [
-                "REST: GET /health",
-                "REST: GET /status",
-                "REST: GET /optimize/{device_id}",
-                "REST: GET /predictions/{device_id}"
-            ],
-            "type": "optimization",
-            "version": "2.0.0",
-            "status": "active",
-            "lastUpdate": "09-09-2025 14:31"
+            "lastUpdate": "28-10-2025 11:22"
         }
     ],
     "devicesList": [
@@ -267,32 +256,59 @@
                 ]
             },
             "status": "registered",
-            "user_assigned": true,
+            "user_assigned": false,
             "registration_time": "04-09-2025 18:58",
-            "last_sync": "08-09-2025 15:16",
+            "last_sync": "16-09-2025 09:37",
+            "assigned_user": null,
+            "user_device_name": null,
+            "assignment_time": null
+        },
+        {
+            "deviceID": "SmartChill_3C5AB49F2D71",
+            "mac_address": "3C:5A:B4:9F:2D:71",
+            "model": "Whirlpool_WRF535SWHZ",
+            "firmware_version": "1.2.3",
+            "sensors": [
+                "temperature",
+                "humidity",
+                "gas",
+                "light"
+            ],
+            "mqtt_topics": [
+                "Group17/SmartChill/Devices/Whirlpool_WRF535SWHZ/SmartChill_3C5AB49F2D71/temperature",
+                "Group17/SmartChill/Devices/Whirlpool_WRF535SWHZ/SmartChill_3C5AB49F2D71/humidity",
+                "Group17/SmartChill/Devices/Whirlpool_WRF535SWHZ/SmartChill_3C5AB49F2D71/gas",
+                "Group17/SmartChill/Devices/Whirlpool_WRF535SWHZ/SmartChill_3C5AB49F2D71/light",
+                "Group17/SmartChill/Devices/Whirlpool_WRF535SWHZ/SmartChill_3C5AB49F2D71/door_event"
+            ],
+            "mqtt_config": {
+                "broker": "mosquitto:1883",
+                "topicTemplate": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
+                "events": [
+                    "door_event"
+                ]
+            },
+            "status": "registered",
+            "user_assigned": true,
+            "registration_time": "16-09-2025 17:23",
+            "last_sync": "28-10-2025 10:52",
             "assigned_user": "alex",
-            "user_device_name": "Frigo di Alex",
-            "assignment_time": "04-09-2025 19:00"
+            "user_device_name": "Alex\u2019s Fridge",
+            "assignment_time": "28-10-2025 10:23"
         }
     ],
     "usersList": [
         {
-            "userID": "admin",
-            "userName": "Administrator",
-            "chatID": 123456789,
-            "devicesList": []
-        },
-        {
             "userID": "alex",
             "userName": "Alex",
-            "chatID": null,
+            "telegram_chat_id": "861074879",
             "devicesList": [
                 {
-                    "deviceID": "SmartChill_A4B2C3D91E7F",
-                    "deviceName": "Frigo di Alex"
+                    "deviceID": "SmartChill_3C5AB49F2D71",
+                    "deviceName": "Alex\u2019s Fridge"
                 }
             ],
-            "registration_time": "04-09-2025 19:00"
+            "registration_time": "28-10-2025 10:23"
         }
     ]
 }

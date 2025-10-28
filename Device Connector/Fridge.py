@@ -5,11 +5,10 @@ import threading
 import random
 import math
 from datetime import datetime, timezone
-from queue import Queue
 from MyMQTT import MyMQTT
 import os
 
-SETTINGS_FILE = r"D:\PoliTo\Programming for Iot\SmartChill - Project\SmartChill v3\Device Connector\settings.json"
+SETTINGS_FILE = "settings.json"
 
 class FridgeSimulator:
     def __init__(self):
@@ -60,15 +59,27 @@ class FridgeSimulator:
         self.spoilage_active = False
         self.malfunction_active = False
         self.automatic_mode = True
-        self.manual_override = False
+        self.manual_door_control = False # If True, door will not close automatically
         
-        # Threading
-        self.command_queue = Queue()
-        
-        # Realistic simulation parameters
-        self.compressor_cycle = 0
-        self.base_temperature = 4.0
+        # Door management
         self.door_open_start_time = None
+        
+        # Thermal model parameters - SEMPLIFICATI
+        self.target_temperature = 4.0
+        self.compressor_on = False
+        self.last_temp_update = time.time()
+        
+        # Rate di cambio temperatura (°C per ora)
+        self.cooling_rate = 3.0          # Quanto veloce raffredda con compressore ON
+        self.warming_rate = 0.5          # Quanto veloce scalda con compressore OFF
+        self.door_warming_rate = 3.0     # Quanto veloce scalda con porta aperta
+        
+        # Soglie per il compressore (isteresi semplice)
+        self.temp_min = 3.5              # Sotto questa temperatura: compressore OFF
+        self.temp_max = 4.5              # Sopra questa temperatura: compressore ON
+        
+        # Inizializza temperatura vicino al target
+        self.sensors["temperature"] = self.target_temperature + random.uniform(-0.2, 0.2)
         
     def _load_settings(self):
         """Load settings from JSON file"""
@@ -130,7 +141,7 @@ class FridgeSimulator:
             print(f"[REG] Failed to connect to catalog: {e}")
             print("[REG] Proceeding with local configuration...")
             # Use MAC-based device_id as fallback
-            self.device_id = f"SmartChill_{self.mac_address.replace(':', '')[-6:]}"
+            self.device_id = f"SmartChill_{self.mac_address.replace(':', '')}"
             return False
     
     def build_topic(self, sensor_or_event):
@@ -153,6 +164,18 @@ class FridgeSimulator:
             model=self.model,
             device_id=self.device_id
         )
+    
+    def build_command_topic(self, command_type):
+        """Build command topic for receiving simulation commands"""
+        if not self.device_id:
+            return None
+        return f"Group17/SmartChill/Commands/{self.device_id}/{command_type}"
+    
+    def build_response_topic(self):
+        """Build response topic for sending command confirmations"""
+        if not self.device_id:
+            return None
+        return f"Group17/SmartChill/Response/{self.device_id}/command_result"
     
     def create_senml_payload(self, sensor_type, value, timestamp=None):
         """Create SenML formatted payload for sensor data"""
@@ -224,10 +247,15 @@ class FridgeSimulator:
             time.sleep(2)
             self.connected = True
             
-            # Subscribe to command topic
-            command_topic = f"Group17/SmartChill/Commands/{self.device_id}/update_config"
-            self.mqtt_client.mySubscribe(command_topic)
-            print(f"[MQTT] Subscribed to: {command_topic}")
+            # Subscribe to config topic
+            config_topic = self.build_command_topic("update_config")
+            self.mqtt_client.mySubscribe(config_topic)
+            print(f"[MQTT] Subscribed to: {config_topic}")
+            
+            # Subscribe to simulation commands topic
+            simulation_topic = self.build_command_topic("simulation")
+            self.mqtt_client.mySubscribe(simulation_topic)
+            print(f"[MQTT] Subscribed to: {simulation_topic}")
             
             print("[MQTT] Connected successfully")
             return True
@@ -240,86 +268,272 @@ class FridgeSimulator:
         """Callback method for MyMQTT - handles incoming messages"""
         try:
             message = json.loads(payload)
-            print(f"[MQTT] Received config update: {message}")
             
-            # Update sampling intervals if provided
-            if "sampling_intervals" in message:
-                old_intervals = self.sampling_intervals.copy()
-                self.sampling_intervals.update(message["sampling_intervals"])
+            # Handle config updates
+            if "update_config" in topic:
+                print(f"[MQTT] Received config update: {message}")
                 
-                print(f"[CONFIG] Updated sampling intervals:")
-                for sensor in message["sampling_intervals"]:
-                    old_val = old_intervals.get(sensor, "unknown")
-                    new_val = self.sampling_intervals[sensor]
-                    print(f"[CONFIG]   {sensor}: {old_val}s -> {new_val}s")
-                
-                # Save updated settings
-                self._save_settings()
-                
+                if "sampling_intervals" in message:
+                    old_intervals = self.sampling_intervals.copy()
+                    self.sampling_intervals.update(message["sampling_intervals"])
+                    
+                    print(f"[CONFIG] Updated sampling intervals:")
+                    for sensor in message["sampling_intervals"]:
+                        old_val = old_intervals.get(sensor, "unknown")
+                        new_val = self.sampling_intervals[sensor]
+                        print(f"[CONFIG]   {sensor}: {old_val}s -> {new_val}s")
+                    
+                    self._save_settings()
+            
+            # Handle simulation commands
+            elif "simulation" in topic:
+                print(f"[MQTT] Received simulation command: {message}")
+                self._handle_simulation_command(message)
+                    
         except Exception as e:
             print(f"[MQTT] Error processing message: {e}")
     
+    def _handle_simulation_command(self, command):
+        """Handle simulation control commands"""
+        try:
+            action = command.get("action", "").lower()
+            
+            if action == "door_open":
+                 self.manual_door_control = True
+                 self._simulate_door_open()
+                 self._send_command_response("manual_door_on", True, "Manual door control ENABLED (door won't auto-close)")
+                 print("[CMD] Manual door control ENABLED")
+            
+            elif action == "door_close":
+                 self.manual_door_control = False
+                 self._simulate_door_close()
+                 self._send_command_response("manual_door_off", True, "Manual door control DISABLED (door will auto-close)")
+                 print("[CMD] Manual door control DISABLED")
+
+            elif action == "spoilage_start":
+                self.spoilage_active = True
+                self._send_command_response("spoilage_start", True, "Spoilage simulation activated")
+                print("[CMD] Spoilage simulation activated via MQTT")
+                
+            elif action == "spoilage_stop":
+                self.spoilage_active = False
+                self._send_command_response("spoilage_stop", True, "Spoilage simulation deactivated")
+                print("[CMD] Spoilage simulation deactivated via MQTT")
+                
+            elif action == "malfunction_start":
+                self.malfunction_active = True
+                self._send_command_response("malfunction_start", True, "Malfunction simulation activated")
+                print("[CMD] Malfunction simulation activated via MQTT")
+                
+            elif action == "malfunction_stop":
+                self.malfunction_active = False
+                self._send_command_response("malfunction_stop", True, "Malfunction simulation deactivated")
+                print("[CMD] Malfunction simulation deactivated via MQTT")
+                
+            elif action == "reset":
+                self.spoilage_active = False
+                self.malfunction_active = False
+                if self.door_open:
+                    self._simulate_door_close()
+                self.sensors["temperature"] = self.target_temperature
+                self._send_command_response("reset", True, "Simulator reset to normal operation")
+                print("[CMD] Simulator reset to normal operation via MQTT")
+                
+            elif action == "status":
+                status = self.get_simulation_status()
+                self._send_command_response("status", True, "Status retrieved", status)
+                
+            else:
+                self._send_command_response("unknown", False, f"Unknown command: {action}")
+                
+        except Exception as e:
+            print(f"[CMD] Error handling simulation command: {e}")
+            self._send_command_response("error", False, f"Command processing error: {str(e)}")
+    
+    def _send_command_response(self, command, success, message, data=None):
+        """Send response to command via MQTT"""
+        try:
+            response_topic = self.build_response_topic()
+            if response_topic and self.mqtt_client and self.connected:
+                
+                response = {
+                    "command": command,
+                    "success": success,
+                    "message": message,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "device_id": self.device_id
+                }
+                
+                if data:
+                    response["data"] = data
+                
+                self.mqtt_client.myPublish(response_topic, response)
+                print(f"[RESPONSE] Sent: {command} -> {success} ({message})")
+                
+        except Exception as e:
+            print(f"[RESPONSE] Error sending command response: {e}")
+    
+    def get_simulation_status(self):
+        """Get current simulation status"""
+        return {
+            "device_id": self.device_id,
+            "door_open": self.door_open,
+            "spoilage_active": self.spoilage_active,
+            "malfunction_active": self.malfunction_active,
+            "compressor_on": self.compressor_on,
+            "target_temperature": self.target_temperature,
+            "current_temperature": round(self.sensors["temperature"], 2),
+            "automatic_mode": self.automatic_mode,
+            "sensors": {k: round(v, 2) for k, v in self.sensors.items()},
+            "last_compressor_change": self.compressor_last_change,
+            "uptime": time.time() - self.compressor_last_change
+        }
+    
+    def update_compressor_state(self):
+        """Controlla il compressore con isteresi semplice"""
+        temp = self.sensors["temperature"]
+        
+        # Solo se non c'è malfunzionamento
+        if not self.malfunction_active:
+            if not self.compressor_on and temp >= self.temp_max:
+                # Temperatura troppo alta: accendi compressore
+                self.compressor_on = True
+                print(f"[THERMAL] Compressor ON - Temp: {temp:.2f}°C (>= {self.temp_max}°C)")
+                
+            elif self.compressor_on and temp <= self.temp_min:
+                # Temperatura abbastanza bassa: spegni compressore
+                self.compressor_on = False
+                print(f"[THERMAL] Compressor OFF - Temp: {temp:.2f}°C (<= {self.temp_min}°C)")
+    
+    def simulate_thermal_dynamics(self):
+        """Simula la dinamica termica in modo lineare"""
+        current_time = time.time()
+        time_delta = current_time - self.last_temp_update  # secondi
+        self.last_temp_update = current_time
+        
+        # Converte in ore per i rate
+        dt_hours = time_delta / 3600.0
+        
+        current_temp = self.sensors["temperature"]
+        
+        # Calcola il cambiamento di temperatura
+        if self.malfunction_active:
+            # Malfunzionamento: si scalda velocemente, compressore non funziona
+            temp_change = self.warming_rate * 3 * dt_hours  # 3x più veloce
+            
+        elif self.door_open:
+            # Porta aperta: si scalda velocemente indipendentemente dal compressore
+            temp_change = self.door_warming_rate * dt_hours
+            
+        elif self.compressor_on:
+            # Compressore acceso: raffredda
+            temp_change = -self.cooling_rate * dt_hours  # negativo = raffreddamento
+            
+        else:
+            # Compressore spento: si scalda lentamente
+            temp_change = self.warming_rate * dt_hours
+        
+        # Applica il cambiamento
+        new_temp = current_temp + temp_change
+        
+        # Limiti di sicurezza
+        if self.malfunction_active:
+            # Con malfunzionamento può arrivare a temperatura ambiente
+            new_temp = max(-5.0, min(25.0, new_temp))
+        else:
+            # Funzionamento normale: limiti frigorifero
+            new_temp = max(0.0, min(10.0, new_temp))
+        
+        self.sensors["temperature"] = new_temp
+    
+    def _get_door_open_probability(self):
+        """
+        Calculate the probability of the door opening based on the time of day and day of the week.
+        This simulates realistic user behavior (e.g., more activity during meal times).
+        The probability values represent the chance of opening per 2-second simulation tick.
+        """
+        now = datetime.now()
+        current_hour = now.hour
+        # Monday is 0 and Sunday is 6
+        is_weekend = now.weekday() >= 5
+
+        # (start_hour, end_hour, probability)
+        # Probabilities are higher during typical meal times.
+        weekday_schedule = [
+            (7, 9, 0.001),     # Breakfast
+            (12, 14, 0.0025),  # Lunch
+            (19, 21, 0.0025)   # Dinner
+        ]
+        
+        weekend_schedule = [
+            (9, 11, 0.0015),   # Late breakfast
+            (13, 15, 0.003),   # Lunch
+            (19, 22, 0.003)    # Dinner
+        ]
+
+        # Use the appropriate schedule based on the day
+        schedule = weekend_schedule if is_weekend else weekday_schedule
+        
+        # Check if the current time falls into a scheduled high-activity period
+        for start, end, prob in schedule:
+            if start <= current_hour < end:
+                return prob
+        
+        # Return a very low base probability for off-peak hours
+        # Lower probability during the night
+        if 0 <= current_hour < 6:
+            return 0.00001  # Extremely low chance during the night
+        else:
+            return 0.0001   # Low chance for other times
+
     def generate_realistic_data(self):
-        """Generate realistic sensor data based on current state"""
+        """Generate realistic sensor data based on current state and thermal model"""
         current_time = time.time()
         
-        # Temperature simulation with compressor cycles
-        if not self.malfunction_active:
-            if self.door_open:
-                # Door open - temperature rises gradually
-                if self.door_open_start_time:
-                    door_open_duration = current_time - self.door_open_start_time
-                    temp_rise = min(door_open_duration / 180.0 * 3, 4)  # Max 4°C rise after 3 minutes
-                    self.sensors["temperature"] = self.base_temperature + temp_rise
-            else:
-                # Normal operation with compressor cycles
-                self.compressor_cycle += 0.05
-                temp_variation = 1.0 * math.sin(self.compressor_cycle) + random.uniform(-0.2, 0.2)
-                self.sensors["temperature"] = max(1, min(7, self.base_temperature + temp_variation))
-        else:
-            # Malfunction - temperature increases uncontrollably
-            self.sensors["temperature"] += random.uniform(0.1, 0.5)
-            self.sensors["temperature"] = min(15, self.sensors["temperature"])
+        # 1. First, simulate the thermal dynamics
+        self.simulate_thermal_dynamics()
         
+        # 2. Then, update the compressor state based on the new temperature
+        self.update_compressor_state()
+        
+        # 3. Simulate other sensors
         # Humidity correlated with temperature and door state
         if self.door_open:
-            # Door open - humidity increases due to ambient air
             self.sensors["humidity"] = min(90, self.sensors["humidity"] + random.uniform(0.1, 0.5))
         else:
-            # Normal operation - humidity inversely correlated with temperature
             target_humidity = 65 - (self.sensors["temperature"] - 4) * 3
             diff = (target_humidity - self.sensors["humidity"]) * 0.05
             self.sensors["humidity"] += diff + random.uniform(-0.5, 0.5)
             self.sensors["humidity"] = max(30, min(85, self.sensors["humidity"]))
         
-        # Light sensor - clear distinction between door states
+        # Light sensor
         if self.door_open:
             self.sensors["light"] = random.uniform(120, 200)
         else:
             self.sensors["light"] = random.uniform(0, 8)
         
-        # Gas sensor - spoilage detection
+        # Gas sensor
         if self.spoilage_active:
             self.sensors["gas"] = random.uniform(450, 700)
         else:
             self.sensors["gas"] = random.uniform(8, 45)
         
-        # Automatic door events (realistic frequency)
+        # Automatic door events based on a time-dependent probability model
         if (self.automatic_mode and not self.door_open and 
-            random.random() < 0.0003):  # ~1 door opening every 55 minutes on average
+            random.random() < self._get_door_open_probability()):
             self._simulate_door_open()
         
-        # Automatic door closing after realistic duration
-        if (self.door_open and not self.manual_override and self.door_open_start_time and 
-            (current_time - self.door_open_start_time) > random.uniform(20, 90)):
+        if (self.door_open and 
+            not self.manual_door_control and # <-- Add this condition
+            self.door_open_start_time and 
+            (current_time - self.door_open_start_time) > random.uniform(20, 120)):
             self._simulate_door_close()
     
-    def _simulate_door_open(self, manual=False):
+    def _simulate_door_open(self):
         """Simulate door opening event with immediate SenML notification"""
         if not self.door_open:
             self.door_open = True
             self.door_open_start_time = time.time()
-            self.manual_override = manual
             
             # Send immediate door event in SenML format if configured
             if "door_event" in self.include_events:
@@ -333,16 +547,15 @@ class FridgeSimulator:
                     self.mqtt_client.myPublish(topic, senml_payload)
                     print(f"[EVENT] Door OPENED - SenML notification sent to {topic}")
             
-            print("[SIM] Door opened")
+            print("[SIM] Door opened automatically")
     
-    def _simulate_door_close(self, manual=False):
+    def _simulate_door_close(self):
         """Simulate door closing event with immediate SenML notification"""
         if self.door_open:
             current_time = time.time()
             door_duration = current_time - self.door_open_start_time if self.door_open_start_time else 0
             self.door_open = False
             self.door_open_start_time = None
-            self.manual_override = False
             
             # Send immediate door event in SenML format if configured
             if "door_event" in self.include_events:
@@ -357,7 +570,7 @@ class FridgeSimulator:
                     self.mqtt_client.myPublish(topic, senml_payload)
                     print(f"[EVENT] Door CLOSED after {door_duration:.1f}s - SenML notification sent")
             
-            print("[SIM] Door closed")
+            print("[SIM] Door closed automatically")
     
     def publish_sensor_data(self):
         """Publish sensor data in SenML format to MQTT topics"""
@@ -379,9 +592,13 @@ class FridgeSimulator:
                     self.mqtt_client.myPublish(topic, senml_payload)
                     self.last_publish[sensor_type] = current_time
                     
-                    # Display published data
+                    # Display published data with compressor state for temperature
                     unit = self._get_sensor_unit(sensor_type)
-                    print(f"[PUB] {sensor_type}: {value:.2f}{unit} -> {topic} (SenML)")
+                    if sensor_type == "temperature":
+                        comp_state = "ON" if self.compressor_on else "OFF"
+                        print(f"[PUB] {sensor_type}: {value:.2f}{unit} (Comp: {comp_state}) -> {topic}")
+                    else:
+                        print(f"[PUB] {sensor_type}: {value:.2f}{unit} -> {topic}")
     
     def publish_heartbeat(self):
         """Publish heartbeat message in SenML format"""
@@ -421,70 +638,28 @@ class FridgeSimulator:
         }
         return units.get(sensor_type, "")
     
-    def handle_user_commands(self):
-        """Handle user input commands (non-blocking)"""
-        while self.running:
-            try:
-                command = input().strip().lower()
-                if command:
-                    self.command_queue.put(command)
-            except (EOFError, KeyboardInterrupt):
-                self.command_queue.put("quit")
-                break
+    def get_compressor_status(self):
+        """Metodo per ottenere lo stato del compressore (utile per debugging)"""
+        return {
+            "compressor_on": self.compressor_on,
+            "current_temp": self.sensors["temperature"],
+            "target_temp": self.target_temperature,
+            "last_change": self.compressor_last_change,
+            "cycle_time_remaining": max(0, self.min_cycle_time - (time.time() - self.compressor_last_change))
+        }
     
-    def process_user_commands(self):
-        """Process queued user commands"""
-        while self.running:
-            try:
-                if not self.command_queue.empty():
-                    command = self.command_queue.get_nowait()
-                    self._execute_command(command)
-                time.sleep(0.1)
-            except:
-                pass
-    
-    def _execute_command(self, command):
-        """Execute user command"""
-        if command == "apri":
-            self._simulate_door_open(manual=True)
-            print("[CMD] Door opened manually")
-        elif command == "chiudi":
-            self._simulate_door_close(manual=True)
-            print("[CMD] Door closed manually")
-        elif command == "spoilage":
-            self.spoilage_active = True
-            print("[CMD] Spoilage simulation activated")
-        elif command == "malfunzione":
-            self.malfunction_active = True
-            print("[CMD] Malfunction simulation activated")
-        elif command == "normale":
-            self.spoilage_active = False
-            self.malfunction_active = False
-            if self.door_open:
-                self._simulate_door_close(manual=True)
-            self.automatic_mode = True
-            self.sensors["temperature"] = self.base_temperature
-            print("[CMD] Returned to normal operation")
-        elif command == "status":
-            self._print_status()
-        elif command == "help":
-            self._print_help()
-        elif command in ["quit", "exit"]:
-            print("[CMD] Shutting down simulator...")
-            self.shutdown()
-        else:
-            print(f"[CMD] Unknown command: '{command}' - type 'help' for available commands")
-    
-    def _print_status(self):
+    def print_status(self):
         """Print current simulator status"""
-        print("\n" + "=" * 40)
+        print("\n" + "=" * 50)
         print("    FRIDGE SIMULATOR STATUS")
-        print("=" * 40)
+        print("=" * 50)
         print(f"Device ID: {self.device_id}")
         print(f"Model: {self.model}")
         print(f"MAC Address: {self.mac_address}")
         print(f"MQTT Connected: {'Yes' if self.connected else 'No'}")
         print(f"Door State: {'OPEN' if self.door_open else 'CLOSED'}")
+        print(f"Compressor State: {'ON' if self.compressor_on else 'OFF'}")
+        print(f"Target Temperature: {self.target_temperature}°C")
         print(f"Spoilage Active: {'Yes' if self.spoilage_active else 'No'}")
         print(f"Malfunction Active: {'Yes' if self.malfunction_active else 'No'}")
         print(f"Automatic Mode: {'Yes' if self.automatic_mode else 'No'}")
@@ -494,22 +669,17 @@ class FridgeSimulator:
             unit = self._get_sensor_unit(sensor)
             interval = self.sampling_intervals.get(sensor, 60)
             print(f"  {sensor.capitalize():12}: {value:6.2f} {unit:4} (every {interval}s)")
-        print("=" * 40 + "\n")
-    
-    def _print_help(self):
-        """Print available commands"""
-        print("\n" + "-" * 30)
-        print("  AVAILABLE COMMANDS")
-        print("-" * 30)
-        print("  apri        - Open fridge door")
-        print("  chiudi      - Close fridge door") 
-        print("  spoilage    - Activate food spoilage simulation")
-        print("  malfunzione - Activate malfunction simulation")
-        print("  normale     - Return to normal operation")
-        print("  status      - Show current status")
-        print("  help        - Show this help")
-        print("  quit/exit   - Shutdown simulator")
-        print("-" * 30 + "\n")
+        
+        # Info sui cicli del compressore
+        if hasattr(self, 'compressor_last_change'):
+            cycle_time = time.time() - self.compressor_last_change
+            print(f"\nCompressor Cycle Info:")
+            print(f"  Current cycle time: {cycle_time/60:.1f} minutes")
+            print(f"  Min cycle time: {self.min_cycle_time/60:.1f} minutes")
+            print(f"  Cooling rate: {self.cooling_rate}°C/hour")
+            print(f"  Warming rate: {self.warming_rate}°C/hour")
+        
+        print("=" * 50 + "\n")
     
     def sensor_simulation_loop(self):
         """Main sensor simulation loop"""
@@ -538,16 +708,27 @@ class FridgeSimulator:
             except Exception as e:
                 print(f"[ERROR] Heartbeat error: {e}")
     
+    def status_loop(self):
+        """Periodic status reporting loop"""
+        while self.running:
+            try:
+                time.sleep(300)  # Print status every 5 minutes
+                self.print_status()
+            except Exception as e:
+                print(f"[ERROR] Status loop error: {e}")
+    
     def run(self):
         """Main run method - start all processes"""
-        print("=" * 50)
-        print("    SMARTCHILL FRIDGE SIMULATOR (SenML)")
-        print("=" * 50)
+        print("=" * 60)
+        print("    SMARTCHILL FRIDGE SIMULATOR (THERMAL MODEL)")
+        print("=" * 60)
         print(f"MAC Address: {self.mac_address}")
         print(f"Model: {self.model}")
         print(f"Firmware: {self.firmware_version}")
         print(f"Data Format: SenML")
-        print("=" * 50)
+        print(f"Thermal Model: Compressor Duty Cycle")
+        print(f"MQTT Commands: Enabled")
+        print("=" * 60)
         
         # Step 1: Register with catalog
         print("\n[INIT] Step 1: Registering with catalog...")
@@ -566,16 +747,23 @@ class FridgeSimulator:
         
         print("\n[INIT] Simulator started successfully!")
         print("[INIT] Publishing sensor data in SenML format.")
-        print("[INIT] Automatic realistic patterns are active.")
-        self._print_help()
+        print("[INIT] Realistic thermal model with compressor cycles active.")
+        print("[INIT] Automatic door operations enabled.")
+        print("[INIT] MQTT command interface active.")
+        print("\n[COMMANDS] Available MQTT commands:")
+        print("[COMMANDS]   Topic: Group17/SmartChill/Commands/{device_id}/simulation")
+        print("[COMMANDS]   Actions: spoilage_start, spoilage_stop, malfunction_start, malfunction_stop, reset, status")
+        print("[COMMANDS]   Response: Group17/SmartChill/Response/{device_id}/command_result")
+        
+        # Print initial status
+        self.print_status()
         
         # Start all threads
         threads = [
-            threading.Thread(target=self.handle_user_commands, daemon=True),
-            threading.Thread(target=self.process_user_commands, daemon=True),
             threading.Thread(target=self.sensor_simulation_loop, daemon=True),
             threading.Thread(target=self.mqtt_publish_loop, daemon=True),
-            threading.Thread(target=self.heartbeat_loop, daemon=True)
+            threading.Thread(target=self.heartbeat_loop, daemon=True),
+            threading.Thread(target=self.status_loop, daemon=True)
         ]
         
         for thread in threads:

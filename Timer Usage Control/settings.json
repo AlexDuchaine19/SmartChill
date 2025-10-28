@@ -7,9 +7,12 @@
         "version": "1.0.0",
         "endpoints": [
             "MQTT Subscribe: Group17/SmartChill/Devices/+/+/door_event",
-            "MQTT Subscribe: Group17/SmartChill/TimerUsageControl/config_update",
+            "MQTT Subscribe: Group17/SmartChill/TimerUsageControl/+/config_update",
             "MQTT Publish: Group17/SmartChill/+/Alerts/DoorTimeout",
-            "MQTT Publish: Group17/SmartChill/+/Alerts/DoorClosed"
+            "MQTT Publish: Group17/SmartChill/+/Alerts/DoorClosed",
+            "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_ack",
+            "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_error",
+            "MQTT Publish: Group17/SmartChill/TimerUsageControl/+/config_data"
         ]
     },
     "catalog": {
@@ -30,11 +33,16 @@
     },
     "devices": {
         "SmartChill_A4B2C3D91E7F": {
-            "max_door_open_seconds": 60,
+            "max_door_open_seconds": 120,
+            "check_interval": 6,
+            "enable_door_closed_alerts": true
+        },
+        "SmartChill_3C5AB49F2D71": {
+            "max_door_open_seconds": 30,
             "check_interval": 5,
             "enable_door_closed_alerts": true
         }
     },
-    "lastUpdate": "2025-09-04T21:29:50.492507+00:00",
-    "configVersion": 3
+    "lastUpdate": "2025-10-23T11:49:52.728920+00:00",
+    "configVersion": 36
 }

@@ -169,29 +169,236 @@ class FoodSpoilageControl:
             print(f"[CONFIG] Updated configuration for {device_id}: {new_config}")
     
     def handle_config_update(self, topic, payload):
-        """Handle configuration update via MQTT"""
+        """Handle configuration update/get via MQTT with validation and access control"""
         try:
             message = json.loads(payload)
             
-            if message.get("type") == "device_config_update":
+            # Extract requester from topic: Group17/SmartChill/FoodSpoilageControl/{requester}/config_update
+            topic_parts = topic.split('/')
+            if len(topic_parts) < 5:
+                self.send_config_error("invalid_topic", "Invalid topic format", topic)
+                return
+            
+            requester = topic_parts[3]  # The + part from the topic
+            
+            # Handle configuration GET requests
+            if message.get("type") == "config_get":
+                device_id = message.get("device_id")
+                
+                if device_id:
+                    # Return device-specific config
+                    if requester != "admin" and requester != device_id:
+                        self.send_config_error("access_denied", 
+                                            f"Device {requester} cannot read config for {device_id}", 
+                                            topic, device_id)
+                        return
+                    
+                    # Check if device exists (admin bypass this check)
+                    if requester != "admin" and device_id not in self.known_devices:
+                        if not self.check_device_exists_in_catalog(device_id):
+                            self.send_config_error("device_not_found", 
+                                                f"Device {device_id} not found in catalog", 
+                                                topic, device_id)
+                            return
+                    
+                    device_config = self.get_device_config(device_id)
+                    self.send_config_data(device_id, "device_config", device_config, topic)
+                    
+                else:
+                    # Return default config (admin only)
+                    if requester != "admin":
+                        self.send_config_error("access_denied", 
+                                            "Only admin can read default configuration", 
+                                            topic)
+                        return
+                    
+                    defaults = self.settings["defaults"]
+                    self.send_config_data(None, "default_config", defaults, topic)
+            
+            # Handle device configuration updates
+            elif message.get("type") == "device_config_update":
                 device_id = message.get("device_id")
                 new_config = message.get("config", {})
                 
-                if device_id and new_config:
-                    self.update_device_config(device_id, new_config)
-                    
-                    # Acknowledge the update
-                    ack_topic = f"Group17/SmartChill/FoodSpoilageControl/config_ack"
-                    ack_payload = {
-                        "device_id": device_id,
-                        "status": "updated",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                        "config_version": self.settings["configVersion"]
-                    }
-                    self.mqtt_client.myPublish(ack_topic, ack_payload)
-                    
+                # Validate required fields
+                if not device_id or not new_config:
+                    self.send_config_error("missing_fields", "Missing device_id or config", topic, device_id)
+                    return
+                
+                # Access control: admin can modify any device, others only their own
+                if requester != "admin":
+                    if requester != device_id:
+                        self.send_config_error("access_denied", 
+                                            f"Device {requester} cannot modify config for {device_id}", 
+                                            topic, device_id)
+                        return
+                
+                # Check if device exists (admin bypass this check)
+                if requester != "admin":
+                    if device_id not in self.known_devices:
+                        # Try to verify with catalog
+                        if not self.check_device_exists_in_catalog(device_id):
+                            self.send_config_error("device_not_found", 
+                                                f"Device {device_id} not found in catalog", 
+                                                topic, device_id)
+                            return
+                
+                # Validate configuration values
+                validation_error = self.validate_config_values(new_config)
+                if validation_error:
+                    self.send_config_error("invalid_config", validation_error, topic, device_id)
+                    return
+                
+                # Apply configuration
+                self.update_device_config(device_id, new_config)
+                
+                # Send success acknowledgment
+                self.send_config_ack(device_id, "device_updated", new_config, topic)
+                print(f"[CONFIG] Device config updated for {device_id} by {requester}")
+                
+            # Handle default configuration updates (admin only)
+            elif message.get("type") == "default_config_update":
+                new_config = message.get("config", {})
+                
+                if requester != "admin":
+                    self.send_config_error("access_denied", 
+                                        "Only admin can modify default configuration", 
+                                        topic)
+                    return
+                
+                if not new_config:
+                    self.send_config_error("missing_fields", "Missing config", topic)
+                    return
+                
+                # Validate configuration values
+                validation_error = self.validate_config_values(new_config)
+                if validation_error:
+                    self.send_config_error("invalid_config", validation_error, topic)
+                    return
+                
+                # Update defaults
+                with self.config_lock:
+                    self.settings["defaults"].update(new_config)
+                    self.save_settings()
+                
+                # Send success acknowledgment
+                self.send_config_ack(None, "defaults_updated", new_config, topic)
+                print(f"[CONFIG] Default config updated by {requester}")
+                
+            else:
+                self.send_config_error("unknown_type", f"Unknown config type: {message.get('type')}", topic)
+                
+        except json.JSONDecodeError as e:
+            self.send_config_error("invalid_json", f"Invalid JSON payload: {str(e)}", topic)
         except Exception as e:
-            print(f"[CONFIG] Error processing config update: {e}")
+            self.send_config_error("internal_error", f"Internal error: {str(e)}", topic)
+            print(f"[CONFIG] Unexpected error: {e}")
+
+    def send_config_data(self, device_id, data_type, config, original_topic):
+        """Send configuration data response"""
+        if not self.connected or not self.mqtt_client:
+            return
+        
+        # Extract requester from original topic
+        topic_parts = original_topic.split('/')
+        requester = topic_parts[3] if len(topic_parts) > 4 else "unknown"
+        
+        # Send data to requester-specific topic
+        data_topic = f"Group17/SmartChill/FoodSpoilageControl/{requester}/config_data"
+        data_payload = {
+            "device_id": device_id,
+            "data_type": data_type,
+            "config": config,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "config_version": self.settings["configVersion"],
+            "original_topic": original_topic
+        }
+        
+        try:
+            self.mqtt_client.myPublish(data_topic, data_payload)
+            print(f"[CONFIG] Sent config data: {data_type} for {device_id or 'defaults'}")
+        except Exception as e:
+            print(f"[CONFIG] Error sending config data: {e}")
+
+    def validate_config_values(self, config):
+        """Validate configuration values and return error message if invalid"""
+        
+        # Check gas_threshold_ppm
+        if "gas_threshold_ppm" in config:
+            value = config["gas_threshold_ppm"]
+            if not isinstance(value, int) or value < 100 or value > 1000:
+                return "gas_threshold_ppm must be an integer between 100 and 1000"
+        
+        # Check enable_continuous_alerts
+        if "enable_continuous_alerts" in config:
+            value = config["enable_continuous_alerts"]
+            if not isinstance(value, bool):
+                return "enable_continuous_alerts must be a boolean (true/false)"
+        
+        # Check alert_cooldown_minutes
+        if "alert_cooldown_minutes" in config:
+            value = config["alert_cooldown_minutes"]
+            if not isinstance(value, int) or value < 5 or value > 120:
+                return "alert_cooldown_minutes must be an integer between 5 and 120"
+        
+        # Check for unknown config keys
+        allowed_keys = {"gas_threshold_ppm", "enable_continuous_alerts", "alert_cooldown_minutes"}
+        unknown_keys = set(config.keys()) - allowed_keys
+        if unknown_keys:
+            return f"Unknown configuration keys: {', '.join(unknown_keys)}"
+        
+        return None  # No validation errors
+
+    def send_config_ack(self, device_id, status, config, original_topic):
+        """Send positive configuration acknowledgment"""
+        if not self.connected or not self.mqtt_client:
+            return
+        
+        # Extract requester from original topic
+        topic_parts = original_topic.split('/')
+        requester = topic_parts[3] if len(topic_parts) > 4 else "unknown"
+        
+        # Send response to requester-specific topic
+        ack_topic = f"Group17/SmartChill/FoodSpoilageControl/{requester}/config_ack"
+        ack_payload = {
+            "device_id": device_id,
+            "status": status,
+            "config": config,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "config_version": self.settings["configVersion"],
+            "original_topic": original_topic
+        }
+        
+        try:
+            self.mqtt_client.myPublish(ack_topic, ack_payload)
+            print(f"[CONFIG] Sent ACK: {status} for {device_id or 'defaults'}")
+        except Exception as e:
+            print(f"[CONFIG] Error sending ACK: {e}")
+
+    def send_config_error(self, error_code, error_message, original_topic, device_id=None):
+        """Send configuration error response"""
+        if not self.connected or not self.mqtt_client:
+            return
+        
+        # Extract requester from original topic
+        topic_parts = original_topic.split('/')
+        requester = topic_parts[3] if len(topic_parts) > 4 else "unknown"
+        
+        # Send error to requester-specific topic
+        error_topic = f"Group17/SmartChill/FoodSpoilageControl/{requester}/config_error"
+        error_payload = {
+            "device_id": device_id,
+            "error_code": error_code,
+            "error_message": error_message,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "original_topic": original_topic
+        }
+        
+        try:
+            self.mqtt_client.myPublish(error_topic, error_payload)
+            print(f"[CONFIG] Sent ERROR: {error_code} - {error_message}")
+        except Exception as e:
+            print(f"[CONFIG] Error sending error response: {e}")
     
     def is_cooldown_active(self, device_id):
         """Check if device is in alert cooldown period"""

@@ -1,8 +1,8 @@
 {
-    "catalog_url": "http://192.168.1.184:8001",
+    "catalog_url": "http://catalog:8001",
     "deviceInfo": {
-        "mac_address": "A4:B2:C3:D9:1E:7F",
-        "model": "Samsung_RF28T5001SR",
+        "mac_address": "3C:5A:B4:9F:2D:71",
+        "model": "Whirlpool_WRF535SWHZ",
         "firmware_version": "1.2.3",
         "sensors": [
             "temperature",
@@ -10,17 +10,17 @@
             "gas",
             "light"
         ],
-        "deviceID": "SmartChill_A4B2C3D91E7F"
+        "deviceID": "SmartChill_3C5AB49F2D71"
     },
     "sampling_intervals": {
-        "temperature": 600,
-        "humidity": 600,
-        "gas": 600,
+        "temperature": 300,
+        "humidity": 300,
+        "gas": 300,
         "light": 20
     },
     "mqtt_data": {
-        "broker": "localhost",
-        "port": 1884,
+        "broker": "mosquitto",
+        "port": 1883,
         "topic_template": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
         "include_events": [
             "door_event"
@@ -32,5 +32,5 @@
         "heartbeat_topic": "Group17/SmartChill/Devices/{model}/{device_id}/heartbeat",
         "heartbeat_interval_s": 300
     },
-    "last_config_sync": "2025-09-08T15:16:49.757807+00:00"
+    "last_config_sync": "2025-10-28T10:52:24.020396+00:00"
 }
