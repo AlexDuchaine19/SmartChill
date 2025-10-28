@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "28-10-2025 11:22",
+    "lastUpdate": "28-10-2025 11:27",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -116,7 +116,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         },
         {
             "serviceID": "TimerUsageControl",
@@ -134,7 +134,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         },
         {
             "serviceID": "DataAnalysis",
@@ -150,7 +150,7 @@
             "type": "analytics_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -177,7 +177,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -194,7 +194,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         },
         {
             "serviceID": "EnergyOptimization",
@@ -226,7 +226,7 @@
             "type": "interface_bot",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:22"
+            "lastUpdate": "28-10-2025 11:27"
         }
     ],
     "devicesList": [
