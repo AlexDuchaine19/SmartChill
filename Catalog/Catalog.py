@@ -1,7 +1,7 @@
 import cherrypy
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,7 +21,7 @@ def load_catalog():
             "schemaVersion": 1,
             "projectOwner": "Group17",
             "projectName": "SmartChill",
-            "lastUpdate": datetime.now().strftime("%d-%m-%Y %H:%M"),
+            "lastUpdate": datetime.now(timezone.utc).isoformat(),
             "broker": {"IP": "mosquitto", "port": "1883"},
             "deviceModels": {},
             "servicesList": [],
@@ -38,7 +38,7 @@ def load_catalog():
 
 def save_catalog(catalog):
     """Save catalog to JSON file with updated timestamp"""
-    catalog['lastUpdate'] = datetime.now().strftime("%d-%m-%Y %H:%M")
+    catalog['lastUpdate'] = datetime.now(timezone.utc).isoformat()
     os.makedirs(os.path.dirname(CATALOG_FILE), exist_ok=True)
     try:
         with open(CATALOG_FILE, 'w') as f:
@@ -81,7 +81,7 @@ class CatalogAPI:
             return {
                 "status": "healthy",
                 "service": "SmartChill Catalog Service",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "devices_count": len(catalog.get('devicesList', [])),
                 "services_count": len(catalog.get('servicesList', []))
             }
@@ -89,7 +89,7 @@ class CatalogAPI:
             return http_error(500, {
                 "status": "unhealthy",
                 "error": str(e),
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             })
 
     @cherrypy.tools.json_out()
@@ -165,7 +165,7 @@ class CatalogAPI:
         for i, device in enumerate(catalog['devicesList']):
             if device.get('mac_address') == mac_address:
                 existing_device = device
-                existing_device['last_sync'] = datetime.now().strftime("%d-%m-%Y %H:%M")
+                existing_device['last_sync'] = datetime.now(timezone.utc).isoformat()
                 catalog['devicesList'][i] = existing_device
                 save_catalog(catalog)
                 
@@ -194,8 +194,8 @@ class CatalogAPI:
             "mqtt_config": model_config.get('mqtt', {}),
             "status": "registered",
             "user_assigned": False,
-            "registration_time": datetime.now().strftime("%d-%m-%Y %H:%M"),
-            "last_sync": datetime.now().strftime("%d-%m-%Y %H:%M")
+            "registration_time": datetime.now(timezone.utc).isoformat(),
+            "last_sync": datetime.now(timezone.utc).isoformat()
         }
 
         catalog['devicesList'].append(new_device)
@@ -247,7 +247,7 @@ class CatalogAPI:
                     "type": data.get('type', 'microservice'),
                     "version": data.get('version', '1.0.0'),
                     "status": "active",
-                    "lastUpdate": datetime.now().strftime("%d-%m-%Y %H:%M")
+                    "lastUpdate": datetime.now(timezone.utc).isoformat()
                 }
                 catalog['servicesList'][i] = updated_service
                 save_catalog(catalog)
@@ -269,8 +269,8 @@ class CatalogAPI:
             "type": data.get('type', 'microservice'),
             "version": data.get('version', '1.0.0'),
             "status": "active",
-            "registration_time": datetime.now().strftime("%d-%m-%Y %H:%M"),
-            "lastUpdate": datetime.now().strftime("%d-%m-%Y %H:%M")
+            "registration_time": datetime.now(timezone.utc).isoformat(),
+            "lastUpdate": datetime.now(timezone.utc).isoformat()
         }
 
         catalog['servicesList'].append(new_service)
@@ -358,7 +358,7 @@ class CatalogAPI:
         return {
             "device_id": device_id,
             "exists": exists,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
     @cherrypy.tools.json_out()
@@ -487,7 +487,7 @@ class CatalogAPI:
             "userName": data['userName'],
             "telegram_chat_id": data.get("telegram_chat_id", None),
             "devicesList": [],
-            "registration_time": datetime.now().strftime("%d-%m-%Y %H:%M")
+            "registration_time": datetime.now(timezone.utc).isoformat()
         }
 
         catalog['usersList'].append(new_user)
@@ -609,7 +609,7 @@ class CatalogAPI:
         device['user_assigned'] = True
         device['assigned_user'] = user_id
         device['user_device_name'] = device_name
-        device['assignment_time'] = datetime.now().strftime("%d-%m-%Y %H:%M")
+        device['assignment_time'] = datetime.now(timezone.utc).isoformat()
         catalog['devicesList'][device_index] = device
 
         save_catalog(catalog)

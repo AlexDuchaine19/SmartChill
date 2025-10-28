@@ -79,7 +79,7 @@ def register_with_catalog(service_info, catalog_url, max_retries=5, base_delay=2
         "version": service_info.get("version", "1.0.0"),
         "endpoints": service_info.get("endpoints", []),
         "status": "active",
-        "timestamp": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        "timestamp": datetime.now()(timezone.utc).isoformat(),
     }
     for attempt in range(max_retries):
         try:

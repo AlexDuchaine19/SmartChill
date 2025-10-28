@@ -80,7 +80,7 @@ def register_with_catalog(service_info, catalog_url, max_retries=5, base_delay=2
         "version": service_info.get("version", "1.0.0"),
         "endpoints": service_info.get("endpoints", []),
         "status": "active",
-        "timestamp": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
     for attempt in range(max_retries):
         try:
@@ -169,12 +169,9 @@ class TelegramBot:
             "cb_device_unassign": {"handler": self.cb_device_unassign},
             "cb_device_rename": {"handler": self.cb_device_rename},
             "cb_manage": {"handler": self.cb_manage},
-            "cb_services": {"handler": self.cb_services},
             "cb_show_info": {"handler": self.cb_show_info},
             "cb_rename": {"handler": self.cb_rename},
             "cb_unassign": {"handler": self.cb_unassign},
-            "cb_optimizer": {"handler": self.cb_optimizer},
-            "cb_analysis": {"handler": self.cb_analysis},
             "cb_back_mydevices": {"handler": self.cb_back_mydevices},
             "cb_newdevice_start": {"handler": self.cb_newdevice_start}
         }
@@ -642,7 +639,6 @@ class TelegramBot:
         try:
             buttons = [
                 [InlineKeyboardButton(text="🧩 Manage", callback_data=f"cb_manage {device_id}")],
-                [InlineKeyboardButton(text="📈 Services", callback_data=f"cb_services {device_id}")],
                 [InlineKeyboardButton(text="⬅️ Back", callback_data="cb_back_mydevices")],
             ]
             self.bot.sendMessage(chat_id,
@@ -661,17 +657,6 @@ class TelegramBot:
             [InlineKeyboardButton(text="⬅️ Back", callback_data="cb_back_mydevices")],
         ]
         self.bot.sendMessage(chat_id, f"Manage device `{device_id}`:", parse_mode="Markdown",
-                            reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
-
-
-    def cb_services(self, query_id, chat_id, msg_query, device_id):
-        buttons = [
-            [InlineKeyboardButton(text="⚙️ Optimizer", callback_data=f"cb_optimizer {device_id}")],
-            [InlineKeyboardButton(text="📈 Data Analysis", callback_data=f"cb_analysis {device_id}")],
-            [InlineKeyboardButton(text="⬅️ Back", callback_data="cb_back_mydevices")],
-        ]
-        self.bot.sendMessage(chat_id, f"Select a service for `{device_id}`:",
-                            parse_mode="Markdown",
                             reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
     def cb_show_info(self, query_id, chat_id, msg_query, device_id):
@@ -693,7 +678,7 @@ class TelegramBot:
                 return
 
             # --- Format timestamp ---
-            timestamp_str = datetime.now().strftime("%d %b %Y, %H:%M")
+            timestamp_str = datetime.now(timezone.utc).isoformat()
 
             # --- Extract data safely ---
             name = device.get("user_device_name", "N/A")
@@ -742,299 +727,6 @@ class TelegramBot:
             self.bot.sendMessage(chat_id, f"✅ Device `{device_id}` successfully unassigned.", parse_mode="Markdown")
         except Exception as e:
             self.bot.sendMessage(chat_id, f"⚠️ Failed to unassign device: {e}")
-
-    def cb_optimizer(self, query_id, chat_id, msg_query, device_id):
-        """
-        Callback: Requests energy optimization results and presents
-        a professional, user-friendly summary to the user.
-        """
-        processing_msg = self.bot.sendMessage(chat_id, f"⏳ Optimizing `{self.escape_markdown(device_id)}`...", parse_mode="Markdown")
-
-        try:
-            base_url = f"http://energy_optimization:8003/optimize/{device_id}"
-            headers = {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-
-            print(f"[OPTIMIZER] Requesting optimization data for device {device_id}")
-            response = requests.get(base_url, headers=headers, timeout=10)
-
-            if response.status_code != 200:
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    f"⚠️ *Energy Optimization Service unavailable.* (HTTP {response.status_code})",
-                    parse_mode="Markdown"
-                )
-                return
-
-            raw_data = response.json()
-            if not isinstance(raw_data, dict) or not raw_data:
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    "⚠️ No valid data received from Energy Optimization Service."
-                )
-                return
-
-            if raw_data.get("error"):
-                error_msg = raw_data["error"]
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    f"⚠️ Optimization error: {error_msg}"
-                )
-                return
-
-            # --- Extract structured data ---
-            energy = raw_data.get("current_energy", {})
-            recs = raw_data.get("recommendations", [])
-            timestamp_raw = raw_data.get("analysis_timestamp", raw_data.get("timestamp", None))
-
-            # --- Timestamp user-friendly ---
-            if timestamp_raw:
-                try:
-                    ts = datetime.fromisoformat(timestamp_raw.replace("Z", "+00:00"))
-                    timestamp_str = ts.strftime("%d %b %Y, %H:%M")
-                except Exception:
-                    timestamp_str = timestamp_raw
-            else:
-                timestamp_str = "N/A"
-
-            # --- Extract metrics ---
-            daily_kwh = energy.get("daily_kwh", "N/A")
-            runtime_hours = energy.get("runtime_hours_per_day", "N/A")
-            duty_cycle = round(float(energy.get("base_duty_cycle", 0)) * 100, 1)
-            compressor_power = energy.get("compressor_power_watts", "N/A")
-            cycles = energy.get("cycle_analysis", {}).get("cycle_count", 0)
-            confidence = energy.get("cycle_analysis", {}).get("confidence", 0) * 100
-
-            # --- Format Current Energy Section ---
-            energy_text = (
-                f"🔌 *Energy Summary*\n"
-                f"• Daily Consumption: {daily_kwh} kWh/day\n"
-                f"• Compressor Runtime: {runtime_hours} h/day\n"
-                f"• Duty Cycle: {duty_cycle}%\n"
-                f"• Compressor Power: {compressor_power} W\n"
-                f"• Cycle Count: {cycles}\n"
-                f"• Confidence: {confidence:.1f}%\n"
-            )
-
-            # --- Format Recommendations ---
-            if recs:
-                rec_lines = []
-                for rec in recs:
-                    icon = {
-                        "behavioral": "👤",
-                        "maintenance": "🔧",
-                        "alert": "⚠️",
-                        "energy": "⚡",
-                        "setting": "⚙️",
-                        "efficiency": "📊"
-                    }.get(rec.get("type", "generic"), "💡")
-
-                    msg = rec.get("message", "No message available.")
-                    saving_percent = rec.get("potential_savings_percent", 0)
-                    runtime_savings = rec.get("runtime_savings_hours", 0)
-
-                    rec_lines.append(
-                        f"{icon} {msg}\n   ↳ Potential Savings: {saving_percent:.1f}% ({runtime_savings:.1f} h)"
-                    )
-
-                recommendations_text = "\n".join(rec_lines)
-            else:
-                recommendations_text = "_No specific recommendations at this time._"
-
-            # --- Build final message ---
-            final_msg = (
-                f"⚙️ *Energy Optimization Report*\n\n"
-                f"📦 *Device:* `{self.escape_markdown(device_id)}`\n"
-                f"🕒 *Timestamp:* {timestamp_str}\n\n"
-                f"{energy_text}\n"
-                f"💡 *Recommendations*\n{recommendations_text}"
-            )
-
-            # --- Edit message to show results ---
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                final_msg,
-                parse_mode="Markdown",
-            )
-
-        except ConnectionError:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                "❌ Cannot reach *Energy Optimization Service*. Check container `energy_optimization`.",
-                parse_mode="Markdown"
-            )
-        except Timeout:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                "⚠️ Request to Energy Optimization Service timed out. Try again later.",
-                parse_mode="Markdown"
-            )
-        except RequestException as e:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                f"⚠️ Unexpected HTTP error from Energy Optimization Service: {e}",
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            print(f"[ERROR] Unexpected error in cb_optimizer: {e}")
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                f"❌ Unexpected error: {e}",
-                parse_mode="Markdown"
-            )
-
-    def cb_analysis(self, query_id, chat_id, msg_query, device_id):
-        """
-        Callback: Requests Data Analysis results and presents
-        a user-friendly report to the user with loading and formatted timestamp.
-        """
-        
-        processing_msg = self.bot.sendMessage(chat_id, f"⏳ Analyzing data for `{self.escape_markdown(device_id)}`...", parse_mode="Markdown")
-
-        try:
-            base_url = f"http://data_analysis:8004/analyze/{device_id}"
-            params = {
-                "period": "1d",
-                "metrics": "temperature,usage_patterns,trends"
-            }
-            headers = {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-
-            print(f"[ANALYSIS] Requesting: {base_url} with params {params}")
-            response = requests.get(base_url, headers=headers, params=params, timeout=10)
-
-            if response.status_code != 200:
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    f"⚠️ *Data Analysis Service unavailable.* (HTTP {response.status_code})",
-                    parse_mode="Markdown"
-                )
-                return
-
-            # Parse JSON
-            try:
-                raw_data = response.json()
-            except Exception:
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    "❌ Invalid JSON received from Data Analysis Service."
-                )
-                return
-
-            if not isinstance(raw_data, dict) or not raw_data:
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    "⚠️ No valid data received from Data Analysis Service."
-                )
-                return
-
-            if "error" in raw_data:
-                error_msg = raw_data.get("error", "Unknown service error.")
-                self.bot.editMessageText(
-                    telepot.message_identifier(processing_msg),
-                    f"⚠️ Data Analysis error: {error_msg}"
-                )
-                return
-
-            # --- Extract data ---
-            temperature = raw_data.get("temperature_analysis", {})
-            usage = raw_data.get("usage_analysis", {})
-            trends = raw_data.get("trends", {})
-            summary = raw_data.get("data_summary", {})
-
-            period = raw_data.get("period", "1d")
-            timestamp_raw = raw_data.get("analysis_timestamp", raw_data.get("timestamp", None))
-
-            # --- Format timestamp (user-friendly) ---
-            if timestamp_raw:
-                try:
-                    ts = datetime.fromisoformat(timestamp_raw.replace("Z", "+00:00"))
-                    timestamp_str = ts.strftime("%d %b %Y, %H:%M")
-                except Exception:
-                    timestamp_str = timestamp_raw
-            else:
-                timestamp_str = "N/A"
-
-            # Temperature
-            avg_temp = temperature.get("avg_temperature", "N/A")
-            stability = temperature.get("stability_score", "N/A")
-
-            # Usage
-            total_openings = usage.get("total_openings", "N/A")
-            avg_daily_openings = usage.get("avg_daily_openings", "N/A")
-            avg_duration = usage.get("avg_duration_seconds", "N/A")
-            efficiency = usage.get("efficiency_score", "N/A")
-
-            # Trends
-            temp_trend = trends.get("temperature_trend", "N/A")
-            usage_trend = trends.get("usage_trend", "N/A")
-            period_analyzed = trends.get("period_analyzed", "N/A")
-
-            # Summary
-            temp_points = summary.get("temperature_points", "N/A")
-            door_events = summary.get("door_events", "N/A")
-            period_days = summary.get("period_days", "N/A")
-
-            # --- Format message ---
-            report_msg = (
-                f"📊 *Data Analysis Report*\n\n"
-                f"📦 *Device:* `{self.escape_markdown(device_id)}`\n"
-                f"🕒 *Period:* {period} ({period_analyzed})\n"
-                f"📅 *Timestamp:* {timestamp_str}\n\n"
-                f"🌡️ *Temperature Analysis*\n"
-                f"• Avg Temp: {avg_temp} °C\n"
-                f"• Stability Score: {stability}%\n\n"
-                f"🚪 *Usage Analysis*\n"
-                f"• Total Openings: {total_openings}\n"
-                f"• Avg Daily Openings: {avg_daily_openings}\n"
-                f"• Avg Duration: {avg_duration} sec\n"
-                f"• Efficiency Score: {efficiency}%\n\n"
-                f"📈 *Trends*\n"
-                f"• Temperature Trend: {temp_trend}\n"
-                f"• Usage Trend: {usage_trend}\n\n"
-                f"🧩 *Data Summary*\n"
-                f"• Temperature Points: {temp_points}\n"
-                f"• Door Events: {door_events}\n"
-                f"• Period Days: {period_days}\n"
-            )
-
-            # --- Update message ---
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                report_msg,
-                parse_mode="Markdown",
-            )
-
-        except ConnectionError:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                "❌ Cannot reach *Data Analysis Service*. Check container `data_analysis`.",
-                parse_mode="Markdown"
-            )
-        except Timeout:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                "⚠️ Request to Data Analysis Service timed out. Try again later.",
-                parse_mode="Markdown"
-            )
-        except RequestException as e:
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                f"⚠️ Unexpected HTTP error from Data Analysis Service: {e}",
-                parse_mode="Markdown"
-            )
-        except Exception as e:
-            print(f"[ERROR] Unexpected error in cb_analysis: {e}")
-            self.bot.editMessageText(
-                telepot.message_identifier(processing_msg),
-                f"❌ Unexpected error: {e}",
-                parse_mode="Markdown"
-            )
-
 
     # --- Telegram State Handlers ---
     def handle_mac_input(self, chat_id, msg, state_data):
@@ -1122,7 +814,7 @@ class TelegramBot:
 
                     self.bot.editMessageText(
                         telepot.message_identifier(processing_msg),
-                        f"✅ Device `{self.escape_markdown(device_id)}` successfully linked to your account as '{self.escape_markdown(final_name)}'. Use \mydevice to manage your devices",
+                        f"✅ Device `{self.escape_markdown(device_id)}` successfully linked to your account as '{self.escape_markdown(final_name)}'. Use \mydevices to manage your devices",
                         parse_mode="Markdown"
                     )
                     self.clear_status(chat_id)
@@ -1631,7 +1323,7 @@ class TelegramBot:
                         telegram_msg = f"{icon} **{title}** {icon}\n\n"
                         if device_id: telegram_msg += f"**Device:** `{device_id}`\n"
                         telegram_msg += f"The fridge door was closed{duration_text}.\n"
-                        telegram_msg += f"\n_Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_"
+                        telegram_msg += f"\n_Timestamp: {datetime.now(timezone.utc).isoformat()}_"
                         severity = 'info'
                     else:
                         icon = "🚨" if severity == "critical" else ("⚠️" if severity == "warning" else "ℹ️")
@@ -1639,7 +1331,7 @@ class TelegramBot:
                         if device_id: telegram_msg += f"**Device:** `{device_id}`\n"
                         telegram_msg += f"**Details:** {alert_message}\n"
                         if payload.get('recommended_action'): telegram_msg += f"**Suggestion:** {payload['recommended_action']}\n"
-                        telegram_msg += f"\n_Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}_"
+                        telegram_msg += f"\n_Timestamp: {datetime.now(timezone.utc).isoformat()}_"
 
                     self.bot.sendMessage(int(target_chat_id), telegram_msg, parse_mode="Markdown")
                     print(f"[NOTIFY] Alert '{alert_type}' ({severity}) sent to user {target_chat_id}")
