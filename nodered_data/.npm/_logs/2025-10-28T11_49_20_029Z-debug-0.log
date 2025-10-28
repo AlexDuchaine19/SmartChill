@@ -9,3 +9,9 @@
 8 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-10-28T11_49_20_029Z-
 9 verbose logfile /data/.npm/_logs/2025-10-28T11_49_20_029Z-debug-0.log
 10 silly logfile done cleaning log files
+11 verbose cwd /usr/src/node-red
+12 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+13 verbose node v20.19.4
+14 verbose npm  v10.8.2
+15 verbose exit 0
+16 info ok

@@ -1,8 +1,0 @@
-{
-    "projects": {
-        "SmartChill": {
-            "credentialSecret": false
-        }
-    },
-    "activeProject": "SmartChill"
-}

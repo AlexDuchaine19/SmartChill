@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "28-10-2025 11:27",
+    "lastUpdate": "28-10-2025 11:54",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -116,7 +116,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         },
         {
             "serviceID": "TimerUsageControl",
@@ -134,7 +134,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         },
         {
             "serviceID": "DataAnalysis",
@@ -150,7 +150,7 @@
             "type": "analytics_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -177,7 +177,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -194,7 +194,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         },
         {
             "serviceID": "EnergyOptimization",
@@ -210,7 +210,7 @@
             "type": "optimization",
             "version": "3.1.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 10:52"
+            "lastUpdate": "28-10-2025 11:49"
         },
         {
             "serviceID": "TelegramBot",
@@ -226,7 +226,7 @@
             "type": "interface_bot",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "28-10-2025 11:27"
+            "lastUpdate": "28-10-2025 11:54"
         }
     ],
     "devicesList": [
@@ -289,26 +289,13 @@
                 ]
             },
             "status": "registered",
-            "user_assigned": true,
+            "user_assigned": false,
             "registration_time": "16-09-2025 17:23",
             "last_sync": "28-10-2025 10:52",
-            "assigned_user": "alex",
-            "user_device_name": "Alex\u2019s Fridge",
-            "assignment_time": "28-10-2025 10:23"
+            "assigned_user": null,
+            "user_device_name": null,
+            "assignment_time": null
         }
     ],
-    "usersList": [
-        {
-            "userID": "alex",
-            "userName": "Alex",
-            "telegram_chat_id": "861074879",
-            "devicesList": [
-                {
-                    "deviceID": "SmartChill_3C5AB49F2D71",
-                    "deviceName": "Alex\u2019s Fridge"
-                }
-            ],
-            "registration_time": "28-10-2025 10:23"
-        }
-    ]
+    "usersList": []
 }
