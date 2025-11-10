@@ -272,8 +272,12 @@ class EnergyOptimizationService:
             hist_temp = self.fetch_historical_temperature(device_id, duration=training_period)
             hist_events = self.fetch_historical_door_events(device_id, duration=training_period)
 
-            # Need at least a few days worth of dense data
-            min_required_points = 24 * 12 * 3 # ~3 days assuming 5min intervals
+            # --- MODIFICA PER LA DEMO ---
+            # VECCHIO CODICE:
+            # min_required_points = 24 * 12 * 3 # ~3 days assuming 5min intervals
+            # NUOVO CODICE:
+            min_required_points = 7 # Limite abbassato per la demo
+            # --- FINE MODIFICA ---
             if not hist_temp or len(hist_temp) < min_required_points: 
                 print(f"[ML] Insufficient historical temperature data ({len(hist_temp)} points) for {device_id}. Min required: {min_required_points}")
                 return None
@@ -381,8 +385,8 @@ class EnergyOptimizationService:
         # Get CURRENT average stats from the last few days to base prediction on
         # Using a shorter period (e.g., 3d) might make predictions more reactive to recent changes
         recent_period = "3d"
-        temp_data = self.fetch_temperature_series_from_adaptor(device_id, recent_period)
-        door_events = self.fetch_door_events_from_adaptor(device_id, recent_period)
+        temp_data = self.fetch_historical_temperature(device_id, recent_period)
+        door_events = self.fetch_historical_door_events(device_id, recent_period)
         if not temp_data: 
              print(f"[ML] Insufficient recent data ({recent_period}) to base predictions on for {device_id}.")
              return None 
@@ -723,14 +727,16 @@ class EnergyOptimizationService:
 
         # Check if we got enough *recent* data for reliable current analysis
         # Using 50 points as a threshold for a 7d period is reasonable
-        if not temp_data or len(temp_data) < 50:
-            print(f"[ANALYSIS] Insufficient recent temperature data ({len(temp_data)} points) for {device_id} over '{period}'. Cannot perform full analysis.")
-            return {
-                "device_id": device_id, "error": "Insufficient data",
-                "message": f"Need more recent temperature data (have {len(temp_data)}, need ~50+) for analysis over period '{period}'.",
-                "analysis_timestamp": datetime.now(timezone.utc).isoformat(),
-                "service": self.service_id
-            }
+        # --- TEMPORANEAMENTE DISABILITATO PER LA DEMO ---
+        # if not temp_data or len(temp_data) < 50:
+        #    print(f"[ANALYSIS] Insufficient recent temperature data ({len(temp_data)} points) for {device_id} over '{period}'. Cannot perform full analysis.")
+        #    return {
+        #        "device_id": device_id, "error": "Insufficient data",
+        #        "message": f"Need more recent temperature data (have {len(temp_data)}, need ~50+) for analysis over period '{period}'.",
+        #        "analysis_timestamp": datetime.now(timezone.utc).isoformat(),
+        #        "service": self.service_id
+        #    }
+        # --- FINE BLOCCO DISABILITATO ---
 
         temp_analysis = self.analyze_temperature_data(temp_data, period)
         usage_analysis = self.analyze_door_usage(door_events, period)

@@ -32,7 +32,7 @@
       "hour_factor",
       "day_factor"
     ],
-    "min_training_samples": 20
+    "min_training_samples": 3
   },
   "defaults": {
     "fallback_power_specs": {
