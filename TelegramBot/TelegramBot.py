@@ -180,6 +180,7 @@ class TelegramBot:
             "waiting_for_username": {"handler": self.handle_username_input},
             "waiting_for_newdevice_mac": {"handler": self.handle_newdevice_mac},
             "waiting_for_device_rename": {"handler": self.handle_device_rename_input},
+            "waiting_for_username_link": {"handler": self.handle_username_link}
         }
         self.user_states = {}
         self.last_alert_time = {}
@@ -563,7 +564,7 @@ class TelegramBot:
             lines.append(f"**Status:** {self.escape_markdown(device_info.get('status', 'N/A'))}")
 
             if device_info.get('user_assigned'):
-                assigned_user = self.escape_markdown(str(device_info.get('assigned_user', 'Unknown')))
+                assigned_user = self.escape_markdown(str(device_info.get('owner', 'Unknown')))
                 lines.append(f"**Assigned:** Yes, to {assigned_user}")
             else:
                 lines.append(f"**Assigned:** No")
@@ -731,16 +732,17 @@ class TelegramBot:
     # --- Telegram State Handlers ---
     def handle_mac_input(self, chat_id, msg, state_data):
         """
-        REVISED FLOW:
-        1) Validate MAC + lookup device
-        2) If assigned:
-             - if chat matches existing user's chat -> Login OK ("Bentornato")
-             - else -> error: "Device assigned to another user"
-           End
-        3) If free:
-             - Check if THIS chat_id is already linked to a user in catalog
-                 - If YES -> Assign THIS free device to THAT existing user. Success. -> End
-                 - If NO -> Ask for username -> set state waiting_for_username
+        REVISED FLOW (con gestione account esistente):
+        1) Valida MAC + cerca dispositivo
+        2) Se assegnato:
+             - Cerca se questo chat_id è già linkato a un utente.
+             - A) Se chat_id è linkato E l'utente corrisponde -> Login OK ("Bentornato")
+             - B) Se chat_id è linkato E l'utente NON corrisponde -> Errore ("Questo chat è di 'userB', il device è di 'userA'")
+             - C) Se chat_id NON è linkato -> Chiedi username per verifica ("Il device è di 'userA'. Sei tu? Inserisci username")
+        3) Se libero:
+             - Cerca se questo chat_id è già linkato.
+             - A) Se chat_id è linkato -> Assegna device a utente esistente.
+             - B) Se chat_id NON è linkato -> Chiedi username per NUOVA registrazione.
         """
         mac_input = (msg.get("text") or "").strip()
         if not is_valid_mac(mac_input):
@@ -765,39 +767,55 @@ class TelegramBot:
 
             device_id = device_info['deviceID']
             is_assigned = device_info.get('user_assigned', False)
-            assigned_user = device_info.get('assigned_user') # This is the userID (lowercase username)
+            assigned_user = device_info.get('owner') # Questo è lo userID (es. "luca")
+
+            # Controlla se questo chat_id è GIA' linkato a QUALSIASI utente
+            linked_user_for_chat = self._is_registered(chat_id) # Ritorna user_dict o None
 
             if is_assigned:
-                # Device already assigned -> check chat
-                linked_user_for_chat = self._is_chat_id_linked(chat_id) # Check if *this* chat is linked
+                # --- CASO: IL DISPOSITIVO È GIÀ ASSEGNATO ---
                 
-                # Compare the userID the device is assigned to with the userID linked to this chat
-                if linked_user_for_chat and str(assigned_user).lower() == linked_user_for_chat.lower():
-                    # Login success for same user
-                    self.bot.editMessageText(
-                        telepot.message_identifier(processing_msg),
-                        f"✅ Welcome back! The device `{self.escape_markdown(device_id)}` is already linked to your account.\nUse /mydevices to manage it.",
-                        parse_mode="Markdown"
-                    )
+                if linked_user_for_chat:
+                    # Sottocaso A: Chat già linkato
+                    linked_user_id = linked_user_for_chat['userID']
+                    
+                    if str(assigned_user).lower() == linked_user_id.lower():
+                        # A.1) Chat linkato all'utente corretto -> LOGIN OK
+                        self.bot.editMessageText(
+                            telepot.message_identifier(processing_msg),
+                            f"✅ Welcome back! The device `{self.escape_markdown(device_id)}` is already linked to your account.\nUse /mydevices to manage it.",
+                            parse_mode="Markdown"
+                        )
+                        self.clear_status(chat_id)
+                        return
+                    else:
+                        # A.2) Chat linkato a utente DIVERSO -> ERRORE
+                        self.bot.editMessageText(
+                            telepot.message_identifier(processing_msg),
+                            f"⛔️ This device is assigned to user **{assigned_user}**, but your Telegram account is linked to user **{linked_user_id}**.\nPlease /deleteme and retry if you want to change accounts.",
+                            parse_mode="Markdown"
+                        )
+                        self.clear_status(chat_id)
+                        return
+                
                 else:
-                    # Assigned to another user, or this chat isn't linked to the assigned user
+                    # Sottocaso B: Chat NON linkato (Il tuo caso!) -> CHIEDI USERNAME PER VERIFICA
                     self.bot.editMessageText(
                         telepot.message_identifier(processing_msg),
-                        f"⛔️ This device is already assigned to user '{assigned_user}'.\nIf you believe this is an error, please contact support.",
+                        f"ℹ️ This device is already assigned.\n\nIf this is you, please enter your username to link this Telegram chat to your account.\n(Type /cancel to stop)",
                         parse_mode="Markdown"
                     )
-                self.clear_status(chat_id)
-                return
+                    # Imposta il nuovo stato per la verifica
+                    self.set_status(chat_id, "waiting_for_username_link", device_id=device_id, expected_user=assigned_user)
+                    return
 
-            # --- Device is FREE (`is_assigned == False`) ---
             else:
-                # Check if THIS chat_id is already linked to an existing user
-                existing_user_for_chat = self._is_registered(chat_id) # Reuse _is_registered which returns user dict
-
-                if existing_user_for_chat:
-                    # Chat ID already linked -> Assign THIS device to THIS existing user
-                    user_id = existing_user_for_chat['userID']
-                    username = existing_user_for_chat['userName']  # Get username for message
+                # --- CASO: IL DISPOSITIVO È LIBERO ---
+                
+                if linked_user_for_chat:
+                    # A) Chat già linkato -> Assegna device a utente ESISTENTE
+                    user_id = linked_user_for_chat['userID']
+                    username = linked_user_for_chat['userName']
 
                     self.bot.editMessageText(
                         telepot.message_identifier(processing_msg),
@@ -805,23 +823,22 @@ class TelegramBot:
                         parse_mode="Markdown"
                     )
 
-                    # Assign Device
                     assign_response = self._catalog_post(f"/users/{user_id}/assign-device", {
                         "device_id": device_id,
-                        "device_name": f"{username}'s Fridge"  # Use existing username
+                        "device_name": f"{username}'s Fridge"
                     })
                     final_name = assign_response.get("device", {}).get('user_device_name', f"{username}'s Fridge")
 
                     self.bot.editMessageText(
                         telepot.message_identifier(processing_msg),
-                        f"✅ Device `{self.escape_markdown(device_id)}` successfully linked to your account as '{self.escape_markdown(final_name)}'. Use \mydevices to manage your devices",
+                        f"✅ Device `{self.escape_markdown(device_id)}` successfully linked to your account as '{self.escape_markdown(final_name)}'. Use /mydevices to manage your devices",
                         parse_mode="Markdown"
                     )
                     self.clear_status(chat_id)
                     return
 
                 else:
-                    # Device free AND chat_id free -> Proceed to ask for username for NEW user registration
+                    # B) Chat NON linkato -> Procedi con NUOVA REGISTRAZIONE
                     self.bot.editMessageText(
                         telepot.message_identifier(processing_msg),
                         f"✅ Valid MAC address: `{self.escape_markdown(device_id)}` found and available!\n\n"
@@ -832,13 +849,13 @@ class TelegramBot:
 
 
         except CatalogError as e:
-            self.bot.editMessageText(telepot.message_identifier(processing_msg), f"❌ Operazione fallita: {e}")
+            self.bot.editMessageText(telepot.message_identifier(processing_msg), f"❌ Operation failed: {e}")
             self.clear_status(chat_id)
         except Exception as e:
             print(f"[ERROR] Unexpected error in handle_mac_input: {e}")
-            self.bot.editMessageText(telepot.message_identifier(processing_msg), "❌ Errore inatteso.")
+            self.bot.editMessageText(telepot.message_identifier(processing_msg), "❌ Unexpected error.")
             self.clear_status(chat_id)
-            import traceback; traceback.print_exc() # Log full error for debugging
+            import traceback; traceback.print_exc()
     
     def handle_newdevice_mac(self, chat_id, msg, state_data):
         """
@@ -873,7 +890,7 @@ class TelegramBot:
 
             device_id = device_info["deviceID"]
             is_assigned = device_info.get("user_assigned", False)
-            assigned_user = device_info.get("assigned_user")
+            assigned_user = device_info.get("owner")
 
             # --- Step 3: If device is already assigned ---
             if is_assigned:
@@ -1017,6 +1034,54 @@ class TelegramBot:
             )
             self.clear_status(chat_id)
 
+    def handle_username_link(self, chat_id, msg, state_data):
+        """
+        Gestisce l'inserimento dell'username per collegare un chat_id
+        a un account esistente che possiede già un dispositivo.
+        """
+        input_username = (msg.get("text") or "").strip()
+        expected_user = state_data.get("expected_user")
+        
+        if not input_username:
+            self.bot.sendMessage(chat_id, "Please enter your username or type /cancel.")
+            return
+            
+        if not expected_user:
+            self.bot.sendMessage(chat_id, "Internal error: expected user not found. Operation cancelled.")
+            self.clear_status(chat_id)
+            return
+
+        # Confronta l'username inserito con quello atteso
+        if input_username.lower() == expected_user.lower():
+            # Successo! L'utente è corretto.
+            processing_msg = self.bot.sendMessage(chat_id, f"✅ Username verified! Linking this chat to the '{expected_user}' account...")
+            
+            try:
+                # Chiamiamo l'endpoint del Catalog per collegare il chat_id
+                self._cat_post(f"/users/{expected_user}/link_telegram", {"chat_id": str(chat_id)})
+                
+                self.bot.editMessageText(
+                    telepot.message_identifier(processing_msg),
+                    f"✅ Success! Your Telegram account is now linked to **{expected_user}**.\nUse /mydevices to see your devices.",
+                    parse_mode="Markdown"
+                )
+                self.clear_status(chat_id)
+                
+            except CatalogError as e:
+                self.bot.editMessageText(telepot.message_identifier(processing_msg), f"❌ Linking failed: {e}")
+                self.clear_status(chat_id)
+            except Exception as e:
+                self.bot.editMessageText(telepot.message_identifier(processing_msg), f"❌ An unexpected error occurred: {e}")
+                self.clear_status(chat_id)
+                
+        else:
+            # Username errato
+            self.bot.sendMessage(
+                chat_id,
+                f"❌ Incorrect username. You entered '{input_username}', but the device is assigned to '{expected_user}'.\nOperation cancelled.",
+                parse_mode="Markdown"
+            )
+            self.clear_status(chat_id)
 
     def handle_device_rename_input(self, chat_id, msg, state_data):
         """Handle new device name input"""
@@ -1289,8 +1354,8 @@ class TelegramBot:
                 print(f"[ALERT] Alert received for device: {device_id}. Finding assigned user...")
                 try:
                     device_info = self._catalog_get(f"/devices/{device_id}")
-                    if device_info.get('user_assigned') and device_info.get('assigned_user'):
-                        assigned_user_id = device_info['assigned_user']
+                    if device_info.get('user_assigned') and device_info.get('owner'):
+                        assigned_user_id = device_info['owner']
                         user_info = self._catalog_get(f"/users/{assigned_user_id}")
                         target_chat_id = user_info.get('telegram_chat_id')
                         if target_chat_id: print(f"[ALERT] Found chat_id {target_chat_id} for user {assigned_user_id} assigned to device {device_id}")
