@@ -194,6 +194,7 @@ class CatalogAPI:
             "mqtt_config": model_config.get('mqtt', {}),
             "status": "registered",
             "user_assigned": False,
+            "owner": False,
             "registration_time": datetime.now(timezone.utc).isoformat(),
             "last_sync": datetime.now(timezone.utc).isoformat()
         }
@@ -322,8 +323,8 @@ class CatalogAPI:
             return http_error(404, {"error": "Device not found"})
         
         # 2. Update device name in user's devicesList (if assigned)
-        if device_data.get('user_assigned') and device_data.get('assigned_user'):
-            assigned_user_id = device_data['assigned_user']
+        if device_data.get('user_assigned') and device_data.get('owner'):
+            assigned_user_id = device_data['owner']
             
             for user in catalog['usersList']:
                 if user['userID'] == assigned_user_id:
@@ -389,7 +390,7 @@ class CatalogAPI:
             return http_error(404, {"error": "Device not found"})
 
         # if already assigned => response 200
-        if not device_to_unassign.get('user_assigned') and device_to_unassign.get('assigned_user') in (None, "", False):
+        if not device_to_unassign.get('user_assigned') and device_to_unassign.get('owner') in (None, "", False):
             return {
                 "message": f"Device {device_id} already unassigned",
                 "device_id": device_id,
@@ -398,11 +399,11 @@ class CatalogAPI:
 
         # save previous info
         previous_assignment_info = {
-            "assigned_user": device_to_unassign.get('assigned_user'),
+            "owner": device_to_unassign.get('owner'),
             "user_device_name": device_to_unassign.get('user_device_name'),
             "assignment_time": device_to_unassign.get('assignment_time')
         }
-        assigned_user_id = device_to_unassign.get('assigned_user')
+        assigned_user_id = device_to_unassign.get('owner')
 
         # find user assigned and remove device from its list
         user_to_update = next(
@@ -421,7 +422,7 @@ class CatalogAPI:
 
         # unassign device
         device_to_unassign['user_assigned'] = False
-        device_to_unassign['assigned_user'] = None
+        device_to_unassign['owner'] = None
         device_to_unassign['user_device_name'] = None
         device_to_unassign['assignment_time'] = None
 
@@ -525,9 +526,9 @@ class CatalogAPI:
             # Disassegna i device assegnati a quell'userID
             unassigned_devices = []
             for device in catalog.get('devicesList', []):
-                if str(device.get('assigned_user')) == user_id_str:
+                if str(device.get('owner')) == user_id_str:
                     device['user_assigned'] = False
-                    device['assigned_user'] = None
+                    device['owner'] = None
                     device['user_device_name'] = None
                     device['assignment_time'] = None
                     unassigned_devices.append(device['deviceID'])
@@ -607,7 +608,7 @@ class CatalogAPI:
 
         # Mark device as assigned
         device['user_assigned'] = True
-        device['assigned_user'] = user_id
+        device['owner'] = user_id
         device['user_device_name'] = device_name
         device['assignment_time'] = datetime.now(timezone.utc).isoformat()
         catalog['devicesList'][device_index] = device
