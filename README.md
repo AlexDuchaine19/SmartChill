@@ -1,7 +1,7 @@
 # SmartChill - IoT Fridge Monitoring Platform 🧊
 
-**Version:** (e.g., 1.0.0 - *Specify your current version*)
-[cite_start]**Team:** Alexander Duchaine (346096), Luca Marchese (261683) [cite: 288]
+**Version:** 1.0.0
+**Team:** Alexander Duchaine (346096), Luca Marchese (261683)
 **Course:** Programming for IoT (Politecnico di Torino)
 
 ## 🎯 Project Overview
