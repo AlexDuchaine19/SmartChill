@@ -1,0 +1,36 @@
+{
+    "catalog_url": "http://catalog:8001",
+    "deviceInfo": {
+        "mac_address": "00:1A:2B:3C:4D:5E",
+        "model": "Samsung_RF28T5001SR",
+        "firmware_version": "1.2.3",
+        "sensors": [
+            "temperature",
+            "humidity",
+            "gas",
+            "light"
+        ],
+        "deviceID": "SmartChill_001A2B3C4D5E"
+    },
+    "sampling_intervals": {
+        "temperature": 200,
+        "humidity": 200,
+        "gas": 200,
+        "light": 25
+    },
+    "mqtt_data": {
+        "broker": "mosquitto",
+        "port": 1883,
+        "topic_template": "Group17/SmartChill/Devices/{model}/{device_id}/{sensor}",
+        "include_events": [
+            "door_event"
+        ]
+    },
+    "telemetry": {
+        "publish_qos": 2,
+        "retain": false,
+        "heartbeat_topic": "Group17/SmartChill/Devices/{model}/{device_id}/heartbeat",
+        "heartbeat_interval_s": 300
+    },
+    "last_config_sync": "2025-11-07T18:44:28.868071+00:00"
+}

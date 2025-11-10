@@ -33,7 +33,31 @@ services:
       - smartchill_network
     healthcheck:
       test: ["CMD", "pgrep", "-f", "Fridge.py"]
-      interval: 30s
+      interval: 300s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+  
+  device_connector2:
+    build:
+      context: ./Device Connector2
+      dockerfile: Dockerfile
+    container_name: smartchill_device_connector2
+    volumes:
+      - ./Device Connector2:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_started
+      mosquitto:
+        condition: service_started # Mosquitto image has no healthcheck
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "Fridge2.py"]
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 20s
@@ -55,7 +79,6 @@ services:
         condition: service_started
     networks:
       - smartchill_network
-    # Removed healthcheck as it was just pinging catalog
 
   food_spoilage_control:
     build:
@@ -74,7 +97,6 @@ services:
         condition: service_started
     networks:
       - smartchill_network
-    # Removed healthcheck
 
   fridge_status_control:
     build:
@@ -93,12 +115,6 @@ services:
         condition: service_started
     networks:
       - smartchill_network
-    healthcheck:
-      test: ["CMD", "pgrep", "-f", "FridgeStatusControl.py"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
 
   influxdb_adaptor:
     build:
@@ -111,7 +127,6 @@ services:
       - ./InfluxDB Adaptor:/app
     environment:
       - PYTHONUNBUFFERED=1
-      # These use Docker service names now
       - INFLUX_URL=http://influxdb:8086
       - INFLUX_ORG=smartchill
       - INFLUX_BUCKET=smartchill
@@ -132,7 +147,7 @@ services:
         python -c "import requests;
         requests.get('http://catalog:8001/health', timeout=5).raise_for_status();
         requests.get('http://influxdb:8086/health', timeout=5).raise_for_status()"
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 30s
@@ -160,7 +175,7 @@ services:
       - smartchill_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 50s
@@ -186,7 +201,7 @@ services:
       - smartchill_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 50s
@@ -216,7 +231,7 @@ services:
     healthcheck:
       # Simple check: Is the Python process running?
       test: ["CMD", "pgrep", "-f", "TelegramBot.py"] 
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 30s
@@ -242,7 +257,7 @@ services:
       - smartchill_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 30s
@@ -279,7 +294,6 @@ services:
       - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
     restart: unless-stopped
     depends_on:
-      # Add telegram_bot dependency if Node-RED calls it
       mosquitto:
         condition: service_started
       catalog:
@@ -300,7 +314,7 @@ services:
       - smartchill_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:1880"]
-      interval: 30s
+      interval: 300s
       timeout: 10s
       retries: 3
       start_period: 30s
