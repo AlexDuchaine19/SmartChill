@@ -2043,9 +2043,9 @@ class TelegramBot:
 
                 is_info_alert = alert_type.lower() == 'doorclosed'
 
-                if not is_info_alert and (now - last_time < cooldown_sec):
-                    print(f"[NOTIFY] Cooldown active for {alert_type} for user {target_chat_id}. Skipping.")
-                    return
+                # if not is_info_alert and (now - last_time < cooldown_sec):
+                #     print(f"[NOTIFY] Cooldown active for {alert_type} for user {target_chat_id}. Skipping.")
+                #     return
 
                 try:
                     if alert_type.lower() == 'doorclosed':
