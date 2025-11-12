@@ -10,7 +10,11 @@
         "MQTT Subscribe: Group17/SmartChill/+/Alerts/Malfunction",
         "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorTimeout",
         "MQTT Subscribe: Group17/SmartChill/+/Alerts/Spoilage",
-        "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorClosed"
+        "MQTT Subscribe: Group17/SmartChill/+/Alerts/DoorClosed",
+        "MQTT Publish: Group17/SmartChill/{service_name}/{device_id}/config_update",
+        "MQTT Subscribe: Group17/SmartChill/+/+/config_ack",
+        "MQTT Subscribe: Group17/SmartChill/+/+/config_error",
+        "MQTT Subscribe: Group17/SmartChill/+/+/config_data"
       ]
     },
     "telegram": {
@@ -27,5 +31,5 @@
     "optimizer": { "base_url": "http://optimizer:8003" },
     "data_analysis": { "base_url": "http://data-analysis:8004" },
     "nodered": { "dashboard_url": "http://nodered:1880/ui" },
-     "defaults": { "alert_cooldown_minutes": 15 }
+    "defaults": { "alert_cooldown_minutes": 5 }
  }
