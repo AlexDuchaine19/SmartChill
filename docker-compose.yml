@@ -25,7 +25,7 @@ services:
       - mosquitto
     networks:
       - smartchill_net
-  
+
   device_connector2:
     build: ./Device Connector2
     container_name: smartchill_device_connector2
@@ -139,11 +139,11 @@ services:
 
   # --- NEW SERVICE: Telegram Bot ---
   telegram_bot:
-    build: ./TelegramBot 
+    build: ./TelegramBot
     container_name: smartchill_telegram_bot
     volumes:
       # Mount your bot code directory
-      - ./TelegramBot:/app 
+      - ./TelegramBot:/app
     environment:
       - PYTHONUNBUFFERED=1
       # Optional: Pass token via environment if not hardcoded in settings.json
@@ -180,12 +180,12 @@ services:
     container_name: smartchill_mosquitto
     ports:
       # Keep local port 1884 mapping to internal 1883
-      - "1884:1883" 
-      - "9002:9001" 
+      - "1884:1883"
+      - "9002:9001"
     volumes:
       - ./mosquitto/config:/mosquitto/config
       # Ensure data and log volumes are correctly defined below
-      - mosquitto_data:/mosquitto/data 
+      - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
     command: mosquitto -c /mosquitto/config/mosquitto.conf # Ensure config is loaded
     restart: always

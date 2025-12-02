@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Project Specific
+documentation/
+
+*.log
+
+# Node-RED
+nodered_data/node_modules/
+nodered_data/.config.json.backup
+
+# Secrets (just in case)
+secrets/
