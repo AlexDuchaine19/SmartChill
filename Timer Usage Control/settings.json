@@ -32,17 +32,17 @@
         "enable_door_closed_alerts": true
     },
     "devices": {
-        "SmartChill_A4B2C3D91E7F": {
-            "max_door_open_seconds": 120,
-            "check_interval": 6,
-            "enable_door_closed_alerts": true
-        },
         "SmartChill_3C5AB49F2D71": {
             "max_door_open_seconds": 30,
             "check_interval": 5,
             "enable_door_closed_alerts": true
+        },
+        "SmartChill_001A2B3C4D5E": {
+            "max_door_open_seconds": 30,
+            "check_interval": 10,
+            "enable_door_closed_alerts": true
         }
     },
-    "lastUpdate": "2025-10-23T11:49:52.728920+00:00",
-    "configVersion": 36
+    "lastUpdate": "2025-11-10T17:51:41.629882+00:00",
+    "configVersion": 45
 }

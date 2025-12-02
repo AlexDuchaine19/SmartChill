@@ -32,5 +32,5 @@
         "heartbeat_topic": "Group17/SmartChill/Devices/{model}/{device_id}/heartbeat",
         "heartbeat_interval_s": 300
     },
-    "last_config_sync": "2025-11-07T18:44:28.868071+00:00"
+    "last_config_sync": "2025-11-13T15:33:39.615705+00:00"
 }

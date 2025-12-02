@@ -248,7 +248,6 @@ class TelegramBot:
         """
         Helper function to get validation rules and user-friendly text for a setting.
         """
-        # (Dati presi dalla tua immagine 'image_4fbd05.png')
         settings_map = {
             # Timer Configuration
             "max_door_open_seconds": {
@@ -326,7 +325,7 @@ class TelegramBot:
                 "false_text": "Disabled"
             }
         }
-        # Restituisce i dettagli o un dizionario vuoto se non trovato
+        # Returns details or an empty dictionary if not found
         return settings_map.get(field_name, {"name": field_name, "desc": "", "range_text": "", "type": "unknown"})
 
     # --- User Ensure & Link Logic (kept for backward compatibility, NOT used in new flow) ---
@@ -573,7 +572,7 @@ class TelegramBot:
                 self.bot.sendMessage(chat_id, "You have no devices yet. Use /newdevice to add one.")
                 return
 
-            # ✅ Each device gets its own button — nothing else in this view
+            # Each device gets its own button — nothing else in this view
             buttons = [
                 [InlineKeyboardButton(text=f"🧊 {d.get('user_device_name', d.get('deviceID', 'Unknown'))}",
                                     callback_data=f"cb_device_menu {d.get('deviceID')}")]
@@ -663,13 +662,13 @@ class TelegramBot:
         
         device_display = f"`{self.escape_markdown(device_id)}`"
         buttons = [
-            # Queste funzioni (cb_device_info, ecc.) sono già definite nel tuo file
+            # These functions (cb_device_info, etc.) are already defined in your file
             [InlineKeyboardButton(text="ℹ️ Show Info", callback_data=f"cb_device_info {device_id}")],
             [InlineKeyboardButton(text="✏️ Rename Device", callback_data=f"cb_device_rename {device_id}")],
             
-            # --- ECCO LA RIGA AGGIUNTA ---
+            # --- ADDED LINE ---
             [InlineKeyboardButton(text="⚙️ Settings", callback_data=f"cb_settings_menu {device_id}")],
-            # --- FINE ---
+            # --- END ---
             
             [InlineKeyboardButton(text="❌ Unassign Device", callback_data=f"cb_device_unassign {device_id}")],
             [InlineKeyboardButton(text="« Back", callback_data="/mydevices")],
@@ -677,7 +676,7 @@ class TelegramBot:
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
         
-        # Modifica il messaggio, non ne invia uno nuovo
+        # Edits the message, does not send a new one
         self.bot.editMessageText(
             msg_identifier, 
             f"Options for device {device_display}:", 
@@ -700,23 +699,23 @@ class TelegramBot:
         device_id = args[0]
         self.bot.answerCallbackQuery(query_id)
         
-        # Ottieni l'ID del messaggio del menu
+        # Get the menu message ID
         msg_identifier = telepot.message_identifier(msg_query['message'])
         
-        # Modifica il menu in "Loading..."
+        # Change the menu to "Loading..."
         self.bot.editMessageText(msg_identifier, f"🔄 Unassigning `{self.escape_markdown(device_id)}`...")
 
         try:
             response = self._catalog_post(f"/devices/{device_id}/unassign", data=None)
             
-            # Modifica il "Loading..." nel messaggio di successo
+            # Change "Loading..." to success message
             self.bot.editMessageText(msg_identifier, f"✅ Device `{self.escape_markdown(device_id)}` unassigned successfully.", parse_mode="Markdown")
             
-            # (Opzionale) Invia un *nuovo* messaggio per guidare l'utente
+            # (Optional) Send a *new* message to guide the user
             self.bot.sendMessage(chat_id, "Use /mydevices to see your updated list.")
             
         except CatalogError as e:
-            # Modifica il "Loading..." nel messaggio di errore
+            # Change "Loading..." to error message
             self.bot.editMessageText(msg_identifier, f"❌ Unassignment failed: {e}")
 
     def cb_device_rename(self, query_id, chat_id, msg_query, *args):
@@ -728,15 +727,15 @@ class TelegramBot:
 
         self.bot.answerCallbackQuery(query_id)
         
-        # 1. Ottieni l'ID del messaggio da modificare
+        # 1. Get the ID of the message to edit
         msg_identifier = telepot.message_identifier(msg_query['message'])
 
         try:
-            # (Opzionale, ma consigliato) Recupera il nome attuale
+            # (Optional, but recommended) Retrieve current name
             device_info = self._catalog_get(f"/devices/{device_id}")
             current_name = device_info.get('user_device_name', 'N/A')
             
-            # 2. Modifica il messaggio precedente
+            # 2. Edit the previous message
             self.bot.editMessageText(
                 msg_identifier,
                 f"✏️ **Rename Device**\n\n"
@@ -745,14 +744,14 @@ class TelegramBot:
                 f"Please send the new name for this device.\n"
                 f"(Type /cancel to abort)",
                 parse_mode="Markdown"
-                # Non mettiamo una 'reply_markup' così i bottoni scompaiono
+                # We don't put a 'reply_markup' so the buttons disappear
             )
 
-            # 3. Imposta lo stato per attendere la risposta
+            # 3. Set state to wait for response
             self.set_status(chat_id, "waiting_for_device_rename", 
                             device_id=device_id, 
                             old_name=current_name,
-                            # Salva l'ID del messaggio per modificarlo di nuovo dopo!
+                            # Save the message ID to edit it again later!
                             msg_identifier=msg_identifier 
                            )
 
@@ -787,14 +786,14 @@ class TelegramBot:
              self.bot.editMessageText(msg_identifier, "❌ Error: Bot is not configured for publishing. Please check settings.json.")
              return
 
-        # --- SALVATAGGIO PULITO (singo annidamento) ---
+        # --- CLEAN SAVE (single nesting) ---
         state_data_to_save = {
             "device_id": device_id,
             "service_name": service_name,
             "msg_identifier": msg_identifier
         }
         self.set_status(chat_id, "waiting_for_config", data=state_data_to_save)
-        # --- FINE SALVATAGGIO ---
+        # --- END SAVE ---
 
         # Request the config
         topic = self.config_set_template.format(service_name=service_name, device_id=device_id)

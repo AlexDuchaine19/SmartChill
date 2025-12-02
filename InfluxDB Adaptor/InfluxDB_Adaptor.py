@@ -99,7 +99,7 @@ class InfluxDBAdaptor:
     def parse_senml_payload(self, payload):
         """Parse SenML formatted payload and extract sensor data"""
         try:
-            # Decode se payload è bytes
+            # Decode if payload is bytes
             if isinstance(payload, bytes):
                 payload = payload.decode("utf-8")
 
@@ -634,36 +634,6 @@ class InfluxDBAdaptor:
             print(f"[REST] Door events query returned {len(events_list)} events (device={device_filter}, duration={duration})")
             return {"events": events_list}
             
-        except Exception as e:
-            print(f"[REST] Error querying door events from InfluxDB: {e}")
-            return {"events": []}
-    
-    def query_sensor_data_from_influx(self, sensor_type, device_filter=None, duration="24h", *, last=False, limit=None):
-        """
-        Query sensor data from InfluxDB and return in SenML-like format: {"e": [{ "t": <unix>, "v": <value> }, ...]}
-
-        Args:
-            sensor_type (str): es. "temperature", "humidity", ...
-            device_filter (str|None): device_id da filtrare (es. "SmartChill_A4B2C3D91E7F")
-            duration (str): finestra temporale Flux (es. "24h", "7d"). Ignorata solo se si usa un range speciale.
-            last (bool): se True ritorna solo l'ultimo valore disponibile.
-            limit (int|None): se impostato, ritorna gli ultimi N punti (ordinati per tempo crescente).
-
-        Note:
-            - Se last=True, la query usa |> last().
-            - Se limit è impostato, la query usa sort(desc: true) + limit(n: N) + sort() per restituire in ordine cronologico.
-        """
-        try:
-            bucket = self.settings["influxdb"]["bucket"]
-            measurement = self.settings["influxdb"]["measurement_name_sensors"]
-
-            # Costruzione range: Flux richiede sempre un range
-            # Se last=True e non è passato duration, usa una finestra ampia di default
-            effective_duration = duration or ("365d" if last else "24h")
-
-            query = f'''
-            from(bucket: "{bucket}")
-                |> range(start: -{effective_duration})
                 |> filter(fn: (r) => r._measurement == "{measurement}")
                 |> filter(fn: (r) => r.sensor_type == "{sensor_type}")
             '''
@@ -677,12 +647,12 @@ class InfluxDBAdaptor:
                 |> filter(fn: (r) => r._field == "value")
             '''
 
-            # Modalità "ultimo valore"
+            # "Last value" mode
             if last:
                 query += '''
                 |> last()
                 '''
-            # Modalità "ultimi N"
+            # "Last N" mode
             elif isinstance(limit, int) and limit > 0:
                 query += '''
                 |> sort(columns: ["_time"], desc: true)
@@ -690,15 +660,15 @@ class InfluxDBAdaptor:
                 |> sort(columns: ["_time"])
                 ''' % (limit)
             else:
-                # default: tutto il range ordinato
+                # default: entire range sorted
                 query += '''
                 |> sort(columns: ["_time"])
                 '''
 
-            # Esecuzione query
+            # Execute query
             result = self.query_api.query(query)
 
-            # Conversione in SenML-like
+            # Convert to SenML-like
             senml_data = {"e": []}
             count = 0
 

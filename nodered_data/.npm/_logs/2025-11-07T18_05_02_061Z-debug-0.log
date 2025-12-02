@@ -6,6 +6,6 @@
 5 silly config load:file:/usr/local/etc/npmrc
 6 verbose title npm start --userDir /data
 7 verbose argv "start" "--cache" "/data/.npm" "--" "--userDir" "/data"
-8 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-10-28T11_20_27_332Z-
-9 verbose logfile /data/.npm/_logs/2025-10-28T11_20_27_332Z-debug-0.log
+8 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-11-07T18_05_02_061Z-
+9 verbose logfile /data/.npm/_logs/2025-11-07T18_05_02_061Z-debug-0.log
 10 silly logfile done cleaning log files

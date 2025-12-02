@@ -31,17 +31,17 @@
         "alert_cooldown_minutes": 15
     },
     "devices": {
-        "SmartChill_A4B2C3D91E7F": {
+        "SmartChill_3C5AB49F2D71": {
+            "gas_threshold_ppm": 100,
+            "enable_continuous_alerts": false,
+            "alert_cooldown_minutes": 15
+        },
+        "SmartChill_001A2B3C4D5E": {
             "gas_threshold_ppm": 300,
             "enable_continuous_alerts": true,
-            "alert_cooldown_minutes": 10
-        },
-        "SmartChill_3C5AB49F2D71": {
-            "gas_threshold_ppm": 300,
-            "enable_continuous_alerts": false,
             "alert_cooldown_minutes": 15
         }
     },
-    "lastUpdate": "2025-09-16T17:23:18.781804+00:00",
-    "configVersion": 8
+    "lastUpdate": "2025-11-11T12:18:35.713414+00:00",
+    "configVersion": 13
 }

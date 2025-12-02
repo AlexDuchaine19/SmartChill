@@ -33,21 +33,21 @@
         "alert_cooldown_minutes": 30
     },
     "devices": {
-        "SmartChill_A4B2C3D91E7F": {
-            "temp_min_celsius": 0,
-            "temp_max_celsius": 8,
-            "humidity_max_percent": 80,
-            "enable_malfunction_alerts": false,
-            "alert_cooldown_minutes": 10
-        },
         "SmartChill_3C5AB49F2D71": {
             "temp_min_celsius": 0.0,
             "temp_max_celsius": 8.0,
+            "humidity_max_percent": 50,
+            "enable_malfunction_alerts": true,
+            "alert_cooldown_minutes": 30
+        },
+        "SmartChill_001A2B3C4D5E": {
+            "temp_min_celsius": 0.0,
+            "temp_max_celsius": 7,
             "humidity_max_percent": 85.0,
             "enable_malfunction_alerts": true,
             "alert_cooldown_minutes": 30
         }
     },
-    "lastUpdate": "2025-09-16T17:23:18.780816+00:00",
-    "configVersion": 7
+    "lastUpdate": "2025-11-11T12:19:08.061645+00:00",
+    "configVersion": 11
 }
