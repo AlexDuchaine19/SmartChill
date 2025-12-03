@@ -41,32 +41,42 @@ services:
       - smartchill_net
 
   timer_usage_control:
-    build: ./Timer Usage Control
-    container_name: smartchill_timer_usage_control
-    volumes:
-      - ./Timer Usage Control:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
+      build:
+        context: .
+        dockerfile: "./Timer Usage Control/Dockerfile"
+      container_name: smartchill_timer_usage_control
+      environment:
+        - PYTHONUNBUFFERED=1
+      restart: always
+      depends_on:
+        - catalog
+        - mosquitto
+      networks:
+        - smartchill_net
+      # CORREZIONE VOLUMI:
+      volumes:
+        # 1. Mappiamo il codice del servizio nella sua sottocartella specifica
+        - "./Timer Usage Control:/app/TimerUsageControl"
+        # 2. Mappiamo anche Common se vuoi modificare BaseService senza rebuildare
+        - "./Common:/app/Common"
+  
   food_spoilage_control:
-    build: ./Food Spoilage Control
-    container_name: smartchill_food_spoilage_control
-    volumes:
-      - ./Food Spoilage Control:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
+      build:
+        context: .
+        dockerfile: "./Food Spoilage Control/Dockerfile" # Typo corretto qui
+      container_name: smartchill_food_spoilage_control
+      environment:
+        - PYTHONUNBUFFERED=1
+      restart: always
+      depends_on:
+        - catalog
+        - mosquitto
+      networks:
+        - smartchill_net
+      # CORREZIONE VOLUMI:
+      volumes:
+        - "./Food Spoilage Control:/app/FoodSpoilageControl"
+        - "./Common:/app/Common"
 
   fridge_status_control:
     build: ./Fridge Status Control
