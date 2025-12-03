@@ -165,3 +165,14 @@ Defined in **`settings.json`**:
 python Optimizer.py
 # Service runs at http://localhost:8003
 ```
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/data_analysis_client.py`**: Client for interacting with the Data Analysis service.
+- **`modules/analyzer.py`**: Contains the core logic for energy analysis and recommendations.
+- **`modules/predictor.py`**: Manages ML models for energy prediction.
+- **`Optimizer.py`**: The entry point that initializes and orchestrates the modules.

@@ -267,3 +267,12 @@ It reads/writes from `catalog.json` and provides discovery, registration, and mo
 python Catalog.py
 # Service runs at http://localhost:8001
 ```
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/data_manager.py`**: Handles core catalog operations (device/service/user management).
+- **`modules/rest_api.py`**: Contains the REST API handlers for CherryPy.
+- **`Catalog.py`**: The entry point that initializes and orchestrates the modules.

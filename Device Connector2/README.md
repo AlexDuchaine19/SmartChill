@@ -99,3 +99,13 @@ The simulator will:
 2. Connect to the MQTT broker  
 3. Start publishing sensor data, door events, and heartbeat messages  
 4. Accept user commands via console
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
+- **`modules/simulator.py`**: Contains the thermal model and sensor simulation logic.
+- **`Fridge2.py`**: The entry point that initializes and orchestrates the modules.

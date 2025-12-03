@@ -250,3 +250,13 @@ Check InfluxDB health:
 ```bash
 curl http://influxdb:8086/health
 ```
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
+- **`modules/influx_client.py`**: Handles InfluxDB connections and queries.
+- **`InfluxDB_Adaptor.py`**: The entry point that initializes and orchestrates the modules.

@@ -136,3 +136,13 @@ Settings are defined in **`settings.json`**:
 python Data_Analysis.py
 # Service runs at http://localhost:8004
 ```
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/influx_client.py`**: Client for interacting with the InfluxDB Adaptor.
+- **`modules/analyzer.py`**: Contains the core logic for statistical analysis and pattern recognition.
+- **`Data_Analysis.py`**: The entry point that initializes and orchestrates the modules.

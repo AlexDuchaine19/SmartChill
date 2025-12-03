@@ -29,9 +29,21 @@ SmartChill is an IoT platform designed to monitor the status and usage patterns 
 
 ## 🏗️ Architecture
 
-The platform follows a microservice architecture orchestrated using Docker Compose.
+The platform follows a microservice architecture orchestrated using Docker Compose. Each service has been refactored into a **modular architecture** to ensure scalability, maintainability, and separation of concerns.
 
- *(Optional: You can include your architecture diagram here)*
+### Modular Service Structure
+
+Every Python-based service in the project now follows a consistent directory structure:
+
+*   **`modules/`**: Contains the core logic and helper classes.
+    *   **`utils.py`**: Shared utility functions (e.g., settings management).
+    *   **`catalog_client.py`**: Handles all interactions with the Catalog Service (registration, lookups).
+    *   **`mqtt_client.py`**: Encapsulates MQTT connection, subscription, and publishing logic.
+    *   **`[logic_module].py`**: Contains the specific business logic for the service (e.g., `spoilage_monitor.py`, `analyzer.py`).
+*   **`[Service_Name].py`**: The main entry point script that initializes and orchestrates the modules.
+*   **`settings.json`**: Configuration file for the service.
+
+### Service Descriptions
 
 * **`Device Connector (Fridge.py)`:** Simulates a smart fridge, generating sensor data (Temperature, Humidity, Gas, Light) and door events. Publishes data via MQTT in SenML format. Receives simulation commands (e.g., `door_open`, `malfunction_start`) via MQTT.
 * **`Catalog (Catalog.py)`:** Central registry for devices, users, and services. Manages device registration (based on MAC address), user registration (linked to Telegram `chat_id`), device assignments, and service discovery. Provides a REST API.
@@ -86,3 +98,4 @@ The platform follows a microservice architecture orchestrated using Docker Compo
 
 ```bash
 docker-compose down
+```

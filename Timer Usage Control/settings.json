@@ -34,7 +34,7 @@
     "devices": {
         "SmartChill_3C5AB49F2D71": {
             "max_door_open_seconds": 30,
-            "check_interval": 5,
+            "check_interval": 15,
             "enable_door_closed_alerts": true
         },
         "SmartChill_001A2B3C4D5E": {
@@ -43,6 +43,6 @@
             "enable_door_closed_alerts": true
         }
     },
-    "lastUpdate": "2025-11-10T17:51:41.629882+00:00",
-    "configVersion": 45
+    "lastUpdate": "2025-12-03T12:30:10.532509+00:00",
+    "configVersion": 46
 }

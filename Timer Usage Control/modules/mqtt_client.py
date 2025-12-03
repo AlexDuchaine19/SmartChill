@@ -1,0 +1,59 @@
+import time
+import json
+from datetime import datetime, timezone
+from MyMQTT import MyMQTT
+
+class MQTTClient:
+    def __init__(self, settings, service):
+        self.settings = settings
+        self.service = service
+        self.broker_host = settings["mqtt"]["brokerIP"]
+        self.broker_port = settings["mqtt"]["brokerPort"]
+        self.client_id = f"{settings['mqtt']['clientID_prefix']}_{int(time.time())}"
+        self.client = MyMQTT(self.client_id, self.broker_host, self.broker_port, self)
+        self.connected = False
+
+    def start(self):
+        """Start MQTT client and subscribe to topics"""
+        try:
+            self.client.start()
+            time.sleep(2)
+            self.connected = True
+            
+            subscribe_topics = self._extract_subscribe_topics()
+            for topic in subscribe_topics:
+                self.client.mySubscribe(topic)
+                print(f"[MQTT] Subscribed to: {topic}")
+            
+            print(f"[MQTT] Connected to broker {self.broker_host}:{self.broker_port}")
+            return True
+        except Exception as e:
+            print(f"[MQTT] Connection error: {e}")
+            return False
+
+    def stop(self):
+        """Stop MQTT client"""
+        if self.client:
+            self.client.stop()
+            self.connected = False
+            print("[MQTT] Connection closed")
+
+    def notify(self, topic, payload):
+        """Callback for incoming messages"""
+        self.service.handle_message(topic, payload)
+
+    def publish(self, topic, payload):
+        """Publish message to topic"""
+        if self.connected:
+            try:
+                self.client.myPublish(topic, payload)
+            except Exception as e:
+                print(f"[MQTT] Error publishing to {topic}: {e}")
+
+    def _extract_subscribe_topics(self):
+        """Extract subscribe topics from service endpoints"""
+        topics = []
+        for endpoint in self.settings["serviceInfo"]["endpoints"]:
+            if endpoint.startswith("MQTT Subscribe: "):
+                topics.append(endpoint.replace("MQTT Subscribe: ", ""))
+        return topics

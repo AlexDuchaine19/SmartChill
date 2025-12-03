@@ -104,3 +104,13 @@ The service will:
 3. Connect to MQTT broker  
 4. Subscribe to gas topics and listen for config updates  
 5. Publish alerts when thresholds are exceeded
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
+- **`modules/spoilage_monitor.py`**: Manages gas sensor readings and spoilage alerts.
+- **`SpoilageControl.py`**: The entry point that initializes and orchestrates the modules.

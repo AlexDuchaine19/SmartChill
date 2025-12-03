@@ -110,3 +110,13 @@ The service will:
 3. Connect to the MQTT broker  
 4. Monitor temperature and humidity data  
 5. Publish malfunction alerts if thresholds are exceeded
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
+- **`modules/status_monitor.py`**: Manages temperature/humidity monitoring and malfunction alerts.
+- **`StatusControl.py`**: The entry point that initializes and orchestrates the modules.

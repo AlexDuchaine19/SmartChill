@@ -121,3 +121,13 @@ The service will:
 3. Connect to the MQTT broker  
 4. Monitor door events  
 5. Send alerts if thresholds are exceeded
+
+## Modular Architecture
+
+This service has been refactored into a modular architecture to improve maintainability and scalability.
+
+- **`modules/utils.py`**: Helper functions for settings management and common utilities.
+- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
+- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
+- **`modules/timer_manager.py`**: Manages door timers and triggers alerts.
+- **`Time_Control.py`**: The entry point that initializes and orchestrates the modules.
