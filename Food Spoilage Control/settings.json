@@ -32,9 +32,9 @@
     },
     "devices": {
         "SmartChill_3C5AB49F2D71": {
-            "gas_threshold_ppm": 100,
-            "enable_continuous_alerts": false,
-            "alert_cooldown_minutes": 15
+            "gas_threshold_ppm": 80,
+            "enable_continuous_alerts": true,
+            "alert_cooldown_minutes": 10
         },
         "SmartChill_001A2B3C4D5E": {
             "gas_threshold_ppm": 300,
@@ -42,6 +42,6 @@
             "alert_cooldown_minutes": 15
         }
     },
-    "lastUpdate": "2025-11-11T12:18:35.713414+00:00",
-    "configVersion": 13
+    "lastUpdate": "2025-12-04T14:57:31.988398+00:00",
+    "configVersion": 16
 }

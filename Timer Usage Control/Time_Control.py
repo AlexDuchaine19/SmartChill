@@ -1,4 +1,4 @@
-import time
+﻿import time
 import threading
 import json
 from datetime import datetime, timezone
@@ -142,9 +142,41 @@ class TimerUsageControl:
 
     def handle_config_update(self, topic, payload):
         """Handle configuration update/get via MQTT"""
-        # Implementation similar to original, simplified for brevity
-        # In a real refactor, this would be moved to a ConfigHandler module
-        pass
+        try:
+            if isinstance(payload, bytes):
+                payload = payload.decode('utf-8')
+            data = json.loads(payload) if isinstance(payload, str) else payload
+            topic_parts = topic.split('/')
+            if len(topic_parts) >= 5:
+                device_id = topic_parts[3]
+            else:
+                print(f"[CONFIG] Invalid topic format: {topic}")
+                return
+            config_data = data.get('config', {})
+            if config_data.get('request') == 'get_config':
+                print(f"[CONFIG] Received get_config request for {device_id}")
+                current_config = self.get_device_config(device_id)
+                response_topic = f"Group17/SmartChill/TimerUsageControl/{device_id}/config_data"
+                response_payload = {"device_id": device_id, "timestamp": datetime.now(timezone.utc).isoformat(), "config": {"max_door_open_seconds": current_config["max_door_open_seconds"], "check_interval": current_config["check_interval"], "enable_door_closed_alerts": current_config["enable_door_closed_alerts"]}}
+                self.mqtt_client.publish(response_topic, response_payload)
+                print(f"[CONFIG] Sent config_data for {device_id}")
+            else:
+                print(f"[CONFIG] Received config update for {device_id}: {config_data}")
+                valid_keys = ["max_door_open_seconds", "check_interval", "enable_door_closed_alerts"]
+                updates = {k: v for k, v in config_data.items() if k in valid_keys}
+                if updates:
+                    self.update_device_config(device_id, updates)
+                    ack_topic = f"Group17/SmartChill/TimerUsageControl/{device_id}/config_ack"
+                    ack_payload = {"device_id": device_id, "timestamp": datetime.now(timezone.utc).isoformat(), "updated_config": updates}
+                    self.mqtt_client.publish(ack_topic, ack_payload)
+                    print(f"[CONFIG] Config updated and acknowledged for {device_id}")
+                else:
+                    error_topic = f"Group17/SmartChill/TimerUsageControl/{device_id}/config_error"
+                    error_payload = {"device_id": device_id, "timestamp": datetime.now(timezone.utc).isoformat(), "error": "No valid configuration keys provided"}
+                    self.mqtt_client.publish(error_topic, error_payload)
+                    print(f"[CONFIG] Invalid config update for {device_id}")
+        except Exception as e:
+            print(f"[CONFIG] Error handling config update: {e}")
 
     def monitoring_loop(self):
         """Main monitoring loop"""

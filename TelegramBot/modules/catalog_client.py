@@ -1,10 +1,14 @@
 import requests
 import time
 import random
+from datetime import datetime
 from modules.utils import normalize_mac
 
 class CatalogError(Exception):
-    pass
+    """Custom exception for catalog errors."""
+    def __init__(self, message, status_code=500):
+        super().__init__(message)
+        self.status_code = status_code
 
 class CatalogClient:
     def __init__(self, settings):
@@ -12,137 +16,162 @@ class CatalogClient:
         self.catalog_url = settings["catalog"]["url"]
         self.service_info = settings["serviceInfo"]
 
-    def _cat_get(self, endpoint):
-        """Helper for GET requests to Catalog"""
+    def _request(self, method, endpoint, data=None, timeout=6):
+        """Generic internal request handler with robust error parsing"""
+        url = f"{self.catalog_url.rstrip('/')}/{endpoint.lstrip('/')}"
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
         try:
-            url = f"{self.catalog_url}{endpoint}"
-            response = requests.get(url, timeout=5)
+            response = requests.request(method, url, json=data, headers=headers, timeout=timeout)
             response.raise_for_status()
-            return response.json()
+            return response.json() if response.content else {"status": "success", "code": response.status_code}
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            try:
+                err_json = e.response.json()
+                # Try to find the error message in common fields
+                error_msg = err_json.get('error', err_json.get('detail', str(err_json)))
+            except Exception:
+                error_msg = e.response.text
+            
+            # Log for debugging but raise clean error
+            print(f"[CATALOG_ERR] HTTP {status_code} for {method} {url}: {error_msg}")
+            raise CatalogError(f"HTTP {status_code}: {error_msg}", status_code) from e
         except requests.RequestException as e:
-            raise CatalogError(f"Catalog GET failed: {e}")
+            print(f"[CATALOG_ERR] Network error: {e}")
+            raise CatalogError(f"Network error connecting to catalog: {e}")
 
-    def _cat_post(self, endpoint, data):
-        """Helper for POST requests to Catalog"""
-        try:
-            url = f"{self.catalog_url}{endpoint}"
-            response = requests.post(url, json=data, timeout=5)
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
-            raise CatalogError(f"Catalog POST failed: {e}")
+    def _cat_get(self, endpoint): return self._request("GET", endpoint)
+    def _cat_post(self, endpoint, data): return self._request("POST", endpoint, data)
+    def _cat_delete(self, endpoint): return self._request("DELETE", endpoint)
 
-    def _cat_delete(self, endpoint):
-        """Helper for DELETE requests to Catalog"""
-        try:
-            url = f"{self.catalog_url}{endpoint}"
-            response = requests.delete(url, timeout=5)
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
-            raise CatalogError(f"Catalog DELETE failed: {e}")
-
-    def register_service(self, max_retries=5, base_delay=2):
-        """Register this service with the Catalog"""
+    # --- Service Registration ---
+    def register_service(self, max_retries=5, base_delay=2.0):
+        """Register this service with the central catalog."""
+        payload = {
+            "serviceID": self.service_info["serviceID"],
+            "name": self.service_info["serviceName"],
+            "description": self.service_info.get("serviceDescription", ""),
+            "type": self.service_info.get("serviceType", "microservice"),
+            "version": self.service_info.get("version", "1.0.0"),
+            "endpoints": self.service_info.get("endpoints", []),
+            "status": "active",
+            "timestamp": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        }
+        
         for attempt in range(max_retries):
             try:
-                registration_data = {
-                    "serviceID": self.service_info["serviceID"],
-                    "name": self.service_info["serviceName"],
-                    "description": self.service_info["serviceDescription"],
-                    "type": self.service_info["serviceType"],
-                    "version": self.service_info["version"],
-                    "endpoints": self.service_info["endpoints"],
-                    "status": "active"
-                }
-                
-                response = requests.post(
-                    f"{self.catalog_url}/services/register",
-                    json=registration_data,
-                    timeout=5
-                )
-                
-                if response.status_code in [200, 201]:
-                    print(f"[REGISTER] Successfully registered with catalog")
-                    return True
-                else:
-                    print(f"[REGISTER] Failed to register (attempt {attempt+1}/{max_retries}): {response.status_code}")
-                    
-            except requests.RequestException as e:
-                print(f"[REGISTER] Error registering (attempt {attempt+1}/{max_retries}): {e}")
+                self._request("POST", "/services/register", payload)
+                print("[REGISTER] Registered with Catalog")
+                return True
+            except CatalogError as e:
+                if e.status_code == 409: # Already registered is fine
+                     print("[REGISTER] Service updated in Catalog.")
+                     return True
+                print(f"[REGISTER] Failed (attempt {attempt+1}/{max_retries}): {e}")
             
             if attempt < max_retries - 1:
-                delay = base_delay * (2 ** attempt) + random.uniform(0, 1)
-                print(f"[REGISTER] Retrying in {delay:.1f} seconds...")
-                time.sleep(delay)
-        
+                time.sleep(base_delay * (2 ** attempt))
         return False
 
-    def check_registration(self):
-        """Check if service is registered, if not re-register"""
-        try:
-            response = requests.get(f"{self.catalog_url}/services/{self.service_info['serviceID']}", timeout=5)
-            if response.status_code != 200:
-                print("[CHECK] Service not found in catalog, re-registering...")
-                self.register_service()
-        except requests.RequestException:
-            pass
+    # --- User Logic ---
 
     def get_user(self, user_id):
         return self._cat_get(f"/users/{user_id}")
+
+    def is_chat_id_linked(self, chat_id):
+        """
+        Checks if a Telegram chat_id is linked to ANY user. 
+        Iterates through users because /users/by-chat endpoint might not exist.
+        Returns userID if linked, None otherwise.
+        """
+        try:
+            users = self._cat_get("/users")
+            target = str(chat_id)
+            for user in users:
+                if str(user.get('telegram_chat_id')) == target:
+                    linked_user = user.get('userID')
+                    print(f"[AUTH] Chat ID {chat_id} is linked to '{linked_user}'.")
+                    return linked_user
+            print(f"[AUTH] Chat ID {chat_id} is not linked.")
+            return None
+        except CatalogError as e:
+            print(f"[ERROR] Failed to check chat_id link: {e}")
+            return None
+
+    def register_user(self, user_data):
+        """Register a new user. user_data = {userID, userName, telegram_chat_id}"""
+        return self._cat_post("/users", user_data)
+
+    def link_telegram(self, user_id, chat_id):
+        """Link a chat_id to an existing user."""
+        return self._cat_post(f"/users/{user_id}/link_telegram", {"chat_id": str(chat_id)})
+
+    def delete_user(self, user_id):
+        return self._cat_delete(f"/users/{user_id}")
+
+    # --- Device Logic ---
 
     def get_device(self, device_id):
         return self._cat_get(f"/devices/{device_id}")
 
     def get_user_devices(self, user_id):
-        """Get all devices linked to a user"""
-        try:
-            user_info = self.get_user(user_id)
-            device_ids = user_info.get('linked_devices', [])
-            devices = []
-            for dev_id in device_ids:
-                try:
-                    dev_info = self.get_device(dev_id)
-                    devices.append(dev_info)
-                except CatalogError:
-                    continue
-            return devices
-        except CatalogError:
-            return []
+        return self._cat_get(f"/users/{user_id}/devices")
 
     def find_device_by_mac(self, mac_address):
-        """Find a device by its MAC address (custom endpoint or search)"""
-        # Assuming catalog has an endpoint or we search all devices
-        # The original code searched all devices
+        """
+        Finds a device by MAC address. 
+        Iterates through devices because /devices/by-mac endpoint might not exist.
+        """
         try:
-            all_devices = self._cat_get("/devices")
-            norm_mac = normalize_mac(mac_address)
-            for device in all_devices:
-                if normalize_mac(device.get('mac_address')) == norm_mac:
+            normalized_target = normalize_mac(mac_address)
+            if len(normalized_target) != 12:
+                print(f"[VALIDATION] Invalid MAC length: {mac_address}")
+                return None
+                
+            devices = self._cat_get("/devices")
+            for device in devices:
+                device_mac = normalize_mac(device.get('mac_address', ''))
+                if device_mac == normalized_target:
+                    print(f"[CATALOG] Found device by MAC {mac_address}: {device.get('deviceID')}")
                     return device
+            
+            print(f"[CATALOG] Device with MAC {mac_address} not found.")
             return None
-        except CatalogError:
+        except CatalogError as e:
+            print(f"[CATALOG] Error searching devices by MAC: {e}")
             return None
 
-    def link_user_to_device(self, user_id, device_id):
-        """Link a user to a device"""
-        # This might involve updating user or device or both
-        # Original code: POST /users/{user_id}/devices with {"device_id": device_id}
-        # OR PUT /devices/{device_id} with {"owner": user_id}
-        # Let's follow original logic if possible, or assume standard catalog API
-        # Original code logic:
-        # self._cat_post(f"/users/{user_id}/devices", {"device_id": device_id})
-        return self._cat_post(f"/users/{user_id}/devices", {"device_id": device_id})
+    def assign_device_to_user(self, user_id, device_id, device_name):
+        return self._cat_post(f"/users/{user_id}/assign-device", {
+            "device_id": device_id, 
+            "device_name": device_name
+        })
 
-    def unlink_user_from_device(self, user_id, device_id):
-        return self._cat_delete(f"/users/{user_id}/devices/{device_id}")
+    def unassign_device(self, device_id):
+        # Try standard unassign endpoint
+        return self._cat_post(f"/devices/{device_id}/unassign", {})
 
-    def is_user_registered(self, user_id):
+    def rename_device(self, device_id, new_name):
+        """Renames a device. Implements fallback (unassign+assign) if /rename endpoint fails."""
         try:
-            self.get_user(user_id)
-            return True
-        except CatalogError:
-            return False
-
-    def register_user(self, user_data):
-        return self._cat_post("/users", user_data)
+            # Try direct rename endpoint
+            return self._cat_post(f"/devices/{device_id}/rename", {"user_device_name": new_name})
+        except CatalogError as e:
+            if e.status_code == 404:
+                # Endpoint not found? Fallback logic.
+                print(f"[RENAME] Direct rename failed ({e}), attempting fallback strategy...")
+                
+                # 1. Get current owner
+                dev = self.get_device(device_id)
+                user_id = dev.get('assigned_user')
+                if not user_id:
+                    raise CatalogError("Device not assigned, cannot rename via fallback.")
+                
+                # 2. Unassign
+                self.unassign_device(device_id)
+                
+                # 3. Re-assign with new name
+                return self.assign_device_to_user(user_id, device_id, new_name)
+            
+            # If it was another error (e.g. 500), re-raise
+            raise e

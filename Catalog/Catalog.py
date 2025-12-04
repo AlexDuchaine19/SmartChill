@@ -37,6 +37,7 @@ def get_dispatcher(api):
     d.connect('delete_user', '/users/:user_id', controller=api, action='delete_user', conditions={'method': ['DELETE']})
 
     d.connect('link_telegram', '/users/:user_id/link_telegram', controller=api, action='link_telegram', conditions={'method': ['POST']})
+    d.connect('get_user_by_chat', '/users/by-chat/:chat_id', controller=api, action='get_user_by_chat', conditions={'method': ['GET']})
 
     # Services
     d.connect('services', '/services', controller=api, action='get_services', conditions={'method': ['GET']})

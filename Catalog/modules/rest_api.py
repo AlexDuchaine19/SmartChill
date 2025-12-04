@@ -296,6 +296,15 @@ class CatalogAPI:
         
         return http_error(404, {"error": "User not found"})
 
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def get_user_by_chat(self, chat_id):
+        """GET /users/by-chat/{chat_id}"""
+        user = self.data_manager.get_user_by_chat_id(chat_id)
+        if user:
+            return user
+        return http_error(404, {"error": "User not found"})
+
     # ============= DEVICE MODELS =============
     @cherrypy.tools.json_out()
     def get_device_models(self):

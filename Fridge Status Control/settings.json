@@ -34,11 +34,11 @@
     },
     "devices": {
         "SmartChill_3C5AB49F2D71": {
-            "temp_min_celsius": 0.0,
+            "temp_min_celsius": 0,
             "temp_max_celsius": 8.0,
             "humidity_max_percent": 50,
             "enable_malfunction_alerts": true,
-            "alert_cooldown_minutes": 30
+            "alert_cooldown_minutes": 25
         },
         "SmartChill_001A2B3C4D5E": {
             "temp_min_celsius": 0.0,
@@ -48,6 +48,6 @@
             "alert_cooldown_minutes": 30
         }
     },
-    "lastUpdate": "2025-11-11T12:19:08.061645+00:00",
-    "configVersion": 11
+    "lastUpdate": "2025-12-04T15:16:23.973894+00:00",
+    "configVersion": 17
 }

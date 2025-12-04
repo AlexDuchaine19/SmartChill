@@ -278,3 +278,10 @@ class CatalogDataManager:
                 self.save_catalog()
                 return True
         return False
+
+    def get_user_by_chat_id(self, chat_id):
+        chat_id_str = str(chat_id)
+        for user in self.catalog['usersList']:
+            if str(user.get('telegram_chat_id')) == chat_id_str:
+                return user
+        return None

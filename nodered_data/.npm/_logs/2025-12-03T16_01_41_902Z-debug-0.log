@@ -6,8 +6,8 @@
 5 silly config load:file:/usr/local/etc/npmrc
 6 verbose title npm start --userDir /data
 7 verbose argv "start" "--cache" "/data/.npm" "--" "--userDir" "/data"
-8 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-11-13T14_50_37_103Z-
-9 verbose logfile /data/.npm/_logs/2025-11-13T14_50_37_103Z-debug-0.log
+8 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-12-03T16_01_41_902Z-
+9 verbose logfile /data/.npm/_logs/2025-12-03T16_01_41_902Z-debug-0.log
 10 silly logfile start cleaning logs, removing 1 files
 11 silly logfile done cleaning log files
 12 verbose cwd /usr/src/node-red
