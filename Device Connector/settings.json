@@ -10,7 +10,7 @@
             "gas",
             "light"
         ],
-        "deviceID": "SmartChill_3C5AB49F2D71"
+        "deviceID": null
     },
     "sampling_intervals": {
         "temperature": 300,
