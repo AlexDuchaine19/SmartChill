@@ -16,8 +16,8 @@ def set_bot_descriptions(token: str, enable: bool = True):
     """Sets the bot's description and short description on Telegram."""
     if not enable or not token: return
     base = f"https://api.telegram.org/bot{token}"
-    short = "❄️ SmartChill – Keep your fridge under control."
-    desc = "👋 Welcome to SmartChill!\nMonitor your fridge, get smart alerts, and cut waste.\n\n• 🔐 Login or 🆕 Register\n• 📣 Real-time alerts\n• 🧰 Device management"
+    short = "SmartChill – Keep your fridge under control." # what is seen on the bio
+    desc = "Welcome to SmartChill!\nMonitor your fridge, get alerts, and cut waste.\n\n• 🔐 Login or register\n• 📣 Real-time alerts\n• 🧰 Device management"
     try:
         requests.post(f"{base}/setMyShortDescription", data={"short_description": short}, timeout=5)
         requests.post(f"{base}/setMyDescription", data={"description": desc}, timeout=5)
@@ -122,6 +122,12 @@ class TelegramBotService:
         user_id = payload.get('userID')
         msg_text = payload.get('message', 'Event occurred.')
         
+        response = requests.get(f"http://catalog:8001/devices/{device_id}") # request to get the device nick
+        device_nick = None
+        if response.status_code == 200:
+            device = response.json()
+            device_nick = device.get("user_device_name")
+
         # Determine Alert Type (from payload or topic)
         alert_type = payload.get('alert_type')
         if not alert_type:
@@ -170,19 +176,18 @@ class TelegramBotService:
                 title = "Door Closed"
                 duration = payload.get('duration_seconds')
                 dur_text = f" after {duration:.0f}s" if duration else ""
-                body = f"The fridge door was closed{dur_text}."
+                body = f"\nThe fridge door was closed{dur_text}."
                 severity_icon = "" # No severity icon for info
             else:
                 icon = "🚨" if severity == "critical" else ("⚠️" if severity == "warning" else "ℹ️")
                 title = f"{str(alert_type).replace('_', ' ').title()} Alert"
-                body = f"**Details:** {msg_text}"
+                body = f"*Details:* {msg_text}"
                 if payload.get('recommended_action'):
-                    body += f"\n**Suggestion:** {payload['recommended_action']}"
+                    body += f"\n*Suggestion:* {payload['recommended_action']}"
             
-            full_msg = f"{icon} **{title}** {icon}\n\n"
-            if device_id: full_msg += f"**Device:** `{device_id}`\n"
+            full_msg = f"{icon}* - {title}*\n\n"
+            if device_id: full_msg += f"*Device:* {device_nick}\n`(ID: {device_id})`\n"
             full_msg += body
-            full_msg += f"\n\n_Time: {datetime.now(timezone.utc).strftime('%H:%M:%S')}_"
 
             self.bot.sendMessage(int(target_chat_id), full_msg, parse_mode="Markdown")
             print(f"[ALERT] Sent '{alert_type}' to {target_chat_id}")
@@ -287,7 +292,7 @@ class TelegramBotService:
 
     def periodic_registration(self):
         """Background thread for keeping service alive in Catalog."""
-        interval = self.settings.get("catalog", {}).get("registration_interval_seconds", 60)
+        interval = self.settings.get("catalog", {}).get("registration_interval_seconds", 300)
         while self.running:
             time.sleep(interval)
             if self.running:

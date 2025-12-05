@@ -25,7 +25,6 @@ class BotHandlers:
             "/help": self.cmd_help,
             "/newdevice": self.cmd_newdevice,
             "/mydevices": self.cmd_mydevices,
-            "/settings": self.cmd_settings,
             "/showme": self.cmd_showme,
             "/deleteme": self.cmd_deleteme,
             "/cancel": self.cmd_cancel
@@ -46,7 +45,8 @@ class BotHandlers:
             "cb_edit_boolean": self.cb_edit_boolean,
             "cb_set_boolean": self.cb_set_boolean,
             "cb_service_menu_back": self.cb_service_menu_back,
-            "cb_newdevice_start": self.cb_newdevice_start
+            "cb_newdevice_start": self.cb_newdevice_start,
+            "cb_mydevices_back": self.cb_mydevices_back, # Nuova mappatura
         }
 
         # State Handlers (User text input)
@@ -104,7 +104,6 @@ class BotHandlers:
             "/start – Start menu\n"
             "/newdevice – Add a new device\n"
             "/mydevices – List your devices\n"
-            "/settings – Configure devices\n"
             "/showme – Show account info\n"
             "/deleteme – Delete account\n"
             "/cancel – Cancel action"
@@ -124,46 +123,65 @@ class BotHandlers:
         )
         self.set_status(chat_id, "waiting_for_newdevice_mac", user_id=user["userID"])
 
-    def cmd_mydevices(self, chat_id, msg, *args):
-        user = self.catalog.get_user_by_chat_id(chat_id)
-        if not user:
-            self.bot.sendMessage(chat_id, "You are not registered yet. Use /start to begin.")
-            return
-        try:
-            # Recupera la lista aggiornata dal catalog
-            devices = self.catalog.get(f"/users/{user['userID']}/devices")
-            if not devices:
-                self.bot.sendMessage(chat_id, "You have no devices yet. Use /newdevice to add one.")
+    def cmd_mydevices(self, chat_id, msg, *args, message_to_edit=None): # <--- 1. Aggiungi questo parametro
+            user = self.catalog.get_user_by_chat_id(chat_id)
+            if not user:
+                self.bot.sendMessage(chat_id, "You are not registered yet. Use /start to begin.")
                 return
+            try:
+                # --- Logica identica a prima ---
+                devices = self.catalog.get(f"/users/{user['userID']}/devices")
+                if not devices:
+                    txt = "You have no devices yet. Use /newdevice to add one."
+                    # Gestione intelligente dell'invio
+                    if message_to_edit:
+                        self.bot.editMessageText(telepot.message_identifier(message_to_edit), txt)
+                    else:
+                        self.bot.sendMessage(chat_id, txt)
+                    return
 
-            buttons = []
-            for d in devices:
-                name = d.get('user_device_name') or d.get('deviceID') or 'Unknown'
-                buttons.append([InlineKeyboardButton(text=f"🧊 {name}", callback_data=f"cb_device_menu {d.get('deviceID')}")])
-            
-            buttons.append([InlineKeyboardButton(text="➕ Add new device", callback_data="cb_newdevice_start")])
-
-            self.bot.sendMessage(chat_id, "Your Devices:", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
-        except Exception as e:
-            self.bot.sendMessage(chat_id, f"⚠️ Failed to retrieve devices: {e}")
-
-    def cmd_settings(self, chat_id, msg, *args):
-        # Alias per mydevices, dato che le impostazioni sono dentro il menu del device
-        self.cmd_mydevices(chat_id, msg, *args)
+                buttons = []
+                for d in devices:
+                    name = d.get('user_device_name') or d.get('deviceID') or 'Unknown'
+                    buttons.append([InlineKeyboardButton(text=f"🧊 {name}", callback_data=f"cb_device_menu {d.get('deviceID')}")])
+                
+                buttons.append([
+                    InlineKeyboardButton(text="➕ Add new device", callback_data="cb_newdevice_start"),
+                    InlineKeyboardButton(text="Close menu", callback_data="cb_quit_menu")
+                ])
+                
+                # --- 2. Qui sta la magia ---
+                keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+                text = "Your Devices:"
+                
+                if message_to_edit:
+                    # Se arriviamo dal tasto BACK, modifichiamo il messaggio esistente
+                    self.bot.editMessageText(telepot.message_identifier(message_to_edit), text, reply_markup=keyboard)
+                else:
+                    # Se arriviamo dal comando /mydevices, inviamo un nuovo messaggio
+                    self.bot.sendMessage(chat_id, text, reply_markup=keyboard)
+                    
+            except Exception as e:
+                print(f"Error: {e}")
+                self.bot.sendMessage(chat_id, f"⚠️ Failed to retrieve devices: {e}")
 
     def cmd_showme(self, chat_id, msg, *args):
         user = self.catalog.get_user_by_chat_id(chat_id)
+        # print(user)
         if not user:
             self.bot.sendMessage(chat_id, "You are not registered. Use /start.")
             return
         
         dev_count = len(user.get('devicesList', []))
-        message = (f"👤 **User Info**\n"
-                   f"**Catalog UserID:** `{user['userID']}`\n"
-                   f"**Telegram Name:** {user['userName']}\n"
-                   f"**Telegram ChatID:** `{chat_id}`\n"
-                   f"**Registered:** {user.get('registration_time', 'N/A')}\n"
-                   f"**Assigned Devices:** {dev_count}")
+        registration_time = user.get('registration_time', 'N/A')
+        if registration_time != "N/A":
+            dtobj = datetime.fromisoformat(registration_time)
+            readable_time = dtobj.strftime("%d %B %Y")
+        message = (f"👤 *User Info*\n"
+                   f"*Catalog UserID:* `{user['userID']}`\n"
+                   f"*Telegram ChatID:* `{chat_id}`\n"
+                   f"*Registered:* {readable_time}\n"
+                   f"*Assigned Devices:* {dev_count}")
         self.bot.sendMessage(chat_id, message, parse_mode="Markdown")
 
     def cmd_deleteme(self, chat_id, msg, *args):
@@ -202,7 +220,7 @@ class BotHandlers:
             [InlineKeyboardButton(text="✏️ Rename Device", callback_data=f"cb_device_rename {did}")],
             [InlineKeyboardButton(text="⚙️ Settings", callback_data=f"cb_settings_menu {did}")],
             [InlineKeyboardButton(text="❌ Unassign Device", callback_data=f"cb_device_unassign {did}")],
-            [InlineKeyboardButton(text="« Back", callback_data="/mydevices")],
+            [InlineKeyboardButton(text="« Back", callback_data=f"cb_mydevices_back")],
             [InlineKeyboardButton(text="Close Menu", callback_data="cb_quit_menu")]
         ]
         
@@ -212,6 +230,11 @@ class BotHandlers:
             reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
             parse_mode="Markdown"
         )
+
+    def cb_mydevices_back(self, query_id, chat_id, msg_query, *args):
+        self.bot.answerCallbackQuery(query_id)
+        # Chiama la funzione principale passandogli il messaggio originale
+        self.cmd_mydevices(chat_id, msg_query, message_to_edit=msg_query['message'])
 
     def cb_device_info(self, query_id, chat_id, msg_query, *args):
         did = args[0]
@@ -225,12 +248,10 @@ class BotHandlers:
                 return
 
             txt = (
-                f"📘 *Device Information*\n\n"
-                f"🆔 *ID:* `{escape_markdown(did)}`\n"
-                f"🏷️ *Name:* {escape_markdown(device.get('user_device_name', 'N/A'))}\n"
-                f"🔢 *MAC:* `{escape_markdown(device.get('mac_address', 'N/A'))}`\n"
-                f"👤 *Assigned:* {'Yes' if device.get('user_assigned') else 'No'}\n"
-                f"📡 *Status:* {escape_markdown(device.get('status', 'Unknown'))}"
+                f"*Device informations:*\n\n"
+                f"🏷️ - *Name:* {escape_markdown(device.get('user_device_name', 'N/A'))}\n"
+                f"🆔 - *ID:* `{escape_markdown(did)}`\n"
+                f"🔢 - *MAC:* `{escape_markdown(device.get('mac_address', 'N/A'))}`\n"
             )
             
             buttons = [[InlineKeyboardButton(text="« Back", callback_data=f"cb_device_menu {did}")]]
@@ -402,7 +423,7 @@ class BotHandlers:
         self.set_status(chat_id, "waiting_for_new_value", **data)
         
         det = get_setting_details(field)
-        txt = (f"✏️ **{det['name']}**\n\n"
+        txt = (f"✏️  *{det['name']}*\n\n"
                f"_{escape_markdown(det['desc'])}_\n\n"
                f"Enter new value {escape_markdown(det['range_text'])}:\n"
                f"(Type /cancel to abort)")
@@ -458,7 +479,8 @@ class BotHandlers:
     def handle_mac_input(self, chat_id, msg, state_data):
         mac = msg.get("text", "").strip()
         if not is_valid_mac(mac):
-            self.bot.sendMessage(chat_id, "⚠️ Invalid MAC format.")
+            self.bot.sendMessage(chat_id, "⚠️ Invalid MAC format.\nPlease check your MAC address and try again with /start.")
+            self.clear_status(chat_id)
             return
         
         dev_info = self.catalog.find_device_by_mac(normalize_mac(mac))
@@ -490,11 +512,11 @@ class BotHandlers:
             if linked_user:
                 # Device libero, utente esiste
                 self.catalog.post(f"/users/{linked_user['userID']}/assign-device", {"device_id": did})
-                self.bot.sendMessage(chat_id, "✅ Device added to your existing account.")
+                self.bot.sendMessage(chat_id, "✅ Device added to your existing account.\nUse /help for the commands list.")
                 self.clear_status(chat_id)
             else:
                 # Device libero, utente nuovo
-                self.bot.sendMessage(chat_id, "✅ Device found. Enter a **username** to register:")
+                self.bot.sendMessage(chat_id, "✅ Device found. Enter a username to register:")
                 self.set_status(chat_id, "waiting_for_username", device_id=did)
 
     def handle_newdevice_mac(self, chat_id, msg, state_data):
@@ -503,7 +525,8 @@ class BotHandlers:
         
         dev_info = self.catalog.find_device_by_mac(normalize_mac(mac))
         if not dev_info:
-            self.bot.sendMessage(chat_id, "❌ Device not found.")
+            self.bot.sendMessage(chat_id, "❌ Device not found.\nCheck your MAC address and try again.")
+            self.clear_status(chat_id)
             return
         
         if dev_info.get("user_assigned"):
@@ -516,7 +539,7 @@ class BotHandlers:
     def handle_username_input(self, chat_id, msg, state_data):
         username = msg.get("text", "").strip()
         if not is_valid_username(username):
-            self.bot.sendMessage(chat_id, "Invalid format. Use letters/numbers.")
+            self.bot.sendMessage(chat_id, "Invalid format. Use letters and/or numbers.")
             return
         
         # Check duplicati
@@ -530,7 +553,7 @@ class BotHandlers:
         try:
             self.catalog.post("/users", {"userID": username.lower(), "userName": username, "telegram_chat_id": str(chat_id)})
             self.catalog.post(f"/users/{username.lower()}/assign-device", {"device_id": did})
-            self.bot.sendMessage(chat_id, "✅ Registration complete!")
+            self.bot.sendMessage(chat_id, "✅ Registration complete!\nUse /help for the commands list.")
             self.clear_status(chat_id)
         except Exception as e:
             self.bot.sendMessage(chat_id, f"Error: {e}")
@@ -545,7 +568,7 @@ class BotHandlers:
         if input_name.lower() == str(expected).lower():
             try:
                 self.catalog.post(f"/users/{expected}/link_telegram", {"chat_id": str(chat_id)})
-                self.bot.sendMessage(chat_id, f"✅ Success! Telegram chat linked to account `{expected}`.", parse_mode="Markdown")
+                self.bot.sendMessage(chat_id, f"✅ Success! Telegram chat linked to account `{expected}`.\nUse /help for the commands list.", parse_mode="Markdown")
             except Exception as e:
                 self.bot.sendMessage(chat_id, f"Link failed: {e}")
         else:
@@ -556,29 +579,37 @@ class BotHandlers:
         new_name = msg.get("text", "").strip()
         did = state_data.get("device_id")
         mid = state_data.get("msg_identifier")
-        
+        # print(state_data)
+        old_name = state_data.get("old_name")
+
+
         try:
             self.catalog.post(f"/devices/{did}/rename", {"user_device_name": new_name})
-            self.bot.editMessageText(mid, f"✅ Renamed to *{escape_markdown(new_name)}*", parse_mode="Markdown")
+            self.bot.sendMessage(chat_id, f"✅ *{escape_markdown(old_name)}* has been renamed to *{escape_markdown(new_name)}*", parse_mode="Markdown")
         except Exception as e:
             self.bot.sendMessage(chat_id, f"Error: {e}")
         self.clear_status(chat_id)
 
+    # enters with waiting_for_new_value
     def handle_new_value_input(self, chat_id, msg, state_data):
         field = state_data.get("field_name")
         val_str = msg.get("text", "").strip()
         details = get_setting_details(field)
         
-        try:
-            new_val = float(val_str)
-            if new_val.is_integer(): new_val = int(val_str)
-            
-            if "min" in details and new_val < details["min"]: raise ValueError("Value too low")
-            if "max" in details and new_val > details["max"]: raise ValueError("Value too high")
-            
-            self._send_config_update(chat_id, field, new_val, state_data.get("msg_identifier"))
-        except ValueError:
-            self.bot.sendMessage(chat_id, "⚠️ Invalid value. Check constraints.")
+        if val_str == "/cancel":
+            self.bot.sendMessage(chat_id, f"Operation canceled")
+            self.clear_status(chat_id)
+        else:
+            try:
+                new_val = float(val_str)
+                if new_val.is_integer(): new_val = int(val_str)
+                
+                if "min" in details and new_val < details["min"]: raise ValueError("Value too low")
+                if "max" in details and new_val > details["max"]: raise ValueError("Value too high")
+                
+                self._send_config_update(chat_id, field, new_val, state_data.get("msg_identifier"))
+            except ValueError:
+                self.bot.sendMessage(chat_id, "⚠️ Invalid value. Check constraints.")
 
     def _send_config_update(self, chat_id, field, value, msg_id):
         # Recupera dati completi dallo stato

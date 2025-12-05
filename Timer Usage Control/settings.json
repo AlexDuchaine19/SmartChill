@@ -31,7 +31,18 @@
         "alert_severity": "warning",
         "enable_door_closed_alerts": true
     },
-    "devices": {},
-    "lastUpdate": "2025-12-05T09:29:41.761786+00:00",
-    "configVersion": 56
+    "devices": {
+        "SmartChill_3C5AB49F2D71": {
+            "max_door_open_seconds": 30,
+            "check_interval": 5,
+            "enable_door_closed_alerts": true
+        },
+        "SmartChill_001A2B3C4D5E": {
+            "max_door_open_seconds": 30,
+            "check_interval": 1,
+            "enable_door_closed_alerts": true
+        }
+    },
+    "lastUpdate": "2025-12-05T15:26:17.173234+00:00",
+    "configVersion": 68
 }

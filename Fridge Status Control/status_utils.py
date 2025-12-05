@@ -99,7 +99,7 @@ def evaluate_temperature(temperature, temp_min, temp_max):
             "status": "too_low",
             "alert_type": "temperature_too_low",
             "message": f"Temperature too low: {temperature:.1f}°C (min: {temp_min}°C). Risk of freezing.",
-            "action": "Check thermostat settings and increase temperature",
+            "action": "Check the thermostat settings and increase the temperature.",
             "severity": "warning"
         }
     elif temperature > temp_max:
@@ -107,7 +107,7 @@ def evaluate_temperature(temperature, temp_min, temp_max):
             "status": "too_high",
             "alert_type": "temperature_too_high",
             "message": f"Temperature too high: {temperature:.1f}°C (max: {temp_max}°C). Risk of spoilage.",
-            "action": "Check thermostat, door seals, reduce temp",
+            "action": "Check the thermostat, look for damaged door seals, or reduce temperature.",
             "severity": "critical"
         }
     return {"status": "normal", "alert_type": None}
@@ -119,7 +119,7 @@ def evaluate_humidity(humidity, humidity_max):
             "status": "too_high",
             "alert_type": "humidity_too_high",
             "message": f"Humidity too high: {humidity:.1f}% (max: {humidity_max}%). Risk of ice/condensation.",
-            "action": "Check door seals, defrost, air circulation",
+            "action": "Check the door seals, defrost the back of the refrigerator, look for malfunctions in the air circulation system.",
             "severity": "warning"
         }
     return {"status": "normal", "alert_type": None}
@@ -130,14 +130,14 @@ def evaluate_complex_patterns(temperature, humidity, config):
         return {
             "alert_type": "cooling_system_failure",
             "message": f"Possible cooling failure: High temp ({temperature:.1f}°C) & humidity ({humidity:.1f}%)",
-            "action": "Check cooling system, compressor. Contact technician.",
+            "action": "Check the cooling system and compressor. Eventually contact a technician.",
             "severity": "critical"
         }
     elif temperature < config["temp_min_celsius"] and humidity > config["humidity_max_percent"]:
         return {
             "alert_type": "defrost_cycle_issue",
             "message": f"Possible defrost issue: Low temp ({temperature:.1f}°C) with high humidity ({humidity:.1f}%)",
-            "action": "Check defrost cycle settings and drainage",
+            "action": "Check the defrost cycle settings and drainage system.",
             "severity": "warning"
         }
     return None
