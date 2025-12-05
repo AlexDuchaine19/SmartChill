@@ -1,12 +1,13 @@
 import cherrypy
 import os
-from modules.data_manager import CatalogDataManager
-from modules.rest_api import CatalogAPI
+from catalog_api import CatalogAPI
+from catalog_utils import CATALOG_FILE
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CATALOG_FILE = os.environ.get("CATALOG_FILE", os.path.join(BASE_DIR, "catalog.json"))
+# ===================== App Setup =====================
 
-def get_dispatcher(api):
+def get_dispatcher():
+    """Configure routes for the application"""
+    api = CatalogAPI()
     d = cherrypy.dispatch.RoutesDispatcher()
 
     # Health & Info
@@ -37,7 +38,6 @@ def get_dispatcher(api):
     d.connect('delete_user', '/users/:user_id', controller=api, action='delete_user', conditions={'method': ['DELETE']})
 
     d.connect('link_telegram', '/users/:user_id/link_telegram', controller=api, action='link_telegram', conditions={'method': ['POST']})
-    d.connect('get_user_by_chat', '/users/by-chat/:chat_id', controller=api, action='get_user_by_chat', conditions={'method': ['GET']})
 
     # Services
     d.connect('services', '/services', controller=api, action='get_services', conditions={'method': ['GET']})
@@ -54,20 +54,17 @@ def get_dispatcher(api):
     return d
 
 def run_server():
+    # Ensure directory exists (logic preserved from original)
     os.makedirs(os.path.dirname(CATALOG_FILE), exist_ok=True)
 
-    print("=== SmartChill Catalog Service (Modular) ===")
+    print("=== SmartChill Catalog Service (CherryPy) ===")
     print("Starting on http://0.0.0.0:8001")
     print("Health check: http://localhost:8001/health")
     print("System info: http://localhost:8001/info")
 
-    # Initialize modules
-    data_manager = CatalogDataManager(CATALOG_FILE)
-    api = CatalogAPI(data_manager)
-
     conf = {
         '/': {
-            'request.dispatch': get_dispatcher(api),
+            'request.dispatch': get_dispatcher(),
             'tools.response_headers.on': True,
             'tools.response_headers.headers': [('Content-Type', 'application/json; charset=utf-8')],
         }

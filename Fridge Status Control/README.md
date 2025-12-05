@@ -1,122 +1,104 @@
-# SmartChill Fridge Status Control Service
+# Fridge Status Control Service (Modular)
 
-The **Fridge Status Control Service** monitors temperature and humidity data from SmartChill refrigerators via MQTT.  
-It detects abnormal conditions (too hot, too cold, high humidity) and publishes malfunction alerts.  
-The service also auto-registers with the Catalog, keeps per-device configurations, and supports live config updates.
+This service monitors temperature and humidity data from SmartChill devices, detects abnormal conditions, sends alerts, and manages device configurations through a structured MQTT protocol.  
+It is a modular rewrite of the original monolithic `StatusControl_Old.py`, preserving full functionality while improving clarity and maintainability.
 
 ---
 
-## Features
-- Subscribes to **temperature** and **humidity** sensor topics (SenML format)  
-- Detects:  
-  - Temperature too high → risk of spoilage  
-  - Temperature too low → risk of freezing  
-  - Humidity too high → risk of condensation/ice  
-  - Combined abnormal patterns → possible cooling/defrost malfunctions  
-- Publishes **malfunction alerts** with recommended actions  
-- Supports **per-device config overrides** (thresholds, cooldowns)  
-- Handles **config updates** dynamically via MQTT  
-- Auto-registers unknown devices with default settings  
+## Overview
+
+The service performs three main functions:
+
+1. **Receive SenML sensor data** (temperature and humidity) via MQTT.  
+2. **Detect out-of-range conditions** and publish alerts when needed.  
+3. **Handle configuration requests** (get/update) from devices or administrators.
+
+The system integrates with a **Catalog Service** (REST API) for device discovery and service registration.
 
 ---
 
 ## MQTT Topics
 
-**Subscriptions**
-- `Group17/SmartChill/Devices/+/+/temperature` – Temperature data (SenML)  
-- `Group17/SmartChill/Devices/+/+/humidity` – Humidity data (SenML)  
-- `Group17/SmartChill/FridgeStatusControl/config_update` – Config update messages  
+### Incoming Topics  
+Configured in `settings.json` → `serviceInfo.endpoints`:
 
-**Publications**
-- `Group17/SmartChill/{device_id}/Alerts/Malfunction` – Malfunction alerts  
-- `Group17/SmartChill/FridgeStatusControl/config_ack` – Config update acknowledgements  
+- `Group17/SmartChill/FridgeStatusControl/+/config_update` — configuration requests.
+- `Group17/SmartChill/+/status` — SenML sensor data.
+
+### Outgoing Topics
+
+- Alerts  
+  - `Group17/SmartChill/{deviceId}/Alerts/Temperature`  
+  - `Group17/SmartChill/{deviceId}/Alerts/Humidity`
+
+- Configuration responses  
+  - `.../{requester}/config_data`  
+  - `.../{requester}/config_ack`  
+  - `.../{requester}/config_error`
 
 ---
 
-## Example Messages
+## Expected Payloads
 
-**Incoming Temperature Data (SenML)**  
+### SenML Example
+
 ```json
 {
-  "bn": "SmartChill_A4B2C3D91E7F/",
-  "bt": 1694251000.0,
+  "bn": "SmartChill_001/",
+  "bt": 1700000000,
   "e": [
-    { "n": "temperature", "v": 9.3, "u": "Cel", "t": 0 }
+    { "n": "tempC", "v": 7.5, "t": 0 },
+    { "n": "humidity", "v": 72, "t": 0 }
   ]
 }
 ```
 
-**Malfunction Alert (Temperature Too High)**  
+### Configuration Request Example
+
 ```json
 {
-  "alert_type": "temperature_too_high",
-  "device_id": "SmartChill_A4B2C3D91E7F",
-  "message": "Temperature too high: 9.3°C (max: 8.0°C). Risk of food spoilage.",
-  "sensor_values": { "temperature": 9.3 },
-  "severity": "critical",
-  "timestamp": "2025-09-09T14:50:00Z",
-  "service": "FridgeStatusControl",
-  "config_version": 2,
-  "recommended_action": "Check thermostat settings, door seals, and reduce temperature"
-}
-```
-
-**Config Update Acknowledgement**  
-```json
-{
-  "device_id": "SmartChill_A4B2C3D91E7F",
-  "status": "updated",
-  "timestamp": "2025-09-09T14:52:00Z",
-  "config_version": 3
-}
-```
-
----
-
-## Configuration
-
-Defined in **`settings.json`**:
-- **Catalog URL**: `http://catalog:8001`  
-- **MQTT Broker**: `mosquitto:1883`  
-- **Defaults**:  
-  - Temperature range: `0.0–8.0 °C`  
-  - Max humidity: `85%`  
-  - Malfunction alerts: enabled  
-  - Alert cooldown: `30 minutes`  
-
-Example per-device config:
-```json
-{
-  "SmartChill_A4B2C3D91E7F": {
-    "temp_min_celsius": 0.0,
-    "temp_max_celsius": 8.0,
-    "humidity_max_percent": 85.0,
-    "enable_malfunction_alerts": true,
-    "alert_cooldown_minutes": 30
+  "type": "device_config_update",
+  "device_id": "SmartChill_001",
+  "config": {
+    "min_temp_celsius": 2,
+    "max_temp_celsius": 8,
+    "enable_continuous_alerts": false
   }
 }
 ```
 
 ---
 
-## Run
-```bash
+## Modular Architecture
+
+```
+StatusControl.py        → Main orchestrator
+modules/
+ ├─ config_manager.py   → Full MQTT configuration protocol
+ ├─ status_monitor.py   → Temperature/humidity evaluation + alerts
+ ├─ mqtt_client.py      → MQTT connection and message forwarding
+ ├─ catalog_client.py   → REST integration with Catalog Service
+ └─ utils.py            → Settings load/save (versioned)
+```
+
+---
+
+## Running the Service
+
+```
 python StatusControl.py
 ```
 
-The service will:  
-1. Register with the Catalog  
-2. Load known devices  
-3. Connect to the MQTT broker  
-4. Monitor temperature and humidity data  
-5. Publish malfunction alerts if thresholds are exceeded
+The service will:
 
-## Modular Architecture
+- Register itself in the Catalog  
+- Subscribe to required MQTT topics  
+- Accept configuration commands  
+- Process sensor readings  
+- Publish alerts when needed  
 
-This service has been refactored into a modular architecture to improve maintainability and scalability.
+---
 
-- **`modules/utils.py`**: Helper functions for settings management and common utilities.
-- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
-- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
-- **`modules/status_monitor.py`**: Manages temperature/humidity monitoring and malfunction alerts.
-- **`StatusControl.py`**: The entry point that initializes and orchestrates the modules.
+## Summary
+
+This modular version preserves the logic of the original service while providing a cleaner, maintainable architecture with reliable alerting and configuration management.

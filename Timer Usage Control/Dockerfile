@@ -16,4 +16,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://catalog:8001/health', timeout=5)" || exit 1
 
 # Run the application
-CMD ["python", "Time_Control.py"]
+CMD ["python", "Timer_Control.py"]
