@@ -1,47 +1,26 @@
-# SmartChill – Food Spoilage Control Service
+# SmartChill Food Spoilage Control
 
-A modular Python service for monitoring gas levels from SmartChill devices, sending spoilage alerts, and managing device configurations via MQTT and a Catalog REST API.
+A monitoring service dedicated to detecting potential food spoilage by analyzing gas sensor readings (VOCs/odors).
 
-## Overview
-The service receives gas sensor data (SenML), detects possible food spoilage, sends alerts, and exposes a full configuration protocol over MQTT.  
-All logic is split across dedicated modules for clarity and maintainability.
+## 📂 Folder Architecture
 
-## Architecture
-- **SpoilageControl.py**  
-  Main orchestrator. Loads settings, starts the service, routes MQTT messages, parses SenML, and coordinates all modules.
+* **`main.py`**: Entry point.
+* **`spoilage_service.py`**: Manages MQTT connections, device configuration, and alert dispatching.
+* **`spoilage_utils.py`**: Logic for threshold evaluation and SenML parsing.
 
-- **modules/config_manager.py**  
-  Handles the entire MQTT configuration protocol:  
-  - `config_get`, `device_config_update`, `default_config_update`  
-  - validation of config values  
-  - access control (admin vs device)  
-  - sending config_data, config_ack, config_error responses  
-  - auto-registration of new devices
+## ⚙️ Functionality
 
-- **modules/mqtt_client.py**  
-  Manages the MQTT connection using MyMQTT:  
-  subscribes to topics, forwards messages to the service, publishes JSON payloads.
+* **Gas Monitoring**: Continuously checks gas PPM levels against configured thresholds.
+* **Alerting**: Sends alerts via MQTT when thresholds are breached.
+* **Dynamic Config**: Allows remote adjustment of thresholds and alert frequency via MQTT.
 
-- **modules/spoilage_monitor.py**  
-  Processes gas readings:  
-  compares values to thresholds, handles cooldowns, updates status, publishes spoilage alerts.
+## 📡 Interfaces
 
-- **modules/catalog_client.py**  
-  Communicates with the Catalog Service:  
-  service registration, device existence checks, loading known devices.
+### MQTT Topics
+* **Sub**: `Group17/SmartChill/Devices/+/+/gas` (Sensor readings).
+* **Sub**: `.../config_update` (Remote configuration).
+* **Pub**: `Group17/SmartChill/{id}/Alerts/Spoilage` (Alerts).
 
-- **modules/utils.py**  
-  Loads and saves settings.json with versioning and timestamps.
-
-- **MyMQTT.py**  
-  Wrapper around Paho MQTT used by mqtt_client.
-
-## Workflow Summary
-1. Devices publish SenML gas data → MQTT  
-2. MQTTClient forwards the message → SpoilageControl  
-3. SpoilageControl parses SenML → SpoilageMonitor  
-4. SpoilageMonitor updates status and may send an alert  
-5. Configuration messages (`* /config_update`) → ConfigManager  
-6. ConfigManager validates, updates settings, and sends responses
-
-## Running the Service
+### Data Format
+* **Input**: SenML (Gas readings).
+* **Alerts**: JSON object containing severity, timestamp, and recommended actions.

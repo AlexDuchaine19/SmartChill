@@ -1,111 +1,27 @@
 # SmartChill Fridge Simulator
 
-The **Fridge Simulator** emulates a SmartChill refrigerator device, producing realistic sensor data and door events in **SenML format**, and publishing them over MQTT.  
-It can register with the Catalog Service, send periodic telemetry, and react to user commands.
+This component simulates a smart IoT fridge. It generates realistic sensor data based on a physical thermal model and user interaction patterns.
 
----
+## 📂 Folder Architecture
 
-## Features
-- Simulates sensors: **temperature, humidity, gas, light**  
-- Generates **door events** (open/close with duration)  
-- Publishes **heartbeat messages** for device liveness  
-- Sends all telemetry in **SenML format** over MQTT  
-- Supports **manual user commands** (open/close door, spoilage, malfunction, etc.)  
-- Automatically registers with the **Catalog Service** and retrieves assigned topics  
+* **`main.py`**: Entry point. Starts the simulation loop.
+* **`fridge_service.py`**: Manages the device state (compressor, door), simulation loops, and MQTT publishing.
+* **`fridge_utils.py`**: Logic for thermal calculations and SenML payload generation.
 
----
+## ⚙️ Functionality
 
-## MQTT Topics
+* **Thermal Model**: Simulates temperature changes based on compressor cycles and door state.
+* **Simulation**: Generates data for Temperature, Humidity, Gas (spoilage), and Light.
+* **Interactivity**: Accepts remote MQTT commands to simulate faults (e.g., "leave door open").
 
-Topics follow this template (from `settings.json`):  
-```
-Group17/SmartChill/Devices/{model}/{device_id}/{sensor}
-Group17/SmartChill/Devices/{model}/{device_id}/door_event
-Group17/SmartChill/Devices/{model}/{device_id}/heartbeat
-```
+## 📡 Interfaces
 
-Example sensor publish (temperature):  
-```json
-{
-  "bn": "SmartChill_A4B2C3D91E7F/",
-  "bt": 1694250000.0,
-  "e": [{
-    "n": "temperature",
-    "v": 4.2,
-    "u": "Cel",
-    "t": 0
-  }]
-}
-```
+### MQTT Topics (Published)
+* `Group17/SmartChill/Devices/{model}/{id}/{sensor}`: Periodic sensor readings.
+* `Group17/SmartChill/Devices/{model}/{id}/door_event`: Asynchronous door events.
 
-Example door event publish (closed):  
-```json
-{
-  "bn": "SmartChill_A4B2C3D91E7F/",
-  "bt": 1694250100.0,
-  "e": [
-    { "n": "door_state", "vs": "door_closed", "t": 0 },
-    { "n": "door_duration", "v": 35.2, "u": "s", "t": 0 }
-  ]
-}
-```
+### MQTT Topics (Subscribed)
+* `Group17/SmartChill/Commands/{id}/simulation`: Receives commands (e.g., `spoilage_start`, `door_open`).
 
-Example heartbeat publish:  
-```json
-{
-  "bn": "SmartChill_A4B2C3D91E7F/",
-  "bt": 1694250200.0,
-  "e": [
-    { "n": "heartbeat", "vs": "alive", "t": 0 },
-    { "n": "uptime", "v": 123456.7, "u": "s", "t": 0 }
-  ]
-}
-```
-
----
-
-## Configuration
-
-Defined in **`settings.json`**:
-- **Catalog URL**: `http://192.168.1.184:8001`  
-- **Device Info**: MAC `A4:B2:C3:D9:1E:7F`, model `Samsung_RF28T5001SR`, firmware `1.2.3`  
-- **Sensors**: temperature, humidity, gas, light  
-- **Sampling Intervals**: temperature/humidity/gas = 600s, light = 20s  
-- **MQTT Broker**: `localhost:1884`  
-- **Telemetry**: QoS 2, retain disabled, heartbeat every 300s  
-
----
-
-## User Commands
-
-- `apri` → Open fridge door  
-- `chiudi` → Close fridge door  
-- `spoilage` → Simulate food spoilage (gas sensor spikes)  
-- `malfunzione` → Simulate malfunction (temperature rises uncontrollably)  
-- `normale` → Return to normal operation  
-- `status` → Print simulator status  
-- `help` → Show available commands  
-- `quit` / `exit` → Stop simulator  
-
----
-
-## Run
-```bash
-python Fridge.py
-```
-
-The simulator will:  
-1. Register the device with the Catalog (if available)  
-2. Connect to the MQTT broker  
-3. Start publishing sensor data, door events, and heartbeat messages  
-4. Accept user commands via console
-
-## Modular Architecture
-
-This service has been refactored into a modular architecture to improve maintainability and scalability.
-
-- **`modules/utils.py`**: Helper functions for settings management and common utilities.
-- **`modules/catalog_client.py`**: Handles interactions with the Catalog service (registration, device lookup).
-- **`modules/mqtt_client.py`**: Manages MQTT connections, subscriptions, and publishing.
-- **`modules/simulator.py`**: Contains the thermal model and sensor simulation logic.
-- **`Fridge2.py`**: The entry point that initializes and orchestrates the modules.
+### Data Format
+* **SenML (JSON)**: All telemetry is published using the SenML standard.
