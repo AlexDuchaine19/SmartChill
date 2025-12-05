@@ -21,40 +21,6 @@ The project follows a **Service-Oriented Architecture (SOA)**. The components in
 
 ---
 
-### High-Level Data Flow
-
-```mermaid
-graph TD
-    User((User/Telegram)) <--> Bot[Telegram Bot]
-    Bot <--> Catalog[Catalog Service]
-
-    subgraph "Device Layer"
-        Fridge[Fridge Simulator] -- SenML (MQTT) --> Broker((MQTT Broker))
-    end
-
-    subgraph "Control Layer"
-        Broker --> Spoilage[Spoilage Control]
-        Broker --> Timer[Timer Control]
-        Broker --> Status[Status Control]
-        Spoilage -- Alerts (MQTT) --> Broker
-        Timer -- Alerts (MQTT) --> Broker
-        Status -- Alerts (MQTT) --> Broker
-    end
-
-    subgraph "Data Layer"
-        Broker --> Adaptor[InfluxDB Adaptor]
-        Adaptor --> DB[(InfluxDB)]
-    end
-
-    subgraph "Intelligence Layer"
-        Analysis[Data Analysis] -- HTTP --> Adaptor
-        Optimizer[Energy Optimizer] -- HTTP --> Adaptor
-    end
-
-    Bot <-- HTTP --> Analysis
-    Bot <-- HTTP --> Optimizer
-```
-
 ---
 
 ## 🧩 Microservices Overview
