@@ -30,7 +30,7 @@ class BotHandlers:
             "/cancel": self.cmd_cancel
         }
         
-        # Callback Mappings (Button clicks)
+        # Callback Mappings (Buttons)
         self.callbacks = {
             "cb_quit_menu": self.cb_quit_menu,
             "cb_device_menu": self.cb_device_menu,
@@ -46,18 +46,18 @@ class BotHandlers:
             "cb_set_boolean": self.cb_set_boolean,
             "cb_service_menu_back": self.cb_service_menu_back,
             "cb_newdevice_start": self.cb_newdevice_start,
-            "cb_mydevices_back": self.cb_mydevices_back, # Nuova mappatura
+            "cb_mydevices_back": self.cb_mydevices_back,
         }
 
-        # State Handlers (User text input)
+        # State Handlers (text input)
         self.state_handlers = {
             "waiting_for_mac": self.handle_mac_input,
             "waiting_for_username": self.handle_username_input,
             "waiting_for_newdevice_mac": self.handle_newdevice_mac,
             "waiting_for_device_rename": self.handle_device_rename_input,
             "waiting_for_new_value": self.handle_new_value_input,
-            "waiting_for_username_link": self.handle_username_link, # Logica Node-RED
-            "waiting_for_config": None # Stato di attesa passiva (aspetta MQTT)
+            "waiting_for_username_link": self.handle_username_link, 
+            "waiting_for_config": None # wait MQTT
         }
 
     # --- Helper Methods ---
@@ -123,17 +123,15 @@ class BotHandlers:
         )
         self.set_status(chat_id, "waiting_for_newdevice_mac", user_id=user["userID"])
 
-    def cmd_mydevices(self, chat_id, msg, *args, message_to_edit=None): # <--- 1. Aggiungi questo parametro
+    def cmd_mydevices(self, chat_id, msg, *args, message_to_edit=None):
             user = self.catalog.get_user_by_chat_id(chat_id)
             if not user:
                 self.bot.sendMessage(chat_id, "You are not registered yet. Use /start to begin.")
                 return
             try:
-                # --- Logica identica a prima ---
                 devices = self.catalog.get(f"/users/{user['userID']}/devices")
                 if not devices:
                     txt = "You have no devices yet. Use /newdevice to add one."
-                    # Gestione intelligente dell'invio
                     if message_to_edit:
                         self.bot.editMessageText(telepot.message_identifier(message_to_edit), txt)
                     else:
@@ -150,15 +148,12 @@ class BotHandlers:
                     InlineKeyboardButton(text="Close menu", callback_data="cb_quit_menu")
                 ])
                 
-                # --- 2. Qui sta la magia ---
                 keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
                 text = "Your Devices:"
                 
                 if message_to_edit:
-                    # Se arriviamo dal tasto BACK, modifichiamo il messaggio esistente
                     self.bot.editMessageText(telepot.message_identifier(message_to_edit), text, reply_markup=keyboard)
                 else:
-                    # Se arriviamo dal comando /mydevices, inviamo un nuovo messaggio
                     self.bot.sendMessage(chat_id, text, reply_markup=keyboard)
                     
             except Exception as e:
@@ -193,7 +188,7 @@ class BotHandlers:
         try:
             uid = user.get('userID')
             self.catalog.delete(f"/users/{uid}")
-            self.bot.sendMessage(chat_id, f"✅ User {user['userName']} deleted. Devices unassigned.")
+            self.bot.sendMessage(chat_id, f"User {user['userName']} deleted.\nDevices were unassigned.")
         except Exception as e:
             self.bot.sendMessage(chat_id, f"❌ Deletion failed: {e}")
 
@@ -233,7 +228,6 @@ class BotHandlers:
 
     def cb_mydevices_back(self, query_id, chat_id, msg_query, *args):
         self.bot.answerCallbackQuery(query_id)
-        # Chiama la funzione principale passandogli il messaggio originale
         self.cmd_mydevices(chat_id, msg_query, message_to_edit=msg_query['message'])
 
     def cb_device_info(self, query_id, chat_id, msg_query, *args):
@@ -268,7 +262,7 @@ class BotHandlers:
         
         try:
             self.catalog.post(f"/devices/{did}/unassign", None)
-            self.bot.editMessageText(msg_id, f"✅ Device `{escape_markdown(did)}` unassigned.", parse_mode="Markdown")
+            self.bot.editMessageText(msg_id, f"Device `{escape_markdown(did)}` unassigned.", parse_mode="Markdown")
             self.bot.sendMessage(chat_id, "Use /mydevices to refresh.")
         except Exception as e:
             self.bot.editMessageText(msg_id, f"❌ Failed: {e}")
@@ -278,7 +272,6 @@ class BotHandlers:
         self.bot.answerCallbackQuery(query_id)
         msg_id = telepot.message_identifier(msg_query['message'])
         
-        # Recupera info per mostrare nome attuale
         try:
             d = self.catalog.get(f"/devices/{did}")
             curr = d.get('user_device_name', 'N/A')
@@ -318,7 +311,6 @@ class BotHandlers:
             self.bot.editMessageText(msg_id, "❌ Error: Bot not configured for publishing.")
             return
 
-        # Prepare state to wait for MQTT response
         self.set_status(chat_id, "waiting_for_config", device_id=did, service_name=svc, msg_identifier=msg_id)
         
         # Publish MQTT request
@@ -333,7 +325,6 @@ class BotHandlers:
     def cb_show_current_info(self, query_id, chat_id, msg_query, *args):
         self.bot.answerCallbackQuery(query_id)
         
-        # Recupera dati dallo stato (che ora contiene la config ricevuta via MQTT)
         state = self.get_status(chat_id)
         if not state or not state.get('data'):
             self.bot.sendMessage(chat_id, "❌ Session expired.")
@@ -368,7 +359,7 @@ class BotHandlers:
         
         buttons = []
         
-        # Logica per generare bottoni specifici per servizio
+        # service-specific buttons
         # TimerUsageControl
         if svc == "TimerUsageControl":
             val = config.get('max_door_open_seconds', 'N/A')
@@ -417,7 +408,6 @@ class BotHandlers:
         if not state: return
         data = state['data']
         
-        # Salva info extra per l'input successivo
         data['field_name'] = field
         data['msg_identifier'] = msg_id
         self.set_status(chat_id, "waiting_for_new_value", **data)
@@ -460,7 +450,7 @@ class BotHandlers:
             self.cb_show_service_options(chat_id, msg_id, state['data'])
 
     def cb_show_service_options(self, chat_id, msg_id, state_data):
-        """Mostra il menu intermedio (Info / Modify)"""
+        """Show menu (Info / Modify)"""
         svc = state_data.get("service_name")
         did = state_data.get("device_id")
         buttons = [
@@ -493,15 +483,13 @@ class BotHandlers:
         is_assigned = dev_info.get("user_assigned", False)
         owner = dev_info.get("owner")
         
-        # Utente corrente
         linked_user = self.catalog.get_user_by_chat_id(chat_id)
         
         if is_assigned:
             if linked_user and str(owner).lower() == str(linked_user['userID']).lower():
-                self.bot.sendMessage(chat_id, "✅ Device already linked to you.")
+                self.bot.sendMessage(chat_id, "Device already linked to you.")
                 self.clear_status(chat_id)
             else:
-                # Caso Node-RED: Device assegnato a qualcun altro (potresti essere tu su altro canale)
                 self.bot.sendMessage(
                     chat_id, 
                     f"⚠️ Device assigned to `{escape_markdown(owner)}`.\nIf this is you, enter your **username** to link this chat:", 
@@ -510,13 +498,13 @@ class BotHandlers:
                 self.set_status(chat_id, "waiting_for_username_link", device_id=did, expected_user=owner)
         else:
             if linked_user:
-                # Device libero, utente esiste
+                # free device, user exists
                 self.catalog.post(f"/users/{linked_user['userID']}/assign-device", {"device_id": did})
-                self.bot.sendMessage(chat_id, "✅ Device added to your existing account.\nUse /help for the commands list.")
+                self.bot.sendMessage(chat_id, "Device added to your existing account.\n\nUse /help for the commands list.")
                 self.clear_status(chat_id)
             else:
-                # Device libero, utente nuovo
-                self.bot.sendMessage(chat_id, "✅ Device found. Enter a username to register:")
+                # free device, new user
+                self.bot.sendMessage(chat_id, "Device found.\nEnter a username to register:")
                 self.set_status(chat_id, "waiting_for_username", device_id=did)
 
     def handle_newdevice_mac(self, chat_id, msg, state_data):
@@ -542,7 +530,7 @@ class BotHandlers:
             self.bot.sendMessage(chat_id, "Invalid format. Use letters and/or numbers.")
             return
         
-        # Check duplicati
+        # Check duplicates
         try:
             self.catalog.get(f"/users/{username.lower()}")
             self.bot.sendMessage(chat_id, "❌ Username already taken. Try another.")
@@ -612,7 +600,6 @@ class BotHandlers:
                 self.bot.sendMessage(chat_id, "⚠️ Invalid value. Check constraints.")
 
     def _send_config_update(self, chat_id, field, value, msg_id):
-        # Recupera dati completi dallo stato
         state = self.get_status(chat_id)
         data = state.get('data', {})
         did = data.get("device_id")
@@ -624,15 +611,13 @@ class BotHandlers:
         self.mqtt.myPublish(topic, payload)
         self.bot.editMessageText(msg_id, f"🔄 Updating *{field}* to `{value}`...", parse_mode="Markdown")
         
-        # Pulisci stato temporaneo e torna in attesa di ACK
         if 'field_name' in data: del data['field_name']
         self.set_status(chat_id, "waiting_for_config", **data)
 
     # --- External Event Handling ---
 
     def handle_config_response(self, device_id, payload, topic_type):
-        """Gestisce le risposte MQTT di configurazione (Data, Ack, Error)."""
-        # Trova la chat che sta aspettando questo device
+        """Handles MQTT configurations (Data, Ack, Error)."""
         target_chat = None
         state_data = None
         
@@ -649,10 +634,8 @@ class BotHandlers:
         msg_id = state_data.get("msg_identifier")
         
         if topic_type == "config_data":
-            # Aggiorna la config nello stato
             state_data["config"] = payload.get("config", {})
             self.set_status(target_chat, "waiting_for_config", **state_data)
-            # Mostra il menu
             self.cb_show_service_options(target_chat, msg_id, state_data)
             
         elif topic_type == "config_ack":
@@ -665,7 +648,7 @@ class BotHandlers:
             self.set_status(target_chat, "waiting_for_config", **state_data)
 
     def handle_my_chat_member(self, msg):
-        """Gestisce blocchi del bot."""
+        """Handle bot kicked from chats"""
         status = msg.get('new_chat_member', {}).get('status')
         chat_id = msg.get('chat', {}).get('id')
         if status in ['kicked', 'left']:

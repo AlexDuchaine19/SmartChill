@@ -2,7 +2,6 @@ import cherrypy
 import json
 from datetime import datetime, timezone
 
-# Importiamo le utility dal file creato precedentemente
 from catalog_utils import load_catalog, save_catalog, generate_device_topics
 
 # ===================== Controller Helpers =====================
@@ -103,7 +102,7 @@ class CatalogAPI:
         clean_mac = mac_address.replace(":", "").replace("-", "").upper()
         device_id = f"SmartChill_{clean_mac}"
 
-        # Check if device already exists (sync scenario)
+        # Check if device already exists
         for i, device in enumerate(catalog['devicesList']):
             if device.get('mac_address') == mac_address:
                 existing_device = device
@@ -323,7 +322,7 @@ class CatalogAPI:
         """POST /devices/{device_id}/unassign"""
         catalog = load_catalog()
 
-        # trovo device in catalog
+        # find device in catalog
         device_to_unassign = next(
             (d for d in catalog.get('devicesList', []) if d.get('deviceID') == device_id),
             None
@@ -420,13 +419,13 @@ class CatalogAPI:
                 return http_error(400, {"error": f"Missing required field: {field}"})
 
         catalog = load_catalog()
-        # controllo duplicato (case-insensitive)
+        # duplicate check
         for user in catalog['usersList']:
             if user['userID'].lower() == data['userID'].lower():
                 return http_error(409, {"error": "User already exists"})
 
         new_user = {
-            "userID": data['userID'].lower(),  # normalizzi in minuscolo
+            "userID": data['userID'].lower(),  # lowercase
             "userName": data['userName'],
             "telegram_chat_id": data.get("telegram_chat_id", None),
             "devicesList": [],
@@ -449,10 +448,10 @@ class CatalogAPI:
         try:
             catalog = load_catalog()
 
-            # Normalizza a stringa (Telegram chat_id numerico passato nel path)
+            # Normalize to string
             user_id_str = str(user_id)
 
-            # Trova utente per userID (non userName!)
+            # find user
             user_found = False
             user_to_delete = None
             for i, user in enumerate(catalog.get('usersList', [])):
@@ -465,7 +464,7 @@ class CatalogAPI:
                 cherrypy.response.status = 404
                 return {"error": f"User '{user_id_str}' not found"}
 
-            # Disassegna i device assegnati a quell'userID
+            # Unassign
             unassigned_devices = []
             for device in catalog.get('devicesList', []):
                 if str(device.get('owner')) == user_id_str:
@@ -572,7 +571,7 @@ class CatalogAPI:
 
         for user in catalog['usersList']:
             if user['userID'].lower() == user_id.lower():
-                # OPZIONALE: Verifica se già linkato
+                # Check if already linked
                 if user.get('telegram_chat_id') == chat_id:
                     return {"message": f"Chat {chat_id} already linked to user {user_id}"}
                 

@@ -5,7 +5,6 @@ import requests
 from datetime import datetime, timezone
 from MyMQTT import MyMQTT
 
-# Importiamo le utility dal file creato precedentemente
 from spoilage_utils import (
     parse_senml_payload,
     validate_config_values,
@@ -56,7 +55,6 @@ class FoodSpoilageControl:
     def save_settings(self):
         """Save current settings to file"""
         try:
-            # Don't use config_lock here since we usually call this from inside a locked block
             self.settings["lastUpdate"] = datetime.now(timezone.utc).isoformat()
             self.settings["configVersion"] += 1
             
@@ -204,7 +202,7 @@ class FoodSpoilageControl:
                      self.send_config_error("access_denied", "Access denied", topic, device_id)
                      return
 
-                # Validate using util function
+                # validation 
                 validation_error = validate_config_values(new_config)
                 if validation_error:
                     self.send_config_error("invalid_config", validation_error, topic, device_id)
@@ -288,14 +286,14 @@ class FoodSpoilageControl:
         threshold = config["gas_threshold_ppm"]
         enable_continuous = config["enable_continuous_alerts"]
         
-        # Use util function to check threshold
+        # check threshold
         current_status = check_alert_condition(gas_value, threshold)
         previous_status = self.gas_status.get(device_id, "normal")
         
         self.gas_status[device_id] = current_status
         # print(f"[GAS] {device_id}: {gas_value} PPM ({current_status})")
         
-        # Use util function to decide alert
+        # decide alert
         cooldown = self.is_cooldown_active(device_id)
         if should_trigger_alert(current_status, previous_status, enable_continuous, cooldown):
             self.send_spoilage_alert(device_id, gas_value, threshold, timestamp)
@@ -334,7 +332,7 @@ class FoodSpoilageControl:
                 self.handle_config_update(topic, payload)
                 return
             
-            # Use util function for parsing
+            # parsing
             parsed_data = parse_senml_payload(payload)
             if not parsed_data: return
             
@@ -399,7 +397,7 @@ class FoodSpoilageControl:
         while self.running:
             try:
                 time.sleep(self.settings["catalog"]["ping_interval_seconds"])
-                # Optional status print
+                # status print
             except: pass
 
     def run(self):

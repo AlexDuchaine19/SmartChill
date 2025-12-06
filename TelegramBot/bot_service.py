@@ -27,12 +27,12 @@ def set_bot_descriptions(token: str, enable: bool = True):
 
 class TelegramBotService:
     def __init__(self, settings_file=SETTINGS_FILE):
-        # 1. Load Settings
+        # Load Settings
         self.settings = load_settings(settings_file)
         self.service_info = self.settings["serviceInfo"]
         self.service_id = self.service_info["serviceID"]
         
-        # 2. Init Components
+        # Init Components
         self.catalog = CatalogClient(self.settings["catalog"]["url"])
         
         self.token = self.settings["telegram"]["TOKEN"]
@@ -44,17 +44,17 @@ class TelegramBotService:
         self.mqtt_client = MyMQTT(client_id, self.mqtt_cfg["brokerIP"], self.mqtt_cfg["brokerPort"], self)
         self.connected_mqtt = False
         
-        # 3. Parse Endpoints for Topics
+        # Parse Endpoints for Topics
         self.subscribe_topics = []
         self.config_template = None
         self._parse_endpoints()
         
-        # 4. Init Logic Handlers
+        # Init Logic Handlers
         self.handlers = BotHandlers(self.bot, self.catalog, self.mqtt_client, self.config_template)
         
-        # 5. State & Threading
+        # State & Threading
         self.running = True
-        self.last_alert_time = {} # Dedup alerts: { "chatid_alerttype_deviceid": timestamp }
+        self.last_alert_time = {} 
         self.message_loop_thread = None
 
         # Set UI descriptions on startup
@@ -99,11 +99,10 @@ class TelegramBotService:
             payload = json.loads(payload_bytes.decode('utf-8'))
             
             # 1. Check if it's a Config Response (Data/Ack/Error)
-            # We look for keywords in the topic or payload structure
+            # look for keywords in the topic or payload structure
             if "config_data" in topic or "config_ack" in topic or "config_error" in topic:
                 topic_type = "config_data" if "config_data" in topic else ("config_ack" if "config_ack" in topic else "config_error")
                 device_id = payload.get("device_id")
-                # Delegate to handlers logic to find the waiting user
                 self.handlers.handle_config_response(device_id, payload, topic_type)
                 return
 
@@ -139,12 +138,10 @@ class TelegramBotService:
         target_chat_id = None
         
         if user_id:
-            # User-based alert
             u = self.catalog.get(f"/users/{user_id}")
             if u: target_chat_id = u.get('telegram_chat_id')
         
         elif device_id:
-            # Device-based alert (find owner)
             d = self.catalog.get(f"/devices/{device_id}")
             if d and d.get('owner'):
                 owner_id = d['owner']
@@ -163,7 +160,7 @@ class TelegramBotService:
         
         is_door_closed_event = (str(alert_type).lower() == 'doorclosed') or ('door_closed' in str(alert_type).lower())
 
-        # Skip if cooldown active (unless it's a "Resolution" event like Door Closed)
+        # Skip if cooldown active
         if not is_door_closed_event and (now - last_time < cooldown_sec):
             print(f"[ALERT] Cooldown active for {alert_key}. Skipping.")
             return
@@ -240,14 +237,13 @@ class TelegramBotService:
         """Routes callback queries (button clicks)."""
         query_id, chat_id, data = telepot.glance(msg_query, flavor='callback_query')
         
-        # Data format is usually "callback_key arg1 arg2"
+        # "callback_key arg1 arg2"
         parts = data.split()
         key = parts[0]
         args = parts[1:]
         
         if key in self.handlers.callbacks:
             print(f"[ROUTER] Routing callback: {key} args={args}")
-            # Pass everything the handler needs
             self.handlers.callbacks[key](query_id, chat_id, msg_query, *args)
         else:
             print(f"[ROUTER] Unknown callback: {key}")
@@ -282,7 +278,7 @@ class TelegramBotService:
                 except Exception as e:
                     if self.running:
                         print(f"[POLLING] Error: {e}")
-                        time.sleep(3) # Wait before retry
+                        time.sleep(3)
         
         self.message_loop_thread = threading.Thread(target=loop, daemon=True)
         self.message_loop_thread.start()

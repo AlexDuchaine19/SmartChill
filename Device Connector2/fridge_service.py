@@ -6,7 +6,6 @@ import random
 from datetime import datetime, timezone
 from MyMQTT import MyMQTT
 
-# Importiamo le utility dal file creato precedentemente
 from fridge_utils import (
     load_settings, 
     save_settings_to_file,
@@ -24,10 +23,9 @@ SETTINGS_FILE = "settings.json"
 
 class FridgeSimulator:
     def __init__(self):
-        # Load settings using util function
+        # Load settings
         self.settings = load_settings(SETTINGS_FILE)
         
-        # Device identity from settings
         self.mac_address = self.settings["deviceInfo"]["mac_address"]
         self.model = self.settings["deviceInfo"]["model"]
         self.firmware_version = self.settings["deviceInfo"]["firmware_version"]
@@ -95,7 +93,7 @@ class FridgeSimulator:
         
         # Initialize compressor stats
         self.compressor_last_change = time.time()
-        self.min_cycle_time = 300 # 5 minutes
+        self.min_cycle_time = 300
 
     def save_settings(self):
         """Helper to save current settings using util function"""
@@ -130,7 +128,6 @@ class FridgeSimulator:
                 print(f"[REG] Registration successful: {config['status']}")
                 print(f"[REG] Device ID: {self.device_id}")
                 
-                # Save updated settings
                 self.save_settings()
                 return True
                 
@@ -157,7 +154,7 @@ class FridgeSimulator:
             time.sleep(2)
             self.connected = True
             
-            # Subscribe topics using utils
+            # Subscribe topics
             config_topic = build_command_topic(self.device_id, "update_config")
             self.mqtt_client.mySubscribe(config_topic)
             print(f"[MQTT] Subscribed to: {config_topic}")
@@ -191,6 +188,7 @@ class FridgeSimulator:
         except Exception as e:
             print(f"[MQTT] Error processing message: {e}")
     
+    #commands for debugging
     def _handle_simulation_command(self, command):
         """Handle simulation control commands"""
         try:
@@ -343,7 +341,7 @@ class FridgeSimulator:
         else:
             self.sensors["gas"] = random.uniform(8, 45)
         
-        # 3. Automatic door (using util probability)
+        # 3. Automatic door
         if (self.automatic_mode and not self.door_open and 
             random.random() < get_door_open_probability()):
             self._simulate_door_open()
@@ -360,7 +358,6 @@ class FridgeSimulator:
             self.door_open_start_time = time.time()
             
             if "door_event" in self.include_events:
-                # Use util for payload
                 senml_payload = create_door_event_senml_payload(
                     self.device_id, "door_opened", timestamp=self.door_open_start_time
                 )
@@ -378,7 +375,6 @@ class FridgeSimulator:
             self.door_open_start_time = None
             
             if "door_event" in self.include_events:
-                # Use util for payload
                 senml_payload = create_door_event_senml_payload(
                     self.device_id, "door_closed", duration=duration, timestamp=current_time
                 )
@@ -397,11 +393,9 @@ class FridgeSimulator:
             interval = self.sampling_intervals.get(sensor_type, 60)
             if current_time - self.last_publish[sensor_type] >= interval:
                 
-                # Use util to build topic
                 topic = build_topic(self.topic_template, self.model, self.device_id, sensor_type)
                 
                 if topic:
-                    # Use util to build payload
                     senml_payload = create_senml_payload(self.device_id, sensor_type, value, current_time)
                     self.mqtt_client.myPublish(topic, senml_payload)
                     self.last_publish[sensor_type] = current_time
@@ -416,7 +410,6 @@ class FridgeSimulator:
             
         heartbeat_topic = build_heartbeat_topic(self.heartbeat_topic_template, self.model, self.device_id)
         if heartbeat_topic:
-            # Custom heartbeat payload (simpler to keep inline or create dedicated util)
             current_time = time.time()
             base_name = f"{self.device_id}/"
             senml_payload = {
@@ -432,7 +425,7 @@ class FridgeSimulator:
         print(f"\n[STATUS] Device: {self.device_id} | Door: {'OPEN' if self.door_open else 'CLOSED'} | "
               f"Comp: {'ON' if self.compressor_on else 'OFF'} | Temp: {self.sensors['temperature']:.2f}°C")
 
-    # Loops (Sensor, MQTT, Heartbeat, Status)
+    # Loops
     def sensor_simulation_loop(self):
         while self.running:
             self.generate_realistic_data()

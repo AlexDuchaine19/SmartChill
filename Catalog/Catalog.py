@@ -54,7 +54,7 @@ def get_dispatcher():
     return d
 
 def run_server():
-    # Ensure directory exists (logic preserved from original)
+    # Ensure directory exists
     os.makedirs(os.path.dirname(CATALOG_FILE), exist_ok=True)
 
     print("=== SmartChill Catalog Service (CherryPy) ===")

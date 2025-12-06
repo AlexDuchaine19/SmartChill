@@ -10,10 +10,8 @@ from datetime import datetime, timezone
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-# Assumiamo che MyMQTT sia nella stessa cartella o nel path
 from MyMQTT import MyMQTT
 
-# Importiamo la logica pura dal file utils
 from influx_utils import (
     parse_senml_payload, 
     validate_sensor_data, 
@@ -94,7 +92,7 @@ class InfluxDBAdaptor:
             print("[INFLUX] Using token from environment variable")
             return token
         
-        # Last resort - try token file if specified
+        # try token file if specified
         token_file = self.settings["influxdb"].get("token_file")
         if token_file:
             try:
@@ -136,7 +134,6 @@ class InfluxDBAdaptor:
     def store_door_event(self, device_id, event_type, value, timestamp, duration=None):
         """Store door event in InfluxDB"""
         try:
-            # CALL TO IMPORTED UTIL FUNCTION
             point = create_door_event_point(
                 self.settings["influxdb"]["measurement_name_events"],
                 device_id, 
@@ -290,13 +287,11 @@ class InfluxDBAdaptor:
     def store_sensor_data(self, device_id, sensor_type, value, timestamp):
         """Store sensor data in InfluxDB"""
         try:
-            # CALL TO IMPORTED UTIL FUNCTION
             # Pass validation setting from config
             enable_val = self.settings["defaults"]["enable_data_validation"]
             if not validate_sensor_data(device_id, sensor_type, value, enable_val):
                 return False
             
-            # CALL TO IMPORTED UTIL FUNCTION
             # Pass measurement name from config
             measurement = self.settings["influxdb"]["measurement_name_sensors"]
             point = create_influx_point(measurement, device_id, sensor_type, value, timestamp)
@@ -325,12 +320,11 @@ class InfluxDBAdaptor:
         
         while self.running:
             try:
-                # Try to get data from queue (with timeout)
+                # Try to get data from queue with timeout
                 try:
                     point = self.data_queue.get(timeout=1)
                     batch.append(point)
                 except queue.Empty:
-                    # No data available, check if we need to flush
                     pass
                 
                 current_time = time.time()
@@ -393,7 +387,6 @@ class InfluxDBAdaptor:
                 self.handle_config_update(topic, payload)
                 return
             
-            # CALL TO IMPORTED UTIL FUNCTION
             parsed_data = parse_senml_payload(payload)
             if not parsed_data:
                 print(f"[SENML] Failed to parse SenML data from topic: {topic}")

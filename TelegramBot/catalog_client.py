@@ -51,7 +51,7 @@ class CatalogClient:
     def delete(self, path): 
         return self.request("DELETE", path)
 
-    # --- Specific Logic (Replicating original functions) ---
+    # --- Specific Logic ---
 
     def register_service(self, service_info, max_retries=5, base_delay=2.0):
         """
@@ -91,7 +91,7 @@ class CatalogClient:
         Fetches all devices and compares normalized MACs.
         """
         try:
-            # Normalize input MAC (remove special chars, uppercase)
+            # Normalize input MAC
             target_mac = re.sub(r'[^0-9A-Fa-f]', '', raw_mac).upper()
             
             devices = self.get("/devices")
@@ -122,7 +122,6 @@ class CatalogClient:
         try:
             users = self.get("/users")
             for user in users:
-                # Compare as strings to be safe
                 if str(user.get('telegram_chat_id')) == str(chat_id):
                     return user
             return None

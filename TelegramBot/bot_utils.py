@@ -17,7 +17,7 @@ def escape_markdown(text):
     """Esegue l'escape dei caratteri speciali per Markdown V2 di Telegram."""
     if text is None:
         return "N/A"
-    # Caratteri che richiedono escape in Markdown V2
+    # escape characters in Markdown V2
     special_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
     text = str(text)
     for char in special_chars:
@@ -30,7 +30,7 @@ def load_settings(filename):
         with open(filename, 'r') as f:
             settings_data = json.load(f)
             
-            # Validazione di base per evitare crash all'avvio
+            # validation
             if "telegram" not in settings_data or "TOKEN" not in settings_data["telegram"]:
                 raise ValueError("Missing 'telegram' or 'TOKEN' in settings.")
             if "catalog" not in settings_data or "url" not in settings_data["catalog"]:
@@ -125,7 +125,7 @@ def get_setting_details(field_name):
         }
     }
     
-    # Restituisce il dizionario trovato o un placeholder generico se la chiave non esiste
+    # base dict if the key doesnt exist
     return settings_map.get(field_name, {
         "name": field_name, 
         "desc": "", 

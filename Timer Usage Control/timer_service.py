@@ -5,7 +5,6 @@ import requests
 from datetime import datetime, timezone
 from MyMQTT import MyMQTT
 
-# Importiamo le utility
 from timer_utils import (
     parse_senml_door_event,
     validate_config_values,
@@ -183,7 +182,6 @@ class TimerUsageControl:
                 if requester != "admin" and requester != device_id:
                     self.send_config_error("access_denied", "Access denied", topic, device_id); return
 
-                # Use util validation
                 val_err = validate_config_values(new_config)
                 if val_err: self.send_config_error("invalid_config", val_err, topic, device_id); return
                 
@@ -238,7 +236,6 @@ class TimerUsageControl:
     def handle_door_closed(self, device_id, event_data):
         """Handle door closed event - stop timer and alert if needed"""
         if device_id in self.device_timers:
-            # Use util calculation
             duration = calculate_duration(self.device_timers[device_id])
             del self.device_timers[device_id]
             
@@ -257,12 +254,10 @@ class TimerUsageControl:
         current_time = time.time()
         
         for device_id, start_time in list(self.device_timers.items()):
-            # Use util calculation
             duration = calculate_duration(start_time, current_time)
             config = self.get_device_config(device_id)
             threshold = config["max_door_open_seconds"]
             
-            # Use util condition check
             if check_timeout_condition(duration, threshold) and device_id not in self.alerted_devices:
                 self.send_door_timeout_alert(device_id, duration)
                 self.alerted_devices[device_id] = current_time
@@ -310,7 +305,6 @@ class TimerUsageControl:
             if "config_update" in topic:
                 self.handle_config_update(topic, payload); return
             
-            # Use util parser
             door_event_data = parse_senml_door_event(payload)
             if not door_event_data: return
             

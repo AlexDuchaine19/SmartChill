@@ -7,7 +7,7 @@ from influxdb_client import Point, WritePrecision
 def parse_senml_payload(payload):
     """Parse SenML formatted payload and extract sensor data"""
     try:
-        # Decode se payload è bytes
+        # Decode if payload in bytes
         if isinstance(payload, bytes):
             payload = payload.decode("utf-8")
 
@@ -62,7 +62,7 @@ def validate_sensor_data(device_id, sensor_type, value, enable_validation=True):
         "temperature": {"min": -50, "max": 100},  # Celsius
         "humidity": {"min": 0, "max": 100},       # Percentage
         "light": {"min": 0, "max": 100000},       # Lux
-        "gas": {"min": 0, "max": 1000}            # PPM or sensor-specific units
+        "gas": {"min": 0, "max": 1000}            # PPM
     }
     
     if sensor_type in validation_rules:

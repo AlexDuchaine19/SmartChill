@@ -5,7 +5,6 @@ import requests
 from datetime import datetime, timezone
 from MyMQTT import MyMQTT
 
-# Importiamo le utility dal file creato precedentemente
 from status_utils import (
     parse_senml_payload,
     validate_config_values,
@@ -289,7 +288,6 @@ class FridgeStatusControl:
         """Analyze temperature using util function and handle alerts"""
         config = self.get_device_config(device_id)
         
-        # Use util function for evaluation
         eval_result = evaluate_temperature(temperature, config["temp_min_celsius"], config["temp_max_celsius"])
         status = eval_result["status"]
         
@@ -309,7 +307,6 @@ class FridgeStatusControl:
         """Analyze humidity using util function and handle alerts"""
         config = self.get_device_config(device_id)
         
-        # Use util function
         eval_result = evaluate_humidity(humidity, config["humidity_max_percent"])
         status = eval_result["status"]
         
@@ -333,7 +330,6 @@ class FridgeStatusControl:
         
         config = self.get_device_config(device_id)
         
-        # Use util function
         pattern = evaluate_complex_patterns(readings["temperature"], readings["humidity"], config)
         
         if pattern:
@@ -376,7 +372,6 @@ class FridgeStatusControl:
                 self.handle_config_update(topic, payload)
                 return
             
-            # Use util function
             parsed_data = parse_senml_payload(payload)
             if not parsed_data: return
             
@@ -404,7 +399,7 @@ class FridgeStatusControl:
                 elif name == "humidity":
                     self.analyze_humidity_status(device_id, float(value), ts)
             
-            # Check complex patterns after update
+            # Check patterns after update
             for entry in parsed_data:
                 did = entry["device_id"] or topic_device_id
                 if did in self.known_devices:

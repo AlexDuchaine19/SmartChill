@@ -7,7 +7,6 @@ import cherrypy
 from datetime import datetime, timezone
 import warnings
 
-# Importiamo la logica pura dal file precedente
 from analysis_logic import (
     analyze_temperature_data, 
     analyze_door_usage, 
@@ -222,12 +221,10 @@ class DataAnalysisService:
         
         if "temperature" in metrics_list:
             temp_data = self.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
-            # CALL TO IMPORTED FUNCTION
             result["temperature_analysis"] = analyze_temperature_data(temp_data, period)
         
         if "usage_patterns" in metrics_list:
             door_events = self.fetch_door_events_from_adaptor(device_id, period)
-            # CALL TO IMPORTED FUNCTION
             result["usage_analysis"] = analyze_door_usage(door_events, period)
         
         if "trends" in metrics_list:
@@ -236,14 +233,11 @@ class DataAnalysisService:
             if not door_events:
                 door_events = self.fetch_door_events_from_adaptor(device_id, period)
             
-            # CALL TO IMPORTED FUNCTION
             result["trends"] = analyze_trends(temp_data, door_events, period)
         
-        # Add data summary
         result["data_summary"] = {
             "temperature_points": len(temp_data),
             "door_events": len(door_events),
-            # CALL TO IMPORTED FUNCTION
             "period_days": period_to_days(period)
         }
         
@@ -455,7 +449,7 @@ class DataAnalysisRestAPI:
             temp_data = self.service.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
             door_events = self.service.fetch_door_events_from_adaptor(device_id, period)
             
-            # Analyze trends using IMPORTED function (not service method)
+            # Analyze trends
             trends = analyze_trends(temp_data, door_events, period)
             
             return {
@@ -496,19 +490,16 @@ class DataAnalysisRestAPI:
             
             if pattern_type == "usage":
                 door_events = self.service.fetch_door_events_from_adaptor(device_id, period)
-                # Call imported function
                 result["patterns"] = analyze_door_usage(door_events, period)
                 
             elif pattern_type == "temperature":
                 temp_data = self.service.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
-                # Call imported function
                 result["patterns"] = analyze_temperature_data(temp_data, period)
                 
             elif pattern_type == "efficiency":
                 temp_data = self.service.fetch_sensor_data_from_adaptor(device_id, "temperature", period)
                 door_events = self.service.fetch_door_events_from_adaptor(device_id, period)
                 
-                # Call imported functions
                 temp_analysis = analyze_temperature_data(temp_data, period)
                 usage_analysis = analyze_door_usage(door_events, period)
                 

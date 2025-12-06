@@ -273,7 +273,7 @@ def prepare_and_train_model(hist_temp, hist_events, min_samples=5):
     valid_days_count = 0
 
     for day_str, data in daily_data.items():
-        if len(data["temp_points"]) < 48: continue # ~4 hours data min
+        if len(data["temp_points"]) < 48: continue # 4 hours data min
 
         day_dt = datetime.strptime(day_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
         if day_dt.date() >= datetime.now(timezone.utc).date(): continue # Skip today

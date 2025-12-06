@@ -58,9 +58,9 @@ def build_response_topic(device_id):
 def get_sensor_unit(sensor_type):
     """Get unit for sensor type"""
     units = {
-        "temperature": "Cel",  # SenML unit for Celsius
-        "humidity": "%RH",     # SenML unit for relative humidity
-        "light": "lx",         # SenML unit for lux
+        "temperature": "Cel",  # celsius
+        "humidity": "%RH",     # relative humidity
+        "light": "lx",         # lux
         "gas": "ppm"           # Parts per million
     }
     return units.get(sensor_type, "")
@@ -84,7 +84,7 @@ def create_senml_payload(device_id, sensor_type, value, timestamp=None):
             "n": sensor_type,  # Sensor name
             "v": round(value, 2),  # Value
             "u": unit,  # Unit
-            "t": 0  # Time offset from base time (0 = same time)
+            "t": 0  # Time offset from base time
         }]
     }
     
@@ -144,7 +144,7 @@ def get_door_open_probability():
         (19, 22, 0.003)    # Dinner
     ]
 
-    # Use the appropriate schedule based on the day
+    # Use the right schedule
     schedule = weekend_schedule if is_weekend else weekday_schedule
     
     # Check if the current time falls into a scheduled high-activity period
@@ -152,7 +152,7 @@ def get_door_open_probability():
         if start <= current_hour < end:
             return prob
     
-    # Return a very low base probability for off-peak hours
+    # Low base probability for off-peak hours
     if 0 <= current_hour < 6:
         return 0.00001
     else:

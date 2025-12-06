@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "projectOwner": "Group17",
     "projectName": "SmartChill",
-    "lastUpdate": "2025-12-05T16:37:47.165509+00:00",
+    "lastUpdate": "2025-12-06T17:34:09.772601+00:00",
     "broker": {
         "IP": "mosquitto",
         "port": 1883
@@ -114,7 +114,7 @@
             "type": "analytics_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:37:44.493437+00:00"
+            "lastUpdate": "2025-12-06T17:34:01.983395+00:00"
         },
         {
             "serviceID": "TelegramBot",
@@ -134,7 +134,7 @@
             "type": "interface_bot",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:36:17.623296+00:00"
+            "lastUpdate": "2025-12-06T17:34:02.251782+00:00"
         },
         {
             "serviceID": "InfluxDBAdaptor",
@@ -161,7 +161,7 @@
             "type": "database_adaptor",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:37:47.165501+00:00"
+            "lastUpdate": "2025-12-06T17:34:04.209889+00:00"
         },
         {
             "serviceID": "EnergyOptimization",
@@ -177,7 +177,7 @@
             "type": "optimization",
             "version": "3.1.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T13:57:47.597751+00:00"
+            "lastUpdate": "2025-12-06T17:29:03.977543+00:00"
         },
         {
             "serviceID": "FoodSpoilageControl",
@@ -194,7 +194,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:37:46.221896+00:00"
+            "lastUpdate": "2025-12-06T17:28:59.574306+00:00"
         },
         {
             "serviceID": "FridgeStatusControl",
@@ -212,7 +212,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:37:43.670920+00:00"
+            "lastUpdate": "2025-12-06T17:34:01.698728+00:00"
         },
         {
             "serviceID": "TimerUsageControl",
@@ -230,7 +230,7 @@
             "type": "monitoring_service",
             "version": "1.0.0",
             "status": "active",
-            "lastUpdate": "2025-12-05T16:37:45.646360+00:00"
+            "lastUpdate": "2025-12-06T17:34:01.658029+00:00"
         }
     ],
     "devicesList": [
@@ -296,7 +296,7 @@
             "user_assigned": false,
             "owner": null,
             "registration_time": "2025-12-05T10:22:52.116945+00:00",
-            "last_sync": "2025-12-05T14:00:34.907328+00:00",
+            "last_sync": "2025-12-06T17:28:59.514601+00:00",
             "user_device_name": null,
             "assignment_time": null
         }

@@ -6,7 +6,6 @@ import cherrypy
 import numpy as np
 from datetime import datetime, timezone
 
-# Importiamo la logica pura dal file utils
 from optimizer_utils import (
     analyze_temperature_data,
     analyze_door_usage,
@@ -176,7 +175,7 @@ class EnergyOptimizationService:
             hist_temp = self.fetch_historical_temperature(device_id, duration=training_period)
             hist_events = self.fetch_historical_door_events(device_id, duration=training_period)
 
-            # 2. Train using Utils
+            # 2. Train
             min_samples = self.settings['ml']['min_training_samples']
             model, features, mae, r2 = prepare_and_train_model(hist_temp, hist_events, min_samples)
 
@@ -189,7 +188,7 @@ class EnergyOptimizationService:
                 "model": model,
                 "last_trained": time.time(),
                 "features": features,
-                "training_days": "var", # Simplified
+                "training_days": "var",
                 "accuracy": {"mae": mae, "r2": r2}
             }
             
@@ -270,7 +269,6 @@ class EnergyOptimizationService:
         temp_data = self.fetch_historical_temperature(device_id, period)
         door_events = self.fetch_historical_door_events(device_id, period)
 
-        # Use imported Utils for calculations
         temp_analysis = analyze_temperature_data(temp_data, period)
         usage_analysis = analyze_door_usage(door_events, period)
         cycle_analysis = analyze_compressor_cycles(temp_data, power_specs, period_info=period)
