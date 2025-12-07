@@ -1,160 +1,19 @@
 services:
-  catalog:
-    build: ./Catalog
-    container_name: smartchill_catalog
+  # ---------------- CORE INFRASTRUCTURE ----------------
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: smartchill_mosquitto
     ports:
-      - "9001:8001"
+      - "1884:1883"
+      - "9002:9001"
     volumes:
-      - ./Catalog:/app
-    environment:
-      - PYTHONUNBUFFERED=1 # Changed from FLASK_ENV for consistency
-    restart: always
+      - ./mosquitto/config:/mosquitto/config
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+    restart: unless-stopped
     networks:
-      - smartchill_net
-
-  device_connector:
-    build: ./Device Connector
-    container_name: smartchill_device_connector
-    volumes:
-      - ./Device Connector:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
-  device_connector2:
-    build: ./Device Connector2
-    container_name: smartchill_device_connector2
-    volumes:
-      - ./Device Connector2:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
-  timer_usage_control:
-    build: ./Timer Usage Control
-    container_name: smartchill_timer_usage_control
-    volumes:
-      - ./Timer Usage Control:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
-  food_spoilage_control:
-    build: ./Food Spoilage Control
-    container_name: smartchill_food_spoilage_control
-    volumes:
-      - ./Food Spoilage Control:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
-  fridge_status_control:
-    build: ./Fridge Status Control
-    container_name: smartchill_fridge_status_control
-    volumes:
-      - ./Fridge Status Control:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-
-  influxdb_adaptor:
-    build: ./InfluxDB Adaptor
-    container_name: smartchill_influxdb_adaptor
-    ports:
-      - "9003:8002"
-    volumes:
-      - ./InfluxDB Adaptor:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-      - INFLUX_URL=http://influxdb:8086
-      - INFLUX_ORG=smartchill
-      - INFLUX_BUCKET=smartchill
-      - INFLUX_TOKEN=smartchill-token
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-      - influxdb
-    networks:
-      - smartchill_net
-
-  energy_optimization:
-    build: ./Energy Optimization
-    container_name: smartchill_energy_optimization
-    ports:
-      - "9004:8003"
-    volumes:
-      - ./Energy Optimization:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      # Energy Optimization now depends on InfluxDB Adaptor, not Data Analysis
-      - influxdb_adaptor
-      # Removed data_analysis dependency
-    networks:
-      - smartchill_net
-
-  data_analysis:
-    build: ./Data Analysis
-    container_name: smartchill_data_analysis
-    ports:
-      - "9005:8004"
-    volumes:
-      - ./Data Analysis:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: always
-    depends_on:
-      - catalog
-      - influxdb_adaptor
-    networks:
-      - smartchill_net
-
-  # --- NEW SERVICE: Telegram Bot ---
-  telegram_bot:
-    build: ./TelegramBot
-    container_name: smartchill_telegram_bot
-    volumes:
-      # Mount your bot code directory
-      - ./TelegramBot:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-      # Optional: Pass token via environment if not hardcoded in settings.json
-      # - TELEGRAM_TOKEN=YOUR_ACTUAL_TOKEN 
-    restart: always
-    depends_on:
-      - catalog
-      - mosquitto
-    networks:
-      - smartchill_net
-  # --- End of Telegram Bot ---
+      - smartchill_network
 
   influxdb:
     image: influxdb:2.7
@@ -171,58 +30,228 @@ services:
     volumes:
       - influxdb_data:/var/lib/influxdb2
       - influxdb_config:/etc/influxdb2
-    restart: always
+    restart: unless-stopped
     networks:
-      - smartchill_net
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
-  mosquitto:
-    image: eclipse-mosquitto:2.0
-    container_name: smartchill_mosquitto
+  catalog:
+    build: ./Catalog
+    container_name: smartchill_catalog
     ports:
-      # Keep local port 1884 mapping to internal 1883
-      - "1884:1883"
-      - "9002:9001"
+      - "8001:8001"
     volumes:
-      - ./mosquitto/config:/mosquitto/config
-      # Ensure data and log volumes are correctly defined below
-      - mosquitto_data:/mosquitto/data
-      - mosquitto_log:/mosquitto/log
-    command: mosquitto -c /mosquitto/config/mosquitto.conf # Ensure config is loaded
-    restart: always
+      - ./Catalog:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
     networks:
-      - smartchill_net
-    # Mosquitto image doesn't have a built-in healthcheck
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
+  # ---------------- MIDDLEWARE SERVICES ----------------
+  influxdb_adaptor:
+    build: ./InfluxDB Adaptor
+    container_name: smartchill_influxdb_adaptor
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./InfluxDB Adaptor:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_ORG=smartchill
+      - INFLUX_BUCKET=smartchill
+      - INFLUX_TOKEN=smartchill-token
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ---------------- LOGIC SERVICES (NO HEALTHCHECK NEEDED) ----------------
+  device_connector:
+    build: ./Device Connector
+    container_name: smartchill_device_connector
+    volumes:
+      - ./Device Connector:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+
+  timer_usage_control:
+    build: ./Timer Usage Control
+    container_name: smartchill_timer_usage_control
+    volumes:
+      - ./Timer Usage Control:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+
+  food_spoilage_control:
+    build: ./Food Spoilage Control
+    container_name: smartchill_food_spoilage_control
+    volumes:
+      - ./Food Spoilage Control:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+
+  fridge_status_control:
+    build: ./Fridge Status Control
+    container_name: smartchill_fridge_status_control
+    volumes:
+      - ./Fridge Status Control:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+
+  telegram_bot:
+    build: ./TelegramBot
+    container_name: smartchill_telegram_bot
+    volumes:
+      - ./TelegramBot:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    networks:
+      - smartchill_network
+
+  # ---------------- ANALYTICS SERVICES ----------------
+  data_analysis:
+    build: ./Data Analysis
+    container_name: smartchill_data_analysis
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./Data Analysis:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      influxdb_adaptor:
+        condition: service_healthy
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  energy_optimization:
+    build: ./Energy Optimization
+    container_name: smartchill_energy_optimization
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./Energy Optimization:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      influxdb_adaptor:
+        condition: service_healthy
+    networks:
+      - smartchill_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ---------------- FRONTEND ----------------
   nodered:
     image: nodered/node-red:latest
     container_name: smartchill_nodered
-    user: "1000:1000"
     ports:
       - "1880:1880"
     volumes:
-      - ./nodered_data:/data
+      - ./nodered_config:/data
     environment:
       - TZ=Europe/Rome
       - NODE_RED_ENABLE_PROJECTS=true
-      - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
-    restart: always
+    restart: unless-stopped
     depends_on:
-      - mosquitto
-      - catalog
-      - influxdb_adaptor
-    entrypoint: >
-      /bin/bash -c "git config --global --add safe.directory /data/projects/SmartChill && npm start --cache /data/.npm -- --userDir /data"
+      mosquitto:
+        condition: service_started
+      catalog:
+        condition: service_healthy
+      influxdb_adaptor:
+        condition: service_healthy
+      energy_optimization:
+        condition: service_healthy
+      data_analysis:
+        condition: service_healthy
     networks:
-      - smartchill_net
+      - smartchill_network
 
 networks:
-  smartchill_net:
+  smartchill_network:
     driver: bridge
 
 volumes:
-  # Define named volumes for persistent data
   mosquitto_data:
   mosquitto_log:
   influxdb_data:
   influxdb_config:
-  nodered_data:
