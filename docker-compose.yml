@@ -84,7 +84,7 @@ services:
     networks:
       - smartchill_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8002/health', timeout=5).raise_for_status()"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,6 +104,28 @@ services:
         condition: service_healthy
       mosquitto:
         condition: service_started
+      influxdb_adaptor:
+        condition: service_healthy
+    networks:
+      - smartchill_network
+
+  device_connector2:
+    build:
+      context: ./Device Connector2
+      dockerfile: Dockerfile
+    container_name: smartchill_device_connector2
+    volumes:
+      - ./Device Connector2:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      catalog:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+      influxdb_adaptor:
+        condition: service_healthy
     networks:
       - smartchill_network
 
