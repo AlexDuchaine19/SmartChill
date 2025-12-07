@@ -253,6 +253,7 @@ services:
     environment:
       - TZ=Europe/Rome
       - NODE_RED_ENABLE_PROJECTS=true
+      - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
     restart: unless-stopped
     depends_on:
       mosquitto:
@@ -265,6 +266,8 @@ services:
         condition: service_healthy
       data_analysis:
         condition: service_healthy
+    entrypoint: >
+      /bin/bash -c "git config --global --add safe.directory /data/projects/SmartChill && npm start --cache /data/.npm -- --userDir /data"
     networks:
       - smartchill_network
 
