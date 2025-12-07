@@ -246,10 +246,11 @@ services:
   nodered:
     image: nodered/node-red:latest
     container_name: smartchill_nodered
+    user: "1000:1000"
     ports:
       - "1880:1880"
     volumes:
-      - ./nodered_config:/data
+      - ./nodered_data:/data
     environment:
       - TZ=Europe/Rome
       - NODE_RED_ENABLE_PROJECTS=true
