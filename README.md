@@ -177,7 +177,8 @@ To ensure proper system discovery, start services in this order:
 
 Access:
 
-👉 **http://localhost:1880/ui**
+👉 **http://localhost:1880/dashboard/login**
+- Insert username and mac address of device connector
 
 **Dashboard Features:**
 
